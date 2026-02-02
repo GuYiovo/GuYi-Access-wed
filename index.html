@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>GuYi Access</title>
+    <link rel="icon" href="http://q.qlogo.cn/headimg_dl?dst_uin=156440000&spec=640&img_type=jpg" type="image/png">
+    
+    <!-- 【修改】引入远程 Tailwind CSS 脚本 (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 【修改】引入远程 Remix Icon (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <style>
+        /* --- 核心排版设置 --- */
+        body { 
+            font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #fff; 
+            color: #1d1d1f;
+            -webkit-font-smoothing: antialiased; 
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* --- 动画系统 --- */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .reveal {
+            opacity: 0; 
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        /* --- 导航栏磨砂 --- */
+        .nav-blur {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* --- 移动端菜单 --- */
+        .mobile-menu-overlay {
+            position: fixed; top: 44px; left: 0; width: 100%; height: 0;
+            background: rgba(255,255,255,0.98); overflow: hidden;
+            transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 40;
+        }
+        .mobile-menu-overlay.open { height: 100vh; }
+
+        /* --- 字体排版 (核心修改区) --- */
+        .hero-headline {
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.025em;
+            color: #1d1d1f;
+            font-size: 48px; /* 移动端 */
+        }
+        @media (min-width: 768px) { .hero-headline { font-size: 80px; } } /* 桌面端加大 */
+
+        .hero-subhead {
+            font-size: 21px; line-height: 1.4; font-weight: 400; color: #1d1d1f;
+        }
+        @media (min-width: 768px) { .hero-subhead { font-size: 28px; line-height: 1.2; } }
+
+        /* --- 按钮组件 --- */
+        .btn-pill {
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 980px; font-size: 17px; font-weight: 400;
+            transition: all 0.2s ease; text-decoration: none;
+            padding: 12px 30px;
+        }
+        .btn-primary {
+            background-color: #0071e3; color: white;
+        }
+        .btn-primary:hover { background-color: #0077ed; }
+        .btn-outline {
+            color: #0071e3; background: transparent;
+        }
+        .btn-outline:hover { background-color: rgba(0, 113, 227, 0.05); }
+
+        /* --- Bento Grid 卡片 --- */
+        .bento-card {
+            background: white; border-radius: 24px; padding: 40px 30px;
+            text-align: center; height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .bento-card:hover { transform: scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+
+        .bg-apple-gray { background-color: #f5f5f7; }
+        .text-gray-apple { color: #86868b; }
+    </style>
+</head>
+<body class="antialiased pb-safe">
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full z-50 nav-blur h-[48px] md:h-[44px] flex items-center justify-center transition-all">
+        <div class="w-full max-w-[980px] px-5 flex justify-between items-center text-[12px] font-normal">
+            <a href="#" class="opacity-90 hover:opacity-100 flex items-center gap-1 text-[#1d1d1f] no-underline z-50">
+                <span class="font-semibold text-[17px] tracking-tight">GuYi <span class="font-normal text-gray-500">Access</span></span>
+            </a>
+            <div class="hidden md:flex gap-8 text-[#333333] text-[12px]">
+                <a href="document.html" class="hover:text-[#0071e3] transition-colors">开发文档</a>
+                <a href="https://github.com/GuYiovo/GuYi-Aegis" class="hover:text-[#0071e3] transition-colors">GitHub</a>
+                <a href="https://github.com/GuYiovo/GuYi-Aegis" class="hover:text-[#0071e3] transition-colors">立即下载</a>
+                <a href="https://qm.qq.com/q/R8q8Nt43aS" class="hover:text-[#0071e3] transition-colors">技术支持</a>
+            </div>
+            <button onclick="toggleMenu()" class="md:hidden text-[#1d1d1f] text-xl p-2 -mr-2 focus:outline-none z-50">
+                <i id="menu-icon" class="ri-menu-line"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 移动端菜单 -->
+    <div id="mobile-menu" class="mobile-menu-overlay md:hidden">
+        <div class="px-8 py-10 flex flex-col gap-6 text-[24px] font-bold text-[#1d1d1f]">
+            <a href="document.html" class="block fade-item">开发文档</a>
+            <a href="https://github.com/GuYiovo/GuYi-Aegis" class="block fade-item">GitHub 仓库</a>
+            <a href="https://github.com/GuYiovo/GuYi-Aegis" class="block fade-item">立即下载</a>
+            <a href="https://qm.qq.com/q/R8q8Nt43aS" class="block fade-item">联系我们</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-16 md:pt-48 md:pb-32 bg-white flex flex-col items-center text-center px-6 overflow-hidden">
+        <div class="max-w-[1024px] w-full flex flex-col items-center">
+            
+            <!-- 大标题 -->
+            <h1 class="hero-headline mb-4 reveal" style="animation-delay: 0.1s;">
+                一切皆有可能。
+            </h1>
+            
+            <!-- 副标题 -->
+            <p class="hero-subhead mb-10 md:mb-12 max-w-2xl mx-auto reveal text-gray-500" style="animation-delay: 0.2s;">
+                突破限制，重构想象。<br>
+                GuYi Access 以极致轻量的 API 架构，为您的软件注入无限潜力。
+            </p>
+
+            <!-- 按钮组 -->
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-20 w-full reveal" style="animation-delay: 0.3s;">
+                <a href="document.html" class="btn-pill btn-primary">开始构建</a>
+                <!-- 修改：跳转下载 -->
+                <a href="https://github.com/GuYiovo/GuYi-Aegis" target="_blank" class="btn-pill btn-outline group">
+                    立即下载 <i class="ri-download-line ml-1 transition-transform group-hover:translate-y-0.5"></i>
+                </a>
+            </div>
+
+            <!-- 产品展示图 (带窗口阴影) -->
+            <div class="relative w-full max-w-[900px] reveal px-2 md:px-0" style="animation-delay: 0.4s;">
+                <div class="rounded-xl md:rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-[0_40px_80px_-20px_rgba(0,0,0,0.12)]">
+                    <!-- 窗口头部 -->
+                    <div class="h-[32px] md:h-[40px] bg-[#f2f2f2] flex items-center px-4 gap-2 border-b border-[#e5e5e5]">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-[#ff5f57] border border-[#e0443e]"></div>
+                            <div class="w-3 h-3 rounded-full bg-[#febc2e] border border-[#d89e24]"></div>
+                            <div class="w-3 h-3 rounded-full bg-[#28c840] border border-[#1aab29]"></div>
+                        </div>
+                    </div>
+                    <!-- 内容 -->
+                    <img src="https://youke.xn--y7xa690gmna.cn/s1/2026/02/02/6980ae52b5f45.webp" alt="Dashboard Interface" class="w-full h-auto block bg-gray-50" onerror="this.src='https://placehold.co/1200x800/fafafa/e5e5e5?text=Dashboard+Interface'">
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 特性展示 (Bento Grid) -->
+    <section class="py-24 md:py-32 bg-apple-gray border-t border-gray-200/60">
+        <div class="max-w-[980px] mx-auto px-6">
+            <div class="text-center mb-16 reveal on-scroll">
+                <h2 class="text-[32px] md:text-[48px] font-bold tracking-tight mb-4 text-[#1d1d1f]">Pro. Beyond.</h2>
+                <p class="text-[19px] md:text-[21px] text-gray-apple max-w-2xl mx-auto">每一个细节都经过重新雕琢，只为成就最强。</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- 卡片 1 -->
+                <div class="bento-card reveal on-scroll" style="animation-delay: 0.1s;">
+                    <div class="w-12 h-12 mx-auto bg-blue-50 rounded-full flex items-center justify-center text-[#0071e3] text-2xl mb-6">
+                        <i class="ri-speed-mini-fill"></i>
+                    </div>
+                    <h3 class="text-[21px] font-semibold mb-3 text-[#1d1d1f]">快，不可思议。</h3>
+                    <p class="text-[15px] text-gray-500 leading-relaxed">Headless API 架构移除所有冗余前端，让每一次鉴权都在毫秒间完成。</p>
+                </div>
+
+                <!-- 卡片 2 -->
+                <div class="bento-card reveal on-scroll" style="animation-delay: 0.2s;">
+                    <div class="w-12 h-12 mx-auto bg-purple-50 rounded-full flex items-center justify-center text-purple-600 text-2xl mb-6">
+                        <i class="ri-shield-check-fill"></i>
+                    </div>
+                    <h3 class="text-[21px] font-semibold mb-3 text-[#1d1d1f]">稳，坚如磐石。</h3>
+                    <p class="text-[15px] text-gray-500 leading-relaxed">内置设备指纹绑定与防白屏机制。无论环境如何变化，验证始终如一。</p>
+                </div>
+
+                <!-- 卡片 3 -->
+                <div class="bento-card reveal on-scroll" style="animation-delay: 0.3s;">
+                    <div class="w-12 h-12 mx-auto bg-orange-50 rounded-full flex items-center justify-center text-orange-500 text-2xl mb-6">
+                        <i class="ri-magic-line"></i>
+                    </div>
+                    <h3 class="text-[21px] font-semibold mb-3 text-[#1d1d1f]">变，随心所欲。</h3>
+                    <p class="text-[15px] text-gray-500 leading-relaxed">Cloud Vars 2.0 允许您无需发版即可更新软件公告、链接与配置。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部 -->
+    <footer class="bg-apple-gray py-12 border-t border-[#d2d2d7] text-[12px] text-gray-500">
+        <div class="max-w-[980px] mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="text-center md:text-left">
+                    <p class="mb-1 font-medium text-gray-600">Designed by GuYi.</p>
+                    <p>Copyright © 2026 GuYi Systems. All rights reserved.</p>
+                </div>
+                <div class="flex gap-8">
+                    <a href="#" class="hover:text-black transition-colors">隐私政策</a>
+                    <a href="#" class="hover:text-black transition-colors">使用条款</a>
+                    <a href="https://qm.qq.com/q/R8q8Nt43aS" class="hover:text-black transition-colors">联系支持</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单逻辑
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            
+            if (menu.classList.contains('open')) {
+                menu.classList.remove('open');
+                icon.classList.remove('ri-close-line');
+                icon.classList.add('ri-menu-line');
+                document.body.style.overflow = ''; 
+            } else {
+                menu.classList.add('open');
+                icon.classList.remove('ri-menu-line');
+                icon.classList.add('ri-close-line');
+                document.body.style.overflow = 'hidden'; 
+            }
+        }
+
+        // 滚动触发动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'none';
+                    entry.target.offsetHeight; 
+                    entry.target.style.animation = 'fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.on-scroll').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>```

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>开发文档 - GuYi Access System</title>
+    <link rel="icon" href="http://q.qlogo.cn/headimg_dl?dst_uin=156440000&spec=640&img_type=jpg" type="img/png">
+    
+    <!-- 【修改】引入远程 Remix Icon (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- 【修改】引入远程 Tailwind CSS 脚本 (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                        mono: ['SF Mono', 'Menlo', 'Monaco', 'Courier New', 'monospace']
+                    },
+                    colors: {
+                        apple: {
+                            blue: '#0071e3',     
+                            dark: '#1d1d1f',     
+                            gray: '#86868b',     
+                            bg: '#fbfbfd',       
+                            border: '#d2d2d7'    
+                        }
+                    },
+                    boxShadow: {
+                        'window': '0 20px 50px -12px rgba(0,0,0,0.18)' 
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+        .nav-item {
+            color: #424245;
+            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            margin-bottom: 2px;
+        }
+        .nav-item:hover { color: #000; background: rgba(0,0,0,0.04); }
+        .nav-item.active { background: #eef7ff; color: #0071e3; font-weight: 600; }
+        .nav-item i { font-size: 14px; opacity: 0.7; }
+
+        /* Mac 终端风格 */
+        .mac-terminal {
+            background: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 24px 0;
+            position: relative;
+        }
+        .mac-terminal-header {
+            background: #2d2d2d;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        .traffic-lights { display: flex; gap: 8px; }
+        .traffic-light { width: 11px; height: 11px; border-radius: 50%; }
+        .close { background: #ff5f56; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #27c93f; }
+
+        .apple-table th { 
+            text-align: left; font-weight: 600; font-size: 12px; 
+            color: #86868b; border-bottom: 1px solid #e5e5e5; padding: 12px 0; 
+        }
+        .apple-table td { 
+            font-size: 14px; color: #1d1d1f; border-bottom: 1px solid #f5f5f5; padding: 16px 0; 
+        }
+        
+        h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 24px; color: #1d1d1f; padding-top: 20px; border-bottom: 1px solid #f5f5f7; padding-bottom: 10px; }
+        h3 { font-size: 20px; font-weight: 600; margin-bottom: 12px; margin-top: 32px; color: #1d1d1f; }
+        p { font-size: 15px; line-height: 1.7; font-weight: 400; color: #424245; margin-bottom: 20px; }
+        
+        code { font-family: 'SF Mono', monospace; background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: #d63384; }
+
+        .toast {
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+            transform: translateY(-100%); opacity: 0; transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        
+        /* 代码Tab样式 */
+        .lang-tab {
+            cursor: pointer; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; transition: all 0.2s; white-space: nowrap;
+        }
+        .lang-tab.active { background: #000; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .lang-tab.inactive { background: #f5f5f7; color: #86868b; }
+        .lang-tab.inactive:hover { background: #e8e8ed; color: #1d1d1f; }
+        
+        .hide-scroll::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-white text-apple-dark h-screen flex flex-col overflow-hidden">
+
+    <div id="toast-container" class="fixed top-6 left-1/2 -translate-x-1/2 z-[100]"></div>
+
+    <!-- 顶部导航 -->
+    <header class="h-14 bg-white/80 backdrop-blur-md border-b border-gray-200/80 fixed w-full z-50 flex items-center justify-between px-6 lg:px-8 transition-all">
+        <div class="flex items-center gap-3">
+            <img src="http://q.qlogo.cn/headimg_dl?dst_uin=156440000&spec=640&img_type=jpg" alt="Logo" class="w-6 h-6 rounded-md">
+            <span class="font-bold text-sm tracking-tight text-black">GuYi <span class="text-gray-500 font-normal">System Docs</span></span>
+        </div>
+        
+        <div class="flex items-center gap-6 text-[13px] font-medium text-gray-600">
+            <a href="cards.php" class="text-apple-blue hover:text-blue-700 flex items-center gap-1"><i class="ri-dashboard-3-line"></i> 返回后台</a>
+            <a href="#support" class="hover:text-black transition-colors">支持</a>
+        </div>
+    </header>
+
+    <div class="flex flex-1 pt-14 h-full relative">
+        
+        <!-- 左侧导航 -->
+        <aside class="w-64 bg-[#fbfbfd] border-r border-gray-200 h-full overflow-y-auto hidden lg:block pb-10 custom-scroll">
+            <div class="p-5 pt-8 space-y-8">
+                <div>
+                    <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-3">入门指南</h5>
+                    <nav>
+                        <a href="#intro" class="nav-item active"><i class="ri-home-4-line"></i> 简介</a>
+                        <a href="#install" class="nav-item"><i class="ri-install-line"></i> 安装与登录</a>
+                        <a href="#structure" class="nav-item"><i class="ri-folder-open-line"></i> 目录结构</a>
+                    </nav>
+                </div>
+                <div>
+                    <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-3">API 对接</h5>
+                    <nav>
+                        <a href="#api-connect" class="nav-item"><i class="ri-plug-line"></i> 接口定义</a>
+                        <a href="#api-response" class="nav-item"><i class="ri-code-s-slash-line"></i> 状态码字典</a>
+                        <a href="#api-examples" class="nav-item text-apple-blue"><i class="ri-code-box-line"></i> 10种语言 SDK</a>
+                    </nav>
+                </div>
+                <div>
+                    <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-3">高级功能</h5>
+                    <nav>
+                        <a href="#api-variables" class="nav-item"><i class="ri-cloud-line"></i> 云变量系统</a>
+                        <a href="#security" class="nav-item"><i class="ri-shield-keyhole-line"></i> 安全设置</a>
+                    </nav>
+                </div>
+                <div>
+                    <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-3">帮助</h5>
+                    <nav>
+                        <a href="#support" class="nav-item"><i class="ri-customer-service-line"></i> 联系我们</a>
+                    </nav>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 w-full h-full overflow-y-auto scroll-smooth bg-white" id="main-scroll">
+            <div class="max-w-[860px] mx-auto px-6 py-12 lg:px-16">
+                
+                <!-- 1. 简介 -->
+                <section id="intro" class="mb-20">
+                    <div class="text-xs font-bold text-apple-blue mb-2 uppercase tracking-wide">V26 Pro Enterprise</div>
+                    <h1 class="text-4xl font-bold text-black mb-6 tracking-tight">GuYi 授权验证系统</h1>
+                    <p class="text-lg leading-relaxed text-gray-600 font-light mb-8">
+                        这是一款轻量级、高性能的单码验证系统。支持多应用管理、云端变量下发、设备指纹绑定以及强大的防刷机制。您可以将其集成到任何 EXE、APK 或 Python 脚本中。
+                    </p>
+
+                    <div class="bg-yellow-50/80 border border-yellow-200/60 rounded-xl p-5 flex gap-4 text-sm text-yellow-800 items-start">
+                        <i class="ri-alert-fill text-yellow-500 text-xl"></i>
+                        <div>
+                            <strong class="text-yellow-900">重要提示：</strong> 为了您的数据安全，请在安装完成后立即删除网站根目录下的 <code class="text-yellow-700 bg-yellow-100">install.php</code> 文件，并在后台修改默认密码。
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. 安装与登录 (重点修复部分) -->
+                <section id="install" class="mb-20">
+                    <h2>安装与默认账号</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <!-- 安装步骤 -->
+                        <div class="space-y-6">
+                            <h3 class="text-lg font-semibold mt-0">部署步骤</h3>
+                            <div class="step-item relative pl-6 border-l-2 border-gray-100 pb-6">
+                                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-100 border-2 border-blue-500"></div>
+                                <h4 class="font-medium text-gray-900">上传源码</h4>
+                                <p class="text-sm text-gray-500 mt-1 mb-0">将所有文件上传至服务器根目录，确保 PHP 版本 > 7.2。</p>
+                            </div>
+                            <div class="step-item relative pl-6 border-l-2 border-gray-100 pb-6">
+                                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-100 border-2 border-blue-500"></div>
+                                <h4 class="font-medium text-gray-900">运行安装程序</h4>
+                                <p class="text-sm text-gray-500 mt-1 mb-0">浏览器访问 <code class="text-xs">http://你的域名/install.php</code> 并填写数据库信息。</p>
+                            </div>
+                            <div class="step-item relative pl-6 border-l-2 border-transparent">
+                                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-green-100 border-2 border-green-500"></div>
+                                <h4 class="font-medium text-gray-900">完成部署</h4>
+                                <p class="text-sm text-gray-500 mt-1 mb-0">安装成功后即可访问后台。</p>
+                            </div>
+                        </div>
+
+                        <!-- 默认账号卡片 (重点) -->
+                        <div>
+                            <h3 class="text-lg font-semibold mt-0 mb-4">初始管理员凭证</h3>
+                            <div class="bg-gradient-to-br from-gray-900 to-black text-white rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full blur-[60px] opacity-20"></div>
+                                
+                                <div class="relative z-10 space-y-4">
+                                    <div>
+                                        <div class="text-xs text-gray-400 uppercase font-semibold tracking-wider">Login URL</div>
+                                        <a href="cards.php" class="text-blue-400 hover:text-blue-300 font-mono text-sm block mt-1">http://你的域名/cards.php</a>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm border border-white/5">
+                                            <div class="text-xs text-gray-400 mb-1">Username</div>
+                                            <div class="font-mono text-lg font-bold text-white tracking-wide">GuYi</div>
+                                        </div>
+                                        <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm border border-white/5 group cursor-pointer" onclick="copyText('admin123')">
+                                            <div class="text-xs text-gray-400 mb-1 flex justify-between">
+                                                Password <i class="ri-file-copy-line opacity-50 group-hover:opacity-100"></i>
+                                            </div>
+                                            <div class="font-mono text-lg font-bold text-green-400 tracking-wide">admin123</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-[11px] text-gray-500 pt-2 border-t border-white/10">
+                                        <i class="ri-shield-check-line align-middle"></i> 首次登录后请务必在【全局配置】中修改密码。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. 目录结构 -->
+                <section id="structure" class="mb-20">
+                    <h2>目录结构说明</h2>
+                    <p>了解系统文件结构有助于您进行二次开发或故障排查。</p>
+                    <div class="mac-terminal">
+                        <div class="mac-terminal-header">
+                            <div class="traffic-lights"><div class="traffic-light close"></div><div class="traffic-light minimize"></div><div class="traffic-light maximize"></div></div>
+                            <div class="ml-4 text-gray-500 text-xs font-mono">Terminal</div>
+                        </div>
+                        <div class="p-5 font-mono text-sm leading-7 text-gray-400">
+                            <div>/ (根目录)</div>
+                            <div class="pl-4">├── <span class="text-yellow-300">cards.php</span> <span class="text-gray-500">// 后台管理主程序 (可重命名以隐藏后台)</span></div>
+                            <div class="pl-4">├── <span class="text-blue-400">Verifyfile/</span></div>
+                            <div class="pl-8">├── <span class="text-green-400">api.php</span> <span class="text-gray-500">// ★ 核心API接口 (客户端调用此文件)</span></div>
+                            <div class="pl-8">└── <span class="text-green-400">captcha.php</span> <span class="text-gray-500">// 后台登录验证码</span></div>
+                            <div class="pl-4">├── <span class="text-purple-300">config.php</span> <span class="text-gray-500">// 数据库配置文件 (包含 SYS_SECRET 密钥)</span></div>
+                            <div class="pl-4">├── <span class="text-purple-300">database.php</span> <span class="text-gray-500">// 数据库操作类 (含鉴权逻辑)</span></div>
+                            <div class="pl-4">├── <span class="text-blue-400">/</span> <span class="text-gray-500">// 存放背景图、Logo等素材</span></div>
+                            <div class="pl-4">├── <span class="text-blue-400">assets/</span> <span class="text-gray-500">// 存放 CSS, JS 静态资源</span></div>
+                            <div class="pl-4">└── <span class="text-white">index.php</span> <span class="text-gray-500">// 404伪装页 (保护目录隐私)</span></div>
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="border-gray-100 my-16">
+
+                <!-- 4. API 接入 -->
+                <section id="api-connect" class="mb-10">
+                    <h2>API 接口定义</h2>
+                    <p>所有客户端（软件/脚本/APP）均通过此接口与服务器通信。请确保使用 <code>POST</code> 方法。</p>
+                    
+                    <div class="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200 flex items-center gap-3 font-mono text-sm mb-8 text-gray-600 shadow-sm">
+                        <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs font-bold tracking-wide">POST</span>
+                        <span>http://您的域名/Verifyfile/api.php</span>
+                    </div>
+
+                    <table class="w-full text-left apple-table mb-8">
+                        <thead><tr><th class="w-1/4">参数名</th><th class="w-1/6">必填</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr><td class="font-mono font-semibold text-blue-600">card_code</td><td>是</td><td class="text-gray-600">用户输入的卡密 (兼容参数名: <code>card</code>)</td></tr>
+                            <tr><td class="font-mono font-semibold text-blue-600">device_hash</td><td>是</td><td class="text-gray-600">设备唯一标识 (机器码)，建议MD5后传入 (兼容参数名: <code>device</code>)</td></tr>
+                            <tr><td class="font-mono font-semibold text-purple-600">app_key</td><td>否</td><td class="text-gray-600">应用密钥。用于区分多应用或获取云端变量 (在后台"应用管理"中获取)</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+                
+                <!-- 5. 状态码 -->
+                <section id="api-response" class="mb-20">
+                     <h3>返回数据示例 (JSON)</h3>
+                     <div class="mac-terminal">
+                        <div class="mac-terminal-header">
+                             <div class="traffic-lights"><div class="traffic-light close"></div></div>
+                             <div class="ml-4 text-gray-500 text-xs font-mono">Response Payload</div>
+                        </div>
+                        <div class="p-5 overflow-x-auto text-gray-300 font-mono text-sm">
+<pre>{
+  <span class="text-purple-400">"code"</span>: <span class="text-yellow-300">200</span>,             <span class="text-gray-500">// 200:成功, 403:验证失败, 429:请求过快</span>
+  <span class="text-purple-400">"msg"</span>: <span class="text-green-400">"OK"</span>,             <span class="text-gray-500">// 提示信息 (如: 卡密已过期 / 设备不匹配)</span>
+  <span class="text-purple-400">"data"</span>: {
+    <span class="text-purple-400">"expire_time"</span>: <span class="text-green-400">"2026-12-31 23:59:59"</span>,  <span class="text-gray-500">// 到期时间</span>
+    <span class="text-purple-400">"variables"</span>: {                         <span class="text-gray-500">// [云变量] 数据 (可选)</span>
+       <span class="text-purple-400">"notice"</span>: <span class="text-green-400">"最新公告内容..."</span>,
+       <span class="text-purple-400">"download_url"</span>: <span class="text-green-400">"https://..."</span>
+    }
+  }
+}</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. SDK 示例 -->
+                <section id="api-examples" class="mb-20">
+                    <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+                        <h2>接入代码示例</h2>
+                        <span class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full border border-gray-200 font-medium">Copy & Paste</span>
+                    </div>
+
+                    <!-- 语言切换 Tabs -->
+                    <div class="flex gap-3 mb-6 overflow-x-auto hide-scroll pb-2" id="lang-tabs">
+                        <div class="lang-tab active" onclick="switchLang('python')">Python</div>
+                        <div class="lang-tab inactive" onclick="switchLang('elang')">易语言 (E-Lang)</div>
+                        <div class="lang-tab inactive" onclick="switchLang('php')">PHP</div>
+                        <div class="lang-tab inactive" onclick="switchLang('csharp')">C#</div>
+                        <div class="lang-tab inactive" onclick="switchLang('java')">Java</div>
+                        <div class="lang-tab inactive" onclick="switchLang('node')">Node.js</div>
+                        <div class="lang-tab inactive" onclick="switchLang('go')">Go</div>
+                        <div class="lang-tab inactive" onclick="switchLang('cpp')">C++</div>
+                    </div>
+                    
+                    <!-- 代码容器 -->
+                    <div class="mac-terminal mt-0 transition-all duration-300 shadow-2xl">
+                        <div class="mac-terminal-header justify-between bg-[#252526]">
+                            <div class="traffic-lights"><div class="traffic-light close"></div><div class="traffic-light minimize"></div><div class="traffic-light maximize"></div></div>
+                            <button onclick="copyCurrentCode()" class="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 bg-white/10 px-2 py-1 rounded"><i class="ri-file-copy-line"></i> 复制代码</button>
+                        </div>
+                        
+                        <!-- Python -->
+                        <div id="code-python" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm">
+<pre><span class="text-pink-400">import</span> requests, hashlib
+
+<span class="text-gray-500"># 1. 配置参数</span>
+api_url = <span class="text-green-400">"http://你的域名/Verifyfile/api.php"</span>
+card = <span class="text-green-400">"VIP-88888888"</span>
+<span class="text-gray-500"># 模拟机器码 (实际开发请获取本机硬件ID)</span>
+hwid = hashlib.md5(<span class="text-green-400">"my_computer_id"</span>.encode()).hexdigest()
+
+<span class="text-gray-500"># 2. 发送验证请求</span>
+try:
+    res = requests.post(api_url, data={
+        <span class="text-green-400">"card_code"</span>: card,
+        <span class="text-green-400">"device_hash"</span>: hwid,
+        <span class="text-green-400">"app_key"</span>: <span class="text-green-400">""</span> <span class="text-gray-500"># 可选</span>
+    }, timeout=<span class="text-yellow-300">5</span>).json()
+
+    <span class="text-gray-500"># 3. 处理结果</span>
+    if res[<span class="text-green-400">'code'</span>] == <span class="text-yellow-300">200</span>:
+        print(<span class="text-green-400">f"验证成功! 到期时间: {res['data']['expire_time']}"</span>)
+        <span class="text-gray-500"># print(res['data']['variables']) # 获取云变量</span>
+    else:
+        print(<span class="text-green-400">f"验证失败: {res['msg']}"</span>)
+
+except Exception as e:
+    print(<span class="text-green-400">"网络连接失败"</span>)</pre>
+                        </div>
+
+                        <!-- 易语言 -->
+                        <div id="code-elang" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
+<pre><span class="text-gray-500">.版本 2</span>
+<span class="text-gray-500">.支持库 spec</span>
+
+<span class="text-pink-400">.子程序</span> _按钮_登录_被单击
+<span class="text-pink-400">.局部变量</span> 网址, 文本型
+<span class="text-pink-400">.局部变量</span> 提交数据, 文本型
+<span class="text-pink-400">.局部变量</span> 返回文本, 文本型
+<span class="text-pink-400">.局部变量</span> json, 类_json
+
+网址 ＝ <span class="text-green-400">"http://你的域名/Verifyfile/api.php"</span>
+<span class="text-gray-500">' 建议使用精易模块的 [网页_访问_对象]</span>
+<span class="text-gray-500">' 机器码需自行获取并MD5处理</span>
+提交数据 ＝ <span class="text-green-400">"card_code="</span> ＋ 编辑框_卡密.内容 ＋ <span class="text-green-400">"&device_hash="</span> ＋ <span class="text-green-400">"YOUR_HWID_MD5"</span>
+
+返回文本 ＝ 编码_Utf8到Ansi (网页_访问_对象 (网址, 1, 提交数据, , , , , , , , , , , , , , , , ))
+
+json.解析 (返回文本)
+<span class="text-pink-400">如果</span> (json.取属性数值 (<span class="text-green-400">"code"</span>) ＝ 200)
+    信息框 (<span class="text-green-400">"登录成功！到期时间："</span> ＋ json.取通用属性 (<span class="text-green-400">"data.expire_time"</span>), 0, , )
+<span class="text-pink-400">否则</span>
+    信息框 (<span class="text-green-400">"登录失败："</span> ＋ json.取通用属性 (<span class="text-green-400">"msg"</span>), #错误图标, , )
+<span class="text-pink-400">如果结束</span></pre>
+                        </div>
+
+                        <!-- PHP -->
+                        <div id="code-php" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
+<pre><span class="text-pink-400">&lt;?php</span>
+$url = <span class="text-green-400">"http://你的域名/Verifyfile/api.php"</span>;
+$data = [
+    <span class="text-green-400">'card_code'</span> => <span class="text-green-400">'VIP-123456'</span>,
+    <span class="text-green-400">'device_hash'</span> => md5(<span class="text-green-400">'server_001'</span>)
+];
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_POST, <span class="text-yellow-300">1</span>);
+curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, <span class="text-yellow-300">true</span>);
+$response = curl_exec($ch);
+curl_close($ch);
+
+$json = json_decode($response, <span class="text-yellow-300">true</span>);
+
+if ($json[<span class="text-green-400">'code'</span>] == <span class="text-yellow-300">200</span>) {
+    echo <span class="text-green-400">"验证通过，过期时间: "</span> . $json[<span class="text-green-400">'data'</span>][<span class="text-green-400">'expire_time'</span>];
+} else {
+    echo <span class="text-green-400">"错误: "</span> . $json[<span class="text-green-400">'msg'</span>];
+}
+<span class="text-pink-400">?></span></pre>
+                        </div>
+
+                        <!-- C# -->
+                        <div id="code-csharp" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
+<pre><span class="text-pink-400">using</span> System.Net.Http;
+<span class="text-pink-400">using</span> Newtonsoft.Json.Linq; <span class="text-gray-500">// Nuget: Newtonsoft.Json</span>
+
+<span class="text-pink-400">public async void</span> VerifyCard()
+{
+    using (var client = new HttpClient())
+    {
+        var values = new Dictionary&lt;string, string&gt;
+        {
+            { <span class="text-green-400">"card_code"</span>, <span class="text-green-400">"VIP-CODE-HERE"</span> },
+            { <span class="text-green-400">"device_hash"</span>, <span class="text-green-400">"YOUR_HWID_HASH"</span> }
+        };
+
+        var content = new FormUrlEncodedContent(values);
+        var response = await client.PostAsync(<span class="text-green-400">"http://site.com/Verifyfile/api.php"</span>, content);
+        var responseString = await response.Content.ReadAsStringAsync();
+        
+        JObject json = JObject.Parse(responseString);
+        
+        if ((int)json[<span class="text-green-400">"code"</span>] == 200) {
+            Console.WriteLine(<span class="text-green-400">"Success: "</span> + json[<span class="text-green-400">"data"</span>][<span class="text-green-400">"expire_time"</span>]);
+        } else {
+            Console.WriteLine(<span class="text-green-400">"Failed: "</span> + json[<span class="text-green-400">"msg"</span>]);
+        }
+    }
+}</pre>
+                        </div>
+
+                         <!-- Java -->
+                        <div id="code-java" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
+<pre><span class="text-pink-400">import</span> java.net.HttpURLConnection;
+<span class="text-pink-400">import</span> java.net.URL;
+<span class="text-pink-400">import</span> java.io.OutputStream;
+<span class="text-pink-400">import</span> java.util.Scanner;
+
+<span class="text-pink-400">public class</span> Main {
+    <span class="text-pink-400">public static void</span> main(String[] args) <span class="text-pink-400">throws</span> Exception {
+        URL url = <span class="text-pink-400">new</span> URL(<span class="text-green-400">"http://site.com/Verifyfile/api.php"</span>);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod(<span class="text-green-400">"POST"</span>);
+        conn.setDoOutput(<span class="text-pink-400">true</span>);
+        
+        String params = <span class="text-green-400">"card_code=VIP-123&device_hash=java_client_hash"</span>;
+        <span class="text-pink-400">try</span> (OutputStream os = conn.getOutputStream()) {
+            os.write(params.getBytes());
+        }
+        
+        Scanner scanner = <span class="text-pink-400">new</span> Scanner(conn.getInputStream());
+        String response = scanner.useDelimiter(<span class="text-green-400">"\\A"</span>).next();
+        System.out.println(response); <span class="text-gray-500">// 推荐使用 Gson 解析 JSON</span>
+    }
+}</pre>
+                        </div>
+
+                        <!-- Node.js -->
+                        <div id="code-node" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
+<pre><span class="text-pink-400">const</span> axios = require(<span class="text-green-400">'axios'</span>);
+
+<span class="text-pink-400">async function</span> verify() {
+    <span class="text-pink-400">try</span> {
+        <span class="text-pink-400">const</span> res = <span class="text-pink-400">await</span> axios.post(<span class="text-green-400">'http://site.com/Verifyfile/api.php'</span>, {
+            card_code: <span class="text-green-400">'VIP-123456'</span>,
+            device_hash: <span class="text-green-400">'node_hwid_hash'</span>
+        });
+
+        <span class="text-pink-400">if</span> (res.data.code === <span class="text-yellow-300">200</span>) {
+            console.log(<span class="text-green-400">'Expires:'</span>, res.data.data.expire_time);
+        } <span class="text-pink-400">else</span> {
+            console.log(<span class="text-green-400">'Error:'</span>, res.data.msg);
+        }
+    } <span class="text-pink-400">catch</span> (error) {
+        console.error(<span class="text-green-400">'Request Failed'</span>);
+    }
+}
+verify();</pre>
+                        </div>
+
+                        <!-- Go -->
+                        <div id="code-go" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
+<pre><span class="text-pink-400">package</span> main
+
+<span class="text-pink-400">import</span> (
+	<span class="text-green-400">"fmt"</span>
+	<span class="text-green-400">"net/http"</span>
+	<span class="text-green-400">"net/url"</span>
+	<span class="text-green-400">"io/ioutil"</span>
+)
+
+<span class="text-pink-400">func</span> main() {
+	api := <span class="text-green-400">"http://site.com/Verifyfile/api.php"</span>
+	data := url.Values{
+		<span class="text-green-400">"card_code"</span>:   {<span class="text-green-400">"VIP-123"</span>},
+		<span class="text-green-400">"device_hash"</span>: {<span class="text-green-400">"go_client_hash"</span>},
+	}
+
+	resp, _ := http.PostForm(api, data)
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	
+	fmt.Println(string(body))
+}</pre>
+                        </div>
+
+                         <!-- C++ -->
+                        <div id="code-cpp" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
+<pre><span class="text-pink-400">#include</span> &lt;curl/curl.h&gt; <span class="text-gray-500">// 依赖 libcurl</span>
+<span class="text-pink-400">#include</span> &lt;iostream&gt;
+<span class="text-pink-400">#include</span> &lt;string&gt;
+
+<span class="text-pink-400">int</span> main() {
+    CURL *curl;
+    CURLcode res;
+    
+    curl = curl_easy_init();
+    if(curl) {
+        std::string postFields = <span class="text-green-400">"card_code=VIP-123&device_hash=hwid_hash"</span>;
+        
+        curl_easy_setopt(curl, CURLOPT_URL, <span class="text-green-400">"http://site.com/Verifyfile/api.php"</span>);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields.c_str());
+        
+        <span class="text-gray-500">// 发送请求...</span>
+        res = curl_easy_perform(curl);
+        
+        curl_easy_cleanup(curl);
+    }
+    return 0;
+}</pre>
+                        </div>
+
+                    </div>
+                </section>
+
+                <hr class="border-gray-100 my-16">
+
+                <!-- 7. 云变量 -->
+                <section id="api-variables" class="mb-20">
+                    <h2>云变量功能说明</h2>
+                    <p>GuYi System 提供了一套强大的云端变量下发系统，您可以在后台【应用列表 -> 变量管理】中进行配置。</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-100 relative overflow-hidden group">
+                            <div class="absolute right-0 top-0 w-20 h-20 bg-green-500 rounded-bl-full opacity-10 transition-opacity group-hover:opacity-20"></div>
+                            <h4 class="font-bold text-gray-900 mb-2 flex items-center gap-2"><i class="ri-lock-2-line text-green-500"></i> 私有变量 (Private)</h4>
+                            <p class="text-sm text-gray-600 mb-4 h-16">仅在 <strong>卡密验证通过</strong> 后才会返回给客户端。适用于传输加密Key、VIP直链、核心配置等敏感数据。</p>
+                            <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded">获取方式：登录成功自动返回</span>
+                        </div>
+                        
+                        <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-100 relative overflow-hidden group">
+                            <div class="absolute right-0 top-0 w-20 h-20 bg-blue-500 rounded-bl-full opacity-10 transition-opacity group-hover:opacity-20"></div>
+                            <h4 class="font-bold text-gray-900 mb-2 flex items-center gap-2"><i class="ri-earth-line text-blue-500"></i> 公开变量 (Public)</h4>
+                            <p class="text-sm text-gray-600 mb-4 h-16">只需提供 <code>app_key</code> 即可获取，<strong>无需消耗卡密</strong>。适用于软件公告、版本号检测、联系方式等公开数据。</p>
+                            <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded">获取方式：POST app_key 即可</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 8. 安全指南 -->
+                <section id="security" class="mb-20">
+                    <h2>安全最佳实践</h2>
+                    <div class="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                        <ul class="space-y-4">
+                            <li class="flex items-start gap-3">
+                                <i class="ri-checkbox-circle-fill text-green-500 mt-0.5 text-lg"></i>
+                                <div>
+                                    <strong class="block text-gray-900 text-sm">安装后清理</strong>
+                                    <span class="text-sm text-gray-500">部署完成后，请务必删除根目录的 <code>install.php</code>，防止站点被重置。</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="ri-lock-password-fill text-blue-500 mt-0.5 text-lg"></i>
+                                <div>
+                                    <strong class="block text-gray-900 text-sm">修改默认密码</strong>
+                                    <span class="text-sm text-gray-500">默认密码 <code>admin123</code> 仅用于首次登录，请进入【全局配置】页面修改。</span>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="ri-key-2-fill text-purple-500 mt-0.5 text-lg"></i>
+                                <div>
+                                    <strong class="block text-gray-900 text-sm">更新密钥</strong>
+                                    <span class="text-sm text-gray-500">编辑 <code>config.php</code>，修改 <code>SYS_SECRET</code> 为随机长字符串，增强 Cookie 安全性。</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- 9. 支持 -->
+                <section id="support" class="mb-24">
+                    <h2>技术支持</h2>
+                    <div class="mt-8 relative overflow-hidden rounded-2xl bg-[#0f172a] text-white p-8 shadow-2xl">
+                        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mt-0 mb-2">GuYi Support Team</h3>
+                                <p class="text-gray-400 text-sm mb-6 max-w-md">如遇部署报错、接口异常或需要定制开发，请加入官方交流群或联系开发者。</p>
+                                
+                                <div class="flex flex-wrap gap-3">
+                                    <a href="https://qm.qq.com/q/R8q8Nt43aS" target="_blank" class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
+                                        <i class="ri-qq-fill"></i> QQ 群: 1077643184
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-white/5 rounded-full border border-white/10">
+                                <i class="ri-customer-service-2-fill text-4xl text-blue-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="pt-8 border-t border-gray-100 text-xs text-gray-400 flex justify-between">
+                    <div>© 2026 GuYi Systems. All rights reserved.</div>
+                    <div>Documentation V2.1</div>
+                </footer>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 复制文本到剪贴板
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('已复制: ' + text);
+            });
+        }
+
+        // 切换语言代码块
+        function switchLang(lang) {
+            document.querySelectorAll('.lang-tab').forEach(el => {
+                el.classList.remove('active');
+                el.classList.add('inactive');
+            });
+            event.target.classList.remove('inactive');
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.code-block').forEach(el => el.classList.add('hidden'));
+            document.getElementById('code-' + lang).classList.remove('hidden');
+        }
+
+        function copyCurrentCode() {
+            const visibleCode = document.querySelector('.code-block:not(.hidden) pre').innerText;
+            copyText(visibleCode);
+        }
+
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            el.className = 'toast px-6 py-3 rounded-full border border-gray-200 flex items-center gap-2 text-sm font-medium text-black mb-3 shadow-lg';
+            el.innerHTML = `<i class="ri-check-line text-green-500 font-bold text-lg"></i> ${msg}`;
+            container.appendChild(el);
+            requestAnimationFrame(()=>el.classList.add('show'));
+            setTimeout(()=>{
+                el.classList.remove('show');
+                setTimeout(()=>el.remove(), 500);
+            }, 2000);
+        }
+
+        // 简单的导航高亮
+        const mainScroll = document.getElementById('main-scroll');
+        const sections = document.querySelectorAll('section');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        mainScroll.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (mainScroll.scrollTop >= (sectionTop - 180)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === '#' + current) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
