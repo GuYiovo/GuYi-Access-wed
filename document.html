@@ -3,707 +3,933 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>开发文档 - GuYi Access System</title>
-    <link rel="icon" href="http://q.qlogo.cn/headimg_dl?dst_uin=156440000&spec=640&img_type=jpg" type="img/png">
-    
-    <!-- 【修改】引入远程 Remix Icon (CDN) -->
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
-    
-    <!-- 【修改】引入远程 Tailwind CSS 脚本 (CDN) -->
+    <title>开发文档 — GuYi Access System</title>
+    <link rel="icon" href="http://q.qlogo.cn/headimg_dl?dst_uin=156440000&spec=640&img_type=jpg" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
-                        mono: ['SF Mono', 'Menlo', 'Monaco', 'Courier New', 'monospace']
-                    },
-                    colors: {
-                        apple: {
-                            blue: '#0071e3',     
-                            dark: '#1d1d1f',     
-                            gray: '#86868b',     
-                            bg: '#fbfbfd',       
-                            border: '#d2d2d7'    
-                        }
-                    },
-                    boxShadow: {
-                        'window': '0 20px 50px -12px rgba(0,0,0,0.18)' 
-                    }
-                }
-            }
-        }
-    </script>
-    
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
     <style>
-        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        :root {
+            --bg: #0c0c12;
+            --surface: #111118;
+            --surface-2: #16161f;
+            --border: rgba(255,255,255,0.07);
+            --border-hover: rgba(255,255,255,0.14);
+            --text: #e8e8f0;
+            --text-muted: #6b6b80;
+            --text-subtle: #9292a8;
+            --blue: #3b82f6;
+            --blue-dim: rgba(59,130,246,0.12);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { font-size: 16px; }
+
+        body {
+            font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        /* ──滚动条 ── */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+
+        /* ── 顶部导航 ── */
+        .topbar {
+            height: 52px;
+            background: rgba(12,12,18,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;display: flex; align-items: center;
+            position: relative; z-index: 50;
+        }
+
+        /* ── 侧边栏 ── */
+        .sidebar {
+            width: 248px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            flex-shrink: 0;
+            overflow-y: auto;
+            padding: 20px 12px 40px;
+        }
+
+        /* ── 导航条目 ── */
+        .nav-group-label {
+            font-size: 10.5px; font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.08em;
+            padding: 0 8px; margin: 20px 0 6px;}
+        .nav-group-label:first-child { margin-top: 0; }
 
         .nav-item {
-            color: #424245;
-            font-size: 13px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: all 0.15s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            margin-bottom: 2px;
+            display: flex; align-items: center; gap: 8px;
+            padding: 7px 10px; border-radius: 8px;
+            font-size: 13.5px; color: var(--text-subtle);
+            text-decoration: none; cursor: pointer;
+            transition: background0.15s, color 0.15s;margin-bottom: 1px; user-select: none;
+            border: 1px solid transparent;
         }
-        .nav-item:hover { color: #000; background: rgba(0,0,0,0.04); }
-        .nav-item.active { background: #eef7ff; color: #0071e3; font-weight: 600; }
-        .nav-item i { font-size: 14px; opacity: 0.7; }
+        .nav-item i { font-size: 14px; flex-shrink: 0; }
+        .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+        .nav-item.active {
+            background: var(--blue-dim);
+            color: var(--blue);
+            border-color: rgba(59,130,246,0.18);
+            font-weight: 500;
+        }
+        .nav-item.active i { opacity: 1; }
 
-        /* Mac 终端风格 */
-        .mac-terminal {
-            background: #1e1e1e;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            border: 1px solid rgba(255,255,255,0.1);
+        /* ── 主内容 ── */
+        .main-scroll {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--bg);
+        }
+        .content-body {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 56px 40px 120px;
+        }
+        @media (max-width: 768px) {
+            .content-body { padding: 40px 20px 80px; }
+        }
+
+        /* ── 排版 ── */
+        .doc-h1 {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 700; line-height: 1.1;
+            letter-spacing: -0.025em;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+        .doc-h2 {
+            font-size: 26px; font-weight: 600;
+            letter-spacing: -0.015em;
+            color: #fff;
+            padding-top: 64px; margin-bottom: 20px; margin-top: 0;
+            border-bottom: 1px solid var(--border);padding-bottom: 12px;
+        }
+        .doc-h3 {
+            font-size: 18px; font-weight: 600;
+            color: var(--text);
+            margin-top: 36px; margin-bottom: 12px;
+        }
+        .doc-p {
+            font-size: 15px; line-height: 1.75;
+            color: var(--text-subtle);
+            margin-bottom: 18px;
+        }
+
+        /* ── 行内代码 ── */
+        code {
+            font-family: "SF Mono", "Fira Code", monospace;
+            font-size: 0.85em;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 1px 6px; border-radius: 5px;
+            color: #93c5fd;
+        }
+
+        /* ── 提示框 ── */
+        .callout {
+            display: flex; gap: 14px; align-items: flex-start;
+            padding: 16px 18px; border-radius: 12px;
+            font-size: 14px; line-height: 1.6;
+            margin-bottom: 24px;
+            border: 1px solid;}
+        .callout-warning {
+            background: rgba(234,179,8,0.07);
+            border-color: rgba(234,179,8,0.2);
+            color: #fde68a;
+        }
+        .callout-warning i { color: #f59e0b; font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+        .callout-info {
+            background: rgba(59,130,246,0.07);
+            border-color: rgba(59,130,246,0.2);
+            color: #bfdbfe;
+        }
+        .callout-info i { color: #60a5fa; font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+        /* ── 终端 ── */
+        .terminal {
+            background: #090912;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
             overflow: hidden;
-            font-size: 13px;
-            line-height: 1.6;
-            margin: 24px 0;
-            position: relative;
+            margin: 20px 0;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
         }
-        .mac-terminal-header {
-            background: #2d2d2d;
-            padding: 10px 16px;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #333;
+        .terminal-header {
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 10px 14px;
+            display: flex; align-items: center; justify-content: space-between;}
+        .tl-group { display: flex; gap: 6px; }
+        .tl { width: 11px; height: 11px; border-radius: 50%; }
+        .terminal-title { font-size: 11px; color: rgba(255,255,255,0.2); font-family: monospace; }
+        .terminal-body {
+            padding: 20px 22px;
+            font-family: "SF Mono", "Fira Code", monospace;
+            font-size: 13px; line-height: 1.8;
+            color: rgba(255,255,255,0.55);
+            overflow-x: auto;
         }
-        .traffic-lights { display: flex; gap: 8px; }
-        .traffic-light { width: 11px; height: 11px; border-radius: 50%; }
-        .close { background: #ff5f56; }
-        .minimize { background: #ffbd2e; }
-        .maximize { background: #27c93f; }
 
-        .apple-table th { 
-            text-align: left; font-weight: 600; font-size: 12px; 
-            color: #86868b; border-bottom: 1px solid #e5e5e5; padding: 12px 0; 
+        /* ── API 端点栏 ── */
+        .endpoint-bar {
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px; padding: 10px 16px;
+            font-family: monospace; font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 24px;
         }
-        .apple-table td { 
-            font-size: 14px; color: #1d1d1f; border-bottom: 1px solid #f5f5f5; padding: 16px 0; 
+        .method-badge {
+            background: rgba(59,130,246,0.15);
+            border: 1px solid rgba(59,130,246,0.3);
+            color: #60a5fa;
+            font-size: 11px; font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 3px 8px; border-radius: 6px;
+            flex-shrink: 0;
         }
-        
-        h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 24px; color: #1d1d1f; padding-top: 20px; border-bottom: 1px solid #f5f5f7; padding-bottom: 10px; }
-        h3 { font-size: 20px; font-weight: 600; margin-bottom: 12px; margin-top: 32px; color: #1d1d1f; }
-        p { font-size: 15px; line-height: 1.7; font-weight: 400; color: #424245; margin-bottom: 20px; }
-        
-        code { font-family: 'SF Mono', monospace; background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: #d63384; }
 
-        .toast {
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
-            transform: translateY(-100%); opacity: 0; transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        /* ── 参数表 ── */
+        .param-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+        .param-table thead tr th {
+            text-align: left; font-size: 11px; font-weight: 600;
+            color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+            padding: 0 12px 10px 12px;
+            border-bottom: 1px solid var(--border);
         }
-        .toast.show { transform: translateY(0); opacity: 1; }
-        
-        /* 代码Tab样式 */
+        .param-table tbody tr td {
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 13.5px;
+            vertical-align: top;
+        }
+        .param-table tbody tr:last-child td { border-bottom: none; }
+        .param-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+        .param-name { font-family: monospace; font-size: 13px; font-weight: 600; color: var(--blue); }
+        .param-required { font-size: 11px; font-weight: 600; }
+        .param-yes { color: #f87171; }
+        .param-no { color: var(--text-muted); }
+        .param-desc { color: var(--text-subtle); font-size: 13.5px; }
+
+        /* ── 语言Tabs ── */
+        .lang-tabs-bar {
+            display: flex; gap: 4px;
+            overflow-x: auto; padding-bottom: 2px;
+            margin-bottom: 0;
+        }
+        .lang-tabs-bar::-webkit-scrollbar { display: none; }
         .lang-tab {
-            cursor: pointer; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; transition: all 0.2s; white-space: nowrap;
+            flex-shrink: 0;
+            padding: 6px 14px; border-radius: 8px;
+            font-size: 13px; font-weight: 500;
+            cursor: pointer; transition: all 0.18s;
+            border: 1px solid transparent;
+            white-space: nowrap;}
+        .lang-tab.active {
+            background: rgba(59,130,246,0.15);
+            border-color: rgba(59,130,246,0.3);
+            color: #93c5fd;
         }
-        .lang-tab.active { background: #000; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        .lang-tab.inactive { background: #f5f5f7; color: #86868b; }
-        .lang-tab.inactive:hover { background: #e8e8ed; color: #1d1d1f; }
-        
-        .hide-scroll::-webkit-scrollbar { display: none; }
+        .lang-tab.inactive {
+            background: rgba(255,255,255,0.04);
+            color: var(--text-muted);
+        }
+        .lang-tab.inactive:hover { background: rgba(255,255,255,0.07); color: var(--text); }
+
+        /* ── 步骤线 ── */
+        .step-line { border-left: 2px solid rgba(255,255,255,0.08); padding-left: 20px; position: relative; padding-bottom: 24px; }
+        .step-line:last-child { border-color: transparent; padding-bottom: 0; }
+        .step-line::before {
+            content: attr(data-step);
+            position: absolute; left: -12px; top: 0;
+            width: 22px; height: 22px; border-radius: 50%;
+            background: #1e1e2e; border: 1.5px solid rgba(59,130,246,0.5);
+            color: var(--blue); font-size: 11px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1;
+        }
+        .step-line::before { content: attr(data-step); }
+
+        /* ── 凭证卡片 ── */
+        .cred-card {
+            background: linear-gradient(135deg, #0f0f1e 0%, #12122a 100%);
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 18px; padding: 28px;
+            position: relative; overflow: hidden;}
+        .cred-card::before {
+            content: '';
+            position: absolute; top: -60px; right: -60px;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(59,130,246,0.15), transparent70%);
+            pointer-events: none;
+        }
+
+        /* ── 特性卡片 ── */
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px;
+            position: relative; overflow: hidden;transition: border-color 0.25s, background 0.25s;
+        }
+        .feature-card:hover {
+            border-color: var(--border-hover);
+            background: var(--surface-2);
+        }
+
+        /* ── Toast ── */
+        .toast-wrap {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 999; display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+        .toast {
+            background: rgba(20,20,32,0.95);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 99px; padding: 10px 20px;
+            font-size: 13.5px; color: var(--text);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            opacity: 0; transform: translateY(-12px);
+            transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+            white-space: nowrap;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        /* ── 安全列表 ── */
+        .security-list { list-style: none; }
+        .security-list li {
+            display: flex; gap: 14px; align-items: flex-start;
+            padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .security-list li:last-child { border-bottom: none; padding-bottom: 0; }
+        .security-list li .icon-wrap {
+            width: 34px; height: 34px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0;
+        }
+
+        /* ── 支持区域 ── */
+        .support-card {
+            background: linear-gradient(135deg, #0d0d22 0%, #0f1525 100%);
+            border: 1px solid rgba(59,130,246,0.15);
+            border-radius: 20px; padding: 40px;
+            position: relative; overflow: hidden;
+        }
+        .support-card::after {
+            content: '';
+            position: absolute; bottom: -80px; right: -80px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(59,130,246,0.1), transparent 60%);
+        }
+
+        /* ── TOC 进度线 ── */
+        .toc-progress {
+            position: fixed; top: 52px; left: 0;
+            width: 2px; height: calc(100% - 52px);
+            background: transparent; z-index: 40;
+        }
+        .toc-progress-fill {
+            width: 100%; background: linear-gradient(to bottom, var(--blue), transparent);
+            transition: height 0.1s;
+        }
     </style>
 </head>
-<body class="bg-white text-apple-dark h-screen flex flex-col overflow-hidden">
 
-    <div id="toast-container" class="fixed top-6 left-1/2 -translate-x-1/2 z-[100]"></div>
+<body>
+<div id="toast-wrap" class="toast-wrap"></div>
 
-    <!-- 顶部导航 -->
-    <header class="h-14 bg-white/80 backdrop-blur-md border-b border-gray-200/80 fixed w-full z-50 flex items-center justify-between px-6 lg:px-8 transition-all">
+<!-- ══════顶部导航 ══════ -->
+<header class="topbar px-5">
+    <div class="flex items-center justify-between w-full max-w-[1440px] mx-auto">
         <div class="flex items-center gap-3">
-            <img src="http://q.qlogo.cn/headimg_dl?dst_uin=156440000&spec=640&img_type=jpg" alt="Logo" class="w-6 h-6 rounded-md">
-            <span class="font-bold text-sm tracking-tight text-black">GuYi <span class="text-gray-500 font-normal">System Docs</span></span>
+            <a href="index.html" class="flex items-center gap-2 no-underline group">
+                <div class="w-6 h-6 rounded-md bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold shadow-lg shadow-blue-900/40">G</div>
+                <span class="font-semibold text-[14px] text-white/90">GuYi<span class="text-white/35font-normal">Access</span></span>
+            </a>
+            <div class="h-4 w-px bg-white/10 mx-1"></div>
+            <span class="text-[13px] text-white/40">开发文档</span>
         </div>
-        
-        <div class="flex items-center gap-6 text-[13px] font-medium text-gray-600">
-            <a href="cards.php" class="text-apple-blue hover:text-blue-700 flex items-center gap-1"><i class="ri-dashboard-3-line"></i> 返回后台</a>
-            <a href="#support" class="hover:text-black transition-colors">支持</a>
-        </div>
-    </header>
 
-    <div class="flex flex-1 pt-14 h-full relative">
-        
-        <!-- 左侧导航 -->
-        <aside class="w-64 bg-[#fbfbfd] border-r border-gray-200 h-full overflow-y-auto hidden lg:block pb-10 custom-scroll">
-            <div class="p-5 pt-8 space-y-8">
-                <div>
-                    <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-3">入门指南</h5>
-                    <nav>
-                        <a href="#intro" class="nav-item active"><i class="ri-home-4-line"></i> 简介</a>
-                        <a href="#install" class="nav-item"><i class="ri-install-line"></i> 安装与登录</a>
-                        <a href="#structure" class="nav-item"><i class="ri-folder-open-line"></i> 目录结构</a>
-                    </nav>
-                </div>
-                <div>
-                    <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-3">API 对接</h5>
-                    <nav>
-                        <a href="#api-connect" class="nav-item"><i class="ri-plug-line"></i> 接口定义</a>
-                        <a href="#api-response" class="nav-item"><i class="ri-code-s-slash-line"></i> 状态码字典</a>
-                        <a href="#api-examples" class="nav-item text-apple-blue"><i class="ri-code-box-line"></i> 10种语言 SDK</a>
-                    </nav>
-                </div>
-                <div>
-                    <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-3">高级功能</h5>
-                    <nav>
-                        <a href="#api-variables" class="nav-item"><i class="ri-cloud-line"></i> 云变量系统</a>
-                        <a href="#security" class="nav-item"><i class="ri-shield-keyhole-line"></i> 安全设置</a>
-                    </nav>
-                </div>
-                <div>
-                    <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-3">帮助</h5>
-                    <nav>
-                        <a href="#support" class="nav-item"><i class="ri-customer-service-line"></i> 联系我们</a>
-                    </nav>
-                </div>
+        <div class="flex items-center gap-2">
+            <!--搜索 (装饰) -->
+            <div class="hidden md:flex items-center gap-2 bg-white/04 border border-white/07 rounded-lg px-3 py-1.5 text-[12px] text-white/30 cursor-not-allowed select-none w-44">
+                <i class="ri-search-line text-sm"></i>
+                <span>搜索文档…</span>
+                <span class="ml-auto font-mono text-[10px]">⌘K</span>
+            </div><a href="cards.php"class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/15 border border-blue-500/25 text-blue-400 text-[12.5px] hover:bg-blue-600/25 transition-all">
+                <i class="ri-dashboard-3-line text-sm"></i> 后台管理
+            </a></div>
+    </div>
+</header>
+
+<!-- ══════ 主体══════ -->
+<div class="flex flex-1 overflow-hidden">
+
+    <!-- 进度线 -->
+    <div class="toc-progress hidden lg:block">
+        <div class="toc-progress-fill" id="progress-fill" style="height:0%"></div>
+    </div>
+
+    <!-- ── 侧边栏 ── -->
+    <aside class="sidebar hidden lg:block"><div class="nav-group-label">入门指南</div>
+        <a href="#intro" class="nav-item active"><i class="ri-home-4-line"></i> 简介</a>
+        <a href="#install" class="nav-item"><i class="ri-install-line"></i> 安装与登录</a>
+        <a href="#structure" class="nav-item"><i class="ri-folder-3-line"></i> 目录结构</a>
+
+        <div class="nav-group-label">API 对接</div>
+        <a href="#api-connect" class="nav-item"><i class="ri-plug-line"></i> 接口定义</a>
+        <a href="#api-response" class="nav-item"><i class="ri-braces-line"></i> 响应格式</a>
+        <a href="#api-examples" class="nav-item"><i class="ri-code-box-line"></i> 多语言 SDK</a>
+
+        <div class="nav-group-label">高级功能</div>
+        <a href="#api-variables" class="nav-item"><i class="ri-cloud-line"></i> 云变量系统</a>
+        <a href="#security" class="nav-item"><i class="ri-shield-keyhole-line"></i> 安全实践</a>
+
+        <div class="nav-group-label">帮助</div>
+        <a href="#support" class="nav-item"><i class="ri-customer-service-line"></i> 联系支持</a>
+
+        <!--版本信息 -->
+        <div class="mt-8mx-2 p-3 rounded-xl bg-blue-500/06 border border-blue-500/12">
+            <div class="text-[11px] text-blue-400/80 font-semibold mb-1flex items-center gap-1.5">
+                <i class="ri-sparkling-line"></i> 当前版本
             </div>
-        </aside>
+            <div class="text-[13px] text-white/60 font-mono">V26Pro Enterprise</div>
+            <div class="text-[11px] text-white/25 mt-0.5">Documentation2.1</div>
+        </div>
+    </aside>
 
-        <!-- 主内容区 -->
-        <main class="flex-1 w-full h-full overflow-y-auto scroll-smooth bg-white" id="main-scroll">
-            <div class="max-w-[860px] mx-auto px-6 py-12 lg:px-16">
-                
-                <!-- 1. 简介 -->
-                <section id="intro" class="mb-20">
-                    <div class="text-xs font-bold text-apple-blue mb-2 uppercase tracking-wide">V26 Pro Enterprise</div>
-                    <h1 class="text-4xl font-bold text-black mb-6 tracking-tight">GuYi 授权验证系统</h1>
-                    <p class="text-lg leading-relaxed text-gray-600 font-light mb-8">
-                        这是一款轻量级、高性能的单码验证系统。支持多应用管理、云端变量下发、设备指纹绑定以及强大的防刷机制。您可以将其集成到任何 EXE、APK 或 Python 脚本中。
-                    </p>
+    <!-- ── 主内容 ── -->
+    <main class="main-scroll" id="main-scroll">
+        <div class="content-body">
 
-                    <div class="bg-yellow-50/80 border border-yellow-200/60 rounded-xl p-5 flex gap-4 text-sm text-yellow-800 items-start">
-                        <i class="ri-alert-fill text-yellow-500 text-xl"></i>
-                        <div>
-                            <strong class="text-yellow-900">重要提示：</strong> 为了您的数据安全，请在安装完成后立即删除网站根目录下的 <code class="text-yellow-700 bg-yellow-100">install.php</code> 文件，并在后台修改默认密码。
+            <!-- ─────────────── 1. 简介 ─────────────── -->
+            <section id="intro" class="mb-16">
+                <div class="flex items-center gap-2 mb-5">
+                    <span class="text-[11px] font-semibold text-blue-400uppercase tracking-widest">V26 Pro Enterprise</span>
+                    <span class="text-[11px] bg-green-500/10 border border-green-500/20 text-green-400 px-2 py-0.5 rounded-full">稳定版</span>
+                </div>
+                <h1 class="doc-h1">GuYi 授权验证系统<br><span style="color:#3b82f6">开发文档</span></h1>
+                <p class="doc-p" style="font-size:17px;">轻量级、高性能的单码验证 API 系统。支持多应用管理、云端变量下发、设备指纹绑定以及完善的防刷机制。可集成至 EXE、APK 或任意脚本语言。</p>
+
+                <div class="callout callout-warning">
+                    <i class="ri-alert-fill"></i>
+                    <div>
+                        <strong style="color:#fcd34d; display:block; margin-bottom:4px;">安全提示</strong>
+                        安装完成后请立即删除根目录的 <code>install.php</code> 文件，并在【全局配置】中修改默认密码，防止站点被恶意重置。
+                    </div>
+                </div>
+
+                <!--快速概览 -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+                    <div class="feature-card text-center">
+                        <div class="text-2xl mb-2 text-blue-400"><i class="ri-flashlight-line"></i></div>
+                        <div class="text-[14px] font-semibold text-white mb-1">极速响应</div>
+                        <div class="text-[12px]" style="color:var(--text-muted)">平均延迟 &lt;50ms</div>
+                    </div>
+                    <div class="feature-card text-center">
+                        <div class="text-2xl mb-2 text-purple-400"><i class="ri-code-s-slash-line"></i></div>
+                        <div class="text-[14px] font-semibold text-white mb-1">10+ 语言</div>
+                        <div class="text-[12px]" style="color:var(--text-muted)">开箱即用 SDK</div>
+                    </div>
+                    <div class="feature-card text-center">
+                        <div class="text-2xl mb-2 text-green-400"><i class="ri-cloud-line"></i></div>
+                        <div class="text-[14px] font-semibold text-white mb-1">云变量</div>
+                        <div class="text-[12px]" style="color:var(--text-muted)">无需发版即可更新</div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ─────────────── 2. 安装─────────────── -->
+            <section id="install" class="mb-16">
+                <h2 class="doc-h2">安装与默认账号</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8mt-6">
+                    <!-- 安装步骤 -->
+                    <div>
+                        <h3 class="doc-h3" style="margin-top:0">部署步骤</h3>
+                        <div class="mt-4 space-y-0">
+                            <div class="step-line" data-step="1">
+                                <h4 style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">上传源码</h4>
+                                <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0">将所有文件上传至服务器根目录，确保 PHP 版本 &gt; 7.2，MySQL &gt; 5.6。</p>
+                            </div>
+                            <div class="step-line" data-step="2" style="margin-top:20px">
+                                <h4 style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">运行安装程序</h4>
+                                <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0">浏览器访问 <code>http://你的域名/install.php</code>，填写数据库信息并执行安装。</p>
+                            </div>
+                            <div class="step-line" data-step="3" style="margin-top:20px">
+                                <h4 style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">完成部署</h4>
+                                <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0">安装成功，删除 <code>install.php</code> 后即可访问后台管理界面。</p>
+                            </div>
                         </div>
                     </div>
-                </section>
 
-                <!-- 2. 安装与登录 (重点修复部分) -->
-                <section id="install" class="mb-20">
-                    <h2>安装与默认账号</h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        <!-- 安装步骤 -->
-                        <div class="space-y-6">
-                            <h3 class="text-lg font-semibold mt-0">部署步骤</h3>
-                            <div class="step-item relative pl-6 border-l-2 border-gray-100 pb-6">
-                                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-100 border-2 border-blue-500"></div>
-                                <h4 class="font-medium text-gray-900">上传源码</h4>
-                                <p class="text-sm text-gray-500 mt-1 mb-0">将所有文件上传至服务器根目录，确保 PHP 版本 > 7.2。</p>
-                            </div>
-                            <div class="step-item relative pl-6 border-l-2 border-gray-100 pb-6">
-                                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-100 border-2 border-blue-500"></div>
-                                <h4 class="font-medium text-gray-900">运行安装程序</h4>
-                                <p class="text-sm text-gray-500 mt-1 mb-0">浏览器访问 <code class="text-xs">http://你的域名/install.php</code> 并填写数据库信息。</p>
-                            </div>
-                            <div class="step-item relative pl-6 border-l-2 border-transparent">
-                                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-green-100 border-2 border-green-500"></div>
-                                <h4 class="font-medium text-gray-900">完成部署</h4>
-                                <p class="text-sm text-gray-500 mt-1 mb-0">安装成功后即可访问后台。</p>
-                            </div>
-                        </div>
-
-                        <!-- 默认账号卡片 (重点) -->
-                        <div>
-                            <h3 class="text-lg font-semibold mt-0 mb-4">初始管理员凭证</h3>
-                            <div class="bg-gradient-to-br from-gray-900 to-black text-white rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full blur-[60px] opacity-20"></div>
-                                
-                                <div class="relative z-10 space-y-4">
-                                    <div>
-                                        <div class="text-xs text-gray-400 uppercase font-semibold tracking-wider">Login URL</div>
-                                        <a href="cards.php" class="text-blue-400 hover:text-blue-300 font-mono text-sm block mt-1">http://你的域名/cards.php</a>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm border border-white/5">
-                                            <div class="text-xs text-gray-400 mb-1">Username</div>
-                                            <div class="font-mono text-lg font-bold text-white tracking-wide">GuYi</div>
+                    <!-- 凭证卡片 -->
+                    <div>
+                        <h3 class="doc-h3" style="margin-top:0">初始管理员凭证</h3>
+                        <div class="cred-card mt-4">
+                            <div class="relative z-10 space-y-5">
+                                <div>
+                                    <div style="font-size:10.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.07em; font-weight:600; margin-bottom:6px;">登录地址</div>
+                                <a href="cards.php" style="font-family:monospace; font-size:13px; color:#60a5fa; text-decoration:none; word-break:break-all;">http://你的域名/cards.php</a>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px;">
+                                        <div style="font-size:10.5px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em;">账号</div>
+                                        <div style="font-family:monospace; font-size:18px; font-weight:700; color:#fff; letter-spacing:0.05em;">GuYi</div>
+                </div>
+                                    <div onclick="copyText('admin123')"
+                                         style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px; cursor:pointer; transition:all 0.2s;"
+                                         onmouseenter="this.style.borderColor='rgba(59,130,246,0.3)'; this.style.background='rgba(59,130,246,0.08)'"
+                                         onmouseleave="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.background='rgba(255,255,255,0.05)'">
+                                        <div style="font-size:10.5px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em; display:flex; justify-content:space-between; align-items:center;">
+                                            密码 <i class="ri-file-copy-line" style="opacity:0.5; font-size:12px;"></i>
                                         </div>
-                                        <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm border border-white/5 group cursor-pointer" onclick="copyText('admin123')">
-                                            <div class="text-xs text-gray-400 mb-1 flex justify-between">
-                                                Password <i class="ri-file-copy-line opacity-50 group-hover:opacity-100"></i>
-                                            </div>
-                                            <div class="font-mono text-lg font-bold text-green-400 tracking-wide">admin123</div>
-                                        </div>
+                                        <div style="font-family:monospace; font-size:18px; font-weight:700; color:#4ade80; letter-spacing:0.05em;">admin123</div>
                                     </div>
-                                    
-                                    <div class="text-[11px] text-gray-500 pt-2 border-t border-white/10">
-                                        <i class="ri-shield-check-line align-middle"></i> 首次登录后请务必在【全局配置】中修改密码。
-                                    </div>
+                                </div>
+                                <div style="font-size:11px; color:var(--text-muted); padding-top:12px; border-top:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; gap:6px;">
+                                    <i class="ri-shield-check-line" style="color:#3b82f6;"></i>
+                                    首次登录后请立即在【全局配置】中修改密码
                                 </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <!-- 3. 目录结构 -->
-                <section id="structure" class="mb-20">
-                    <h2>目录结构说明</h2>
-                    <p>了解系统文件结构有助于您进行二次开发或故障排查。</p>
-                    <div class="mac-terminal">
-                        <div class="mac-terminal-header">
-                            <div class="traffic-lights"><div class="traffic-light close"></div><div class="traffic-light minimize"></div><div class="traffic-light maximize"></div></div>
-                            <div class="ml-4 text-gray-500 text-xs font-mono">Terminal</div>
+
+            <!-- ─────────────── 3. 目录结构 ─────────────── -->
+            <section id="structure" class="mb-16">
+                <h2 class="doc-h2">目录结构说明</h2>
+                <p class="doc-p">了解系统文件结构有助于二次开发与故障排查。</p>
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="tl-group">
+                            <div class="tl" style="background:#ff5f57"></div>
+                            <div class="tl" style="background:#febc2e"></div>
+                            <div class="tl" style="background:#28c840"></div>
                         </div>
-                        <div class="p-5 font-mono text-sm leading-7 text-gray-400">
-                            <div>/ (根目录)</div>
-                            <div class="pl-4">├── <span class="text-yellow-300">cards.php</span> <span class="text-gray-500">// 后台管理主程序 (可重命名以隐藏后台)</span></div>
-                            <div class="pl-4">├── <span class="text-blue-400">Verifyfile/</span></div>
-                            <div class="pl-8">├── <span class="text-green-400">api.php</span> <span class="text-gray-500">// ★ 核心API接口 (客户端调用此文件)</span></div>
-                            <div class="pl-8">└── <span class="text-green-400">captcha.php</span> <span class="text-gray-500">// 后台登录验证码</span></div>
-                            <div class="pl-4">├── <span class="text-purple-300">config.php</span> <span class="text-gray-500">// 数据库配置文件 (包含 SYS_SECRET 密钥)</span></div>
-                            <div class="pl-4">├── <span class="text-purple-300">database.php</span> <span class="text-gray-500">// 数据库操作类 (含鉴权逻辑)</span></div>
-                            <div class="pl-4">├── <span class="text-blue-400">/</span> <span class="text-gray-500">// 存放背景图、Logo等素材</span></div>
-                            <div class="pl-4">├── <span class="text-blue-400">assets/</span> <span class="text-gray-500">// 存放 CSS, JS 静态资源</span></div>
-                            <div class="pl-4">└── <span class="text-white">index.php</span> <span class="text-gray-500">// 404伪装页 (保护目录隐私)</span></div>
-                        </div>
+                        <div class="terminal-title">~/guyi-access/ — bash</div>
+                        <div style="width:50px"></div>
                     </div>
-                </section>
-
-                <hr class="border-gray-100 my-16">
-
-                <!-- 4. API 接入 -->
-                <section id="api-connect" class="mb-10">
-                    <h2>API 接口定义</h2>
-                    <p>所有客户端（软件/脚本/APP）均通过此接口与服务器通信。请确保使用 <code>POST</code> 方法。</p>
-                    
-                    <div class="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200 flex items-center gap-3 font-mono text-sm mb-8 text-gray-600 shadow-sm">
-                        <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs font-bold tracking-wide">POST</span>
-                        <span>http://您的域名/Verifyfile/api.php</span>
+                    <div class="terminal-body">
+                        <div style="color:rgba(255,255,255,0.3)">/ (网站根目录)</div>
+                        <div class="pl-4">├── <span style="color:#fbbf24">cards.php</span><span style="color:rgba(255,255,255,0.2); font-size:12px">// 后台管理入口（可重命名隐藏）</span></div>
+                        <div class="pl-4">├── <span style="color:#60a5fa">Verifyfile/</span></div>
+                        <div class="pl-10">├── <span style="color:#4ade80">api.php</span>        <span style="color:rgba(255,255,255,0.2); font-size:12px">// ★核心验证接口</span></div>
+                        <div class="pl-10">└── <span style="color:#4ade80">captcha.php</span>    <span style="color:rgba(255,255,255,0.2); font-size:12px">// 登录验证码</span></div>
+                        <div class="pl-4">├── <span style="color:#c084fc">config.php</span>        <span style="color:rgba(255,255,255,0.2); font-size:12px">// 数据库配置 & SYS_SECRET</span></div>
+                        <div class="pl-4">├── <span style="color:#c084fc">database.php</span>      <span style="color:rgba(255,255,255,0.2); font-size:12px">// 数据库操作类</span></div>
+                        <div class="pl-4">├── <span style="color:#60a5fa">assets/</span>           <span style="color:rgba(255,255,255,0.2); font-size:12px">// CSS / JS 静态资源</span></div>
+                        <div class="pl-4">└── <span style="color:rgba(255,255,255,0.7)">index.php</span>         <span style="color:rgba(255,255,255,0.2); font-size:12px">// 404伪装页（保护隐私）</span></div>
                     </div>
+                </div>
+            </section>
 
-                    <table class="w-full text-left apple-table mb-8">
-                        <thead><tr><th class="w-1/4">参数名</th><th class="w-1/6">必填</th><th>说明</th></tr></thead>
-                        <tbody>
-                            <tr><td class="font-mono font-semibold text-blue-600">card_code</td><td>是</td><td class="text-gray-600">用户输入的卡密 (兼容参数名: <code>card</code>)</td></tr>
-                            <tr><td class="font-mono font-semibold text-blue-600">device_hash</td><td>是</td><td class="text-gray-600">设备唯一标识 (机器码)，建议MD5后传入 (兼容参数名: <code>device</code>)</td></tr>
-                            <tr><td class="font-mono font-semibold text-purple-600">app_key</td><td>否</td><td class="text-gray-600">应用密钥。用于区分多应用或获取云端变量 (在后台"应用管理"中获取)</td></tr>
-                        </tbody>
-                    </table>
-                </section>
-                
-                <!-- 5. 状态码 -->
-                <section id="api-response" class="mb-20">
-                     <h3>返回数据示例 (JSON)</h3>
-                     <div class="mac-terminal">
-                        <div class="mac-terminal-header">
-                             <div class="traffic-lights"><div class="traffic-light close"></div></div>
-                             <div class="ml-4 text-gray-500 text-xs font-mono">Response Payload</div>
+
+            <div style="border-top:1px solid var(--border); margin:40px 0 60px;"></div>
+
+
+            <!-- ─────────────── 4. API 定义 ─────────────── -->
+            <section id="api-connect" class="mb-16">
+                <h2 class="doc-h2">API 接口定义</h2>
+                <p class="doc-p">所有客户端均通过此唯一接口与服务器通信，使用 <code>POST</code> 方法提交表单数据。</p>
+
+                <div class="endpoint-bar">
+                    <span class="method-badge">POST</span>
+                    <span>http://您的域名/<span style="color:rgba(255,255,255,0.85)">Verifyfile/api.php</span></span>
+                </div>
+
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th style="width:140px">参数名</th>
+                            <th style="width:60px">必填</th>
+                            <th>说明</th>
+                </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="param-name">card_code</span></td>
+                            <td><span class="param-required param-yes">必填</span></td>
+                            <td class="param-desc">用户输入的卡密（兼容参数名:<code>card</code>）</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">device_hash</span></td>
+                            <td><span class="param-required param-yes">必填</span></td>
+                            <td class="param-desc">设备唯一标识（机器码），建议 MD5 后传入（兼容参数名: <code>device</code>）</td>
+                        </tr>
+                        <tr>
+                            <td><span class="param-name">app_key</span></td>
+                            <td><span class="param-required param-no">可选</span></td>
+                            <td class="param-desc">应用密钥，用于区分多应用或获取云端变量（后台"应用管理"中获取）</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+
+            <!-- ─────────────── 5. 响应格式 ─────────────── -->
+            <section id="api-response" class="mb-16">
+                <h2 class="doc-h2">响应格式</h2>
+                <p class="doc-p">服务端统一返回 JSON 格式数据，建议判断 <code>code</code> 字段处理结果。</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3mb-6">
+                    <div style="background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.2); border-radius:10px; padding:14px 16px;">
+                        <div style="font-family:monospace; font-size:20px; font-weight:700; color:#4ade80; margin-bottom:4px;">200</div>
+                        <div style="font-size:12px; color:rgba(255,255,255,0.4)">验证通过</div>
+                    </div>
+                    <div style="background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2); border-radius:10px; padding:14px 16px;">
+                        <div style="font-family:monospace; font-size:20px; font-weight:700; color:#f87171; margin-bottom:4px;">403</div>
+                        <div style="font-size:12px; color:rgba(255,255,255,0.4)">验证失败 / 已过期</div>
+                    </div>
+                    <div style="background:rgba(251,191,36,0.07); border:1px solid rgba(251,191,36,0.2); border-radius:10px; padding:14px 16px;">
+                        <div style="font-family:monospace; font-size:20px; font-weight:700; color:#fbbf24; margin-bottom:4px;">429</div>
+                        <div style="font-size:12px; color:rgba(255,255,255,0.4)">请求过快（防刷）</div>
+                    </div>
+                </div>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="tl-group">
+                            <div class="tl" style="background:#ff5f57"></div>
+                            <div class="tl" style="background:#febc2e"></div>
+                            <div class="tl" style="background:#28c840"></div>
                         </div>
-                        <div class="p-5 overflow-x-auto text-gray-300 font-mono text-sm">
-<pre>{
-  <span class="text-purple-400">"code"</span>: <span class="text-yellow-300">200</span>,             <span class="text-gray-500">// 200:成功, 403:验证失败, 429:请求过快</span>
-  <span class="text-purple-400">"msg"</span>: <span class="text-green-400">"OK"</span>,             <span class="text-gray-500">// 提示信息 (如: 卡密已过期 / 设备不匹配)</span>
-  <span class="text-purple-400">"data"</span>: {
-    <span class="text-purple-400">"expire_time"</span>: <span class="text-green-400">"2026-12-31 23:59:59"</span>,  <span class="text-gray-500">// 到期时间</span>
-    <span class="text-purple-400">"variables"</span>: {                         <span class="text-gray-500">// [云变量] 数据 (可选)</span>
-       <span class="text-purple-400">"notice"</span>: <span class="text-green-400">"最新公告内容..."</span>,
-       <span class="text-purple-400">"download_url"</span>: <span class="text-green-400">"https://..."</span>
+                        <div class="terminal-title">Response Payload — application/json</div>
+                        <button onclick="copyText('{&quot;code&quot;:200,&quot;msg&quot;:&quot;OK&quot;}')"
+                                style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:3px 10px; color:rgba(255,255,255,0.4); font-size:11px; cursor:pointer; display:flex; align-items:center; gap:4px; transition:all 0.2s;"
+                                onmouseenter="this.style.color='rgba(255,255,255,0.8)'"
+                                onmouseleave="this.style.color='rgba(255,255,255,0.4)'">
+                            <i class="ri-file-copy-line"></i> 复制
+                        </button>
+                    </div>
+                    <div class="terminal-body">
+<pre style="margin:0">{
+  <span style="color:#c084fc">"code"</span>: <span style="color:#fbbf24">200</span>,
+  <span style="color:#c084fc">"msg"</span>: <span style="color:#4ade80">"OK"</span>,
+  <span style="color:#c084fc">"data"</span>: {
+    <span style="color:#c084fc">"expire_time"</span>: <span style="color:#4ade80">"2026-12-31 23:59:59"</span>,
+    <span style="color:#c084fc">"variables"</span>: {             <span style="color:rgba(255,255,255,0.2); font-size:12px">// 云变量（如已配置）</span>
+      <span style="color:#c084fc">"notice"</span>: <span style="color:#4ade80">"最新公告内容..."</span>,
+      <span style="color:#c084fc">"download_url"</span>: <span style="color:#4ade80">"https://..."</span>
     }
   }
 }</pre>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ─────────────── 6. SDK 示例 ─────────────── -->
+            <section id="api-examples" class="mb-16">
+                <h2 class="doc-h2">多语言 SDK 示例</h2>
+                <p class="doc-p">复制以下代码，替换 <code>你的域名</code> 与卡密参数即可快速接入。</p>
+
+                <!-- Tab Bar -->
+                <div class="lang-tabs-bar mb-0" id="lang-tabs">
+                    <div class="lang-tab active" onclick="switchLang('python')">Python</div>
+                    <div class="lang-tab inactive" onclick="switchLang('elang')">易语言</div>
+                <div class="lang-tab inactive" onclick="switchLang('php')">PHP</div>
+                    <div class="lang-tab inactive" onclick="switchLang('csharp')">C#</div>
+                    <div class="lang-tab inactive" onclick="switchLang('java')">Java</div>
+                    <div class="lang-tab inactive" onclick="switchLang('node')">Node.js</div>
+                    <div class="lang-tab inactive" onclick="switchLang('go')">Go</div>
+                <div class="lang-tab inactive" onclick="switchLang('cpp')">C++</div>
+                </div>
+
+                <!-- 代码容器 -->
+                <div class="terminal" style="margin-top:8px; border-radius:0 14px 14px 14px;">
+                    <div class="terminal-header">
+                        <div class="tl-group">
+                            <div class="tl" style="background:#ff5f57"></div>
+                            <div class="tl" style="background:#febc2e"></div>
+                            <div class="tl" style="background:#28c840"></div>
                         </div>
+                        <div class="terminal-title" id="code-filename">verify.py</div>
+                        <button onclick="copyCurrentCode()"
+                                style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:3px 10px; color:rgba(255,255,255,0.4); font-size:11px; cursor:pointer; display:flex; align-items:center; gap:4px; transition:all 0.2s;"
+                                onmouseenter="this.style.color='rgba(255,255,255,0.8)'"
+                                onmouseleave="this.style.color='rgba(255,255,255,0.4)'">
+                            <i class="ri-file-copy-line"></i> 复制代码
+                        </button>
                     </div>
-                </section>
 
-                <!-- 6. SDK 示例 -->
-                <section id="api-examples" class="mb-20">
-                    <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
-                        <h2>接入代码示例</h2>
-                        <span class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full border border-gray-200 font-medium">Copy & Paste</span>
-                    </div>
+                    <!-- Python -->
+                    <div id="code-python" class="terminal-body code-block">
+<pre style="margin:0"><span style="color:#f472b6">import</span> <span style="color:#e8e8f0">requests, hashlib</span>
 
-                    <!-- 语言切换 Tabs -->
-                    <div class="flex gap-3 mb-6 overflow-x-auto hide-scroll pb-2" id="lang-tabs">
-                        <div class="lang-tab active" onclick="switchLang('python')">Python</div>
-                        <div class="lang-tab inactive" onclick="switchLang('elang')">易语言 (E-Lang)</div>
-                        <div class="lang-tab inactive" onclick="switchLang('php')">PHP</div>
-                        <div class="lang-tab inactive" onclick="switchLang('csharp')">C#</div>
-                        <div class="lang-tab inactive" onclick="switchLang('java')">Java</div>
-                        <div class="lang-tab inactive" onclick="switchLang('node')">Node.js</div>
-                        <div class="lang-tab inactive" onclick="switchLang('go')">Go</div>
-                        <div class="lang-tab inactive" onclick="switchLang('cpp')">C++</div>
-                    </div>
-                    
-                    <!-- 代码容器 -->
-                    <div class="mac-terminal mt-0 transition-all duration-300 shadow-2xl">
-                        <div class="mac-terminal-header justify-between bg-[#252526]">
-                            <div class="traffic-lights"><div class="traffic-light close"></div><div class="traffic-light minimize"></div><div class="traffic-light maximize"></div></div>
-                            <button onclick="copyCurrentCode()" class="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 bg-white/10 px-2 py-1 rounded"><i class="ri-file-copy-line"></i> 复制代码</button>
-                        </div>
-                        
-                        <!-- Python -->
-                        <div id="code-python" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm">
-<pre><span class="text-pink-400">import</span> requests, hashlib
+<span style="color:rgba(255,255,255,0.25)"># ① 配置</span>
+api_url = <span style="color:#4ade80">"http://你的域名/Verifyfile/api.php"</span>
+card    = <span style="color:#4ade80">"VIP-88888888"</span>
+hwid    = hashlib.md5(<span style="color:#4ade80">"my_computer_id"</span>.encode()).hexdigest()
 
-<span class="text-gray-500"># 1. 配置参数</span>
-api_url = <span class="text-green-400">"http://你的域名/Verifyfile/api.php"</span>
-card = <span class="text-green-400">"VIP-88888888"</span>
-<span class="text-gray-500"># 模拟机器码 (实际开发请获取本机硬件ID)</span>
-hwid = hashlib.md5(<span class="text-green-400">"my_computer_id"</span>.encode()).hexdigest()
-
-<span class="text-gray-500"># 2. 发送验证请求</span>
-try:
+<span style="color:rgba(255,255,255,0.25)"># ② 请求</span>
+<span style="color:#f472b6">try</span>:
     res = requests.post(api_url, data={
-        <span class="text-green-400">"card_code"</span>: card,
-        <span class="text-green-400">"device_hash"</span>: hwid,
-        <span class="text-green-400">"app_key"</span>: <span class="text-green-400">""</span> <span class="text-gray-500"># 可选</span>
-    }, timeout=<span class="text-yellow-300">5</span>).json()
+        <span style="color:#4ade80">"card_code"</span>: card,
+        <span style="color:#4ade80">"device_hash"</span>: hwid,
+        <span style="color:#4ade80">"app_key"</span>: <span style="color:#4ade80">""</span>   <span style="color:rgba(255,255,255,0.25)"># 可选</span>
+    }, timeout=<span style="color:#fbbf24">5</span>).json()
 
-    <span class="text-gray-500"># 3. 处理结果</span>
-    if res[<span class="text-green-400">'code'</span>] == <span class="text-yellow-300">200</span>:
-        print(<span class="text-green-400">f"验证成功! 到期时间: {res['data']['expire_time']}"</span>)
-        <span class="text-gray-500"># print(res['data']['variables']) # 获取云变量</span>
-    else:
-        print(<span class="text-green-400">f"验证失败: {res['msg']}"</span>)
+    <span style="color:rgba(255,255,255,0.25)"># ③ 处理结果</span><span style="color:#f472b6">if</span> res[<span style="color:#4ade80">'code'</span>] == <span style="color:#fbbf24">200</span>:
+        <span style="color:#f472b6">print</span>(<span style="color:#4ade80">f"✓ 验证通过，到期时间：{res['data']['expire_time']}"</span>)
+    <span style="color:#f472b6">else</span>:
+        <span style="color:#f472b6">print</span>(<span style="color:#4ade80">f"✗ 验证失败：{res['msg']}"</span>)
 
-except Exception as e:
-    print(<span class="text-green-400">"网络连接失败"</span>)</pre>
-                        </div>
+<span style="color:#f472b6">except</span> Exception:
+    <span style="color:#f472b6">print</span>(<span style="color:#4ade80">"网络连接失败"</span>)</pre>
+                    </div>
 
-                        <!-- 易语言 -->
-                        <div id="code-elang" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
-<pre><span class="text-gray-500">.版本 2</span>
-<span class="text-gray-500">.支持库 spec</span>
+                    <!-- 易语言 -->
+                    <div id="code-elang" class="terminal-body code-block" style="display:none">
+<pre style="margin:0"><span style="color:rgba(255,255,255,0.3)">.版本 2</span>
+<span style="color:rgba(255,255,255,0.3)">.支持库 spec</span>
 
-<span class="text-pink-400">.子程序</span> _按钮_登录_被单击
-<span class="text-pink-400">.局部变量</span> 网址, 文本型
-<span class="text-pink-400">.局部变量</span> 提交数据, 文本型
-<span class="text-pink-400">.局部变量</span> 返回文本, 文本型
-<span class="text-pink-400">.局部变量</span> json, 类_json
+<span style="color:#f472b6">.子程序</span> _按钮_登录_被单击
+<span style="color:#f472b6">.局部变量</span> 网址, 文本型
+<span style="color:#f472b6">.局部变量</span> 提交数据, 文本型
+<span style="color:#f472b6">.局部变量</span> 返回文本, 文本型
+<span style="color:#f472b6">.局部变量</span> json, 类_json
 
-网址 ＝ <span class="text-green-400">"http://你的域名/Verifyfile/api.php"</span>
-<span class="text-gray-500">' 建议使用精易模块的 [网页_访问_对象]</span>
-<span class="text-gray-500">' 机器码需自行获取并MD5处理</span>
-提交数据 ＝ <span class="text-green-400">"card_code="</span> ＋ 编辑框_卡密.内容 ＋ <span class="text-green-400">"&device_hash="</span> ＋ <span class="text-green-400">"YOUR_HWID_MD5"</span>
+网址 ＝<span style="color:#4ade80">"http://你的域名/Verifyfile/api.php"</span>
+提交数据 ＝ <span style="color:#4ade80">"card_code="</span>＋ 编辑框_卡密.内容 ＋<span style="color:#4ade80">"&device_hash="</span> ＋ <span style="color:#4ade80">"YOUR_HWID_MD5"</span>
 
-返回文本 ＝ 编码_Utf8到Ansi (网页_访问_对象 (网址, 1, 提交数据, , , , , , , , , , , , , , , , ))
+返回文本 ＝编码_Utf8到Ansi(网页_访问_对象(网址, 1, 提交数据, , , , , , , , , , , , , , , , ))
 
-json.解析 (返回文本)
-<span class="text-pink-400">如果</span> (json.取属性数值 (<span class="text-green-400">"code"</span>) ＝ 200)
-    信息框 (<span class="text-green-400">"登录成功！到期时间："</span> ＋ json.取通用属性 (<span class="text-green-400">"data.expire_time"</span>), 0, , )
-<span class="text-pink-400">否则</span>
-    信息框 (<span class="text-green-400">"登录失败："</span> ＋ json.取通用属性 (<span class="text-green-400">"msg"</span>), #错误图标, , )
-<span class="text-pink-400">如果结束</span></pre>
-                        </div>
+json.解析(返回文本)
+<span style="color:#f472b6">如果</span> (json.取属性数值(<span style="color:#4ade80">"code"</span>) ＝ 200)
+    信息框(<span style="color:#4ade80">"登录成功！到期："</span> ＋ json.取通用属性(<span style="color:#4ade80">"data.expire_time"</span>),0, , )
+<span style="color:#f472b6">否则</span>
+    信息框(<span style="color:#4ade80">"登录失败："</span> ＋ json.取通用属性(<span style="color:#4ade80">"msg"</span>), #错误图标, , )
+<span style="color:#f472b6">如果结束</span></pre>
+                    </div>
 
-                        <!-- PHP -->
-                        <div id="code-php" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
-<pre><span class="text-pink-400">&lt;?php</span>
-$url = <span class="text-green-400">"http://你的域名/Verifyfile/api.php"</span>;
+                    <!-- PHP -->
+                    <div id="code-php" class="terminal-body code-block" style="display:none">
+<pre style="margin:0"><span style="color:#f472b6">&lt;?php</span>
+$url= <span style="color:#4ade80">"http://你的域名/Verifyfile/api.php"</span>;
 $data = [
-    <span class="text-green-400">'card_code'</span> => <span class="text-green-400">'VIP-123456'</span>,
-    <span class="text-green-400">'device_hash'</span> => md5(<span class="text-green-400">'server_001'</span>)
+    <span style="color:#4ade80">'card_code'</span>=> <span style="color:#4ade80">'VIP-123456'</span>,
+    <span style="color:#4ade80">'device_hash'</span> => md5(<span style="color:#4ade80">'server_unique_id'</span>),
 ];
 
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $url);
-curl_setopt($ch, CURLOPT_POST, <span class="text-yellow-300">1</span>);
-curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, <span class="text-yellow-300">true</span>);
-$response = curl_exec($ch);
+curl_setopt_array($ch, [
+    CURLOPT_URL            => $url,
+    CURLOPT_POST           =><span style="color:#fbbf24">true</span>,
+    CURLOPT_POSTFIELDS     => http_build_query($data),
+    CURLOPT_RETURNTRANSFER => <span style="color:#fbbf24">true</span>,
+    CURLOPT_TIMEOUT        => <span style="color:#fbbf24">5</span>,
+]);
+$json = json_decode(curl_exec($ch), <span style="color:#fbbf24">true</span>);
 curl_close($ch);
 
-$json = json_decode($response, <span class="text-yellow-300">true</span>);
-
-if ($json[<span class="text-green-400">'code'</span>] == <span class="text-yellow-300">200</span>) {
-    echo <span class="text-green-400">"验证通过，过期时间: "</span> . $json[<span class="text-green-400">'data'</span>][<span class="text-green-400">'expire_time'</span>];
+if ($json[<span style="color:#4ade80">'code'</span>] === <span style="color:#fbbf24">200</span>) {
+    echo <span style="color:#4ade80">"✓ 到期时间: "</span> . $json[<span style="color:#4ade80">'data'</span>][<span style="color:#4ade80">'expire_time'</span>];
 } else {
-    echo <span class="text-green-400">"错误: "</span> . $json[<span class="text-green-400">'msg'</span>];
+    echo <span style="color:#4ade80">"✗ 错误: "</span> . $json[<span style="color:#4ade80">'msg'</span>];
 }
-<span class="text-pink-400">?></span></pre>
-                        </div>
+<span style="color:#f472b6">?></span></pre>
+                    </div>
 
-                        <!-- C# -->
-                        <div id="code-csharp" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
-<pre><span class="text-pink-400">using</span> System.Net.Http;
-<span class="text-pink-400">using</span> Newtonsoft.Json.Linq; <span class="text-gray-500">// Nuget: Newtonsoft.Json</span>
+                    <!-- C# -->
+                    <div id="code-csharp" class="terminal-body code-block" style="display:none">
+<pre style="margin:0"><span style="color:#f472b6">using</span> System.Net.Http;
+<span style="color:#f472b6">using</span> Newtonsoft.Json.Linq; <span style="color:rgba(255,255,255,0.25)">// Nuget: Newtonsoft.Json</span>
 
-<span class="text-pink-400">public async void</span> VerifyCard()
+<span style="color:#f472b6">public async void</span> <span style="color:#60a5fa">VerifyCard</span>()
 {
-    using (var client = new HttpClient())
-    {
-        var values = new Dictionary&lt;string, string&gt;
-        {
-            { <span class="text-green-400">"card_code"</span>, <span class="text-green-400">"VIP-CODE-HERE"</span> },
-            { <span class="text-green-400">"device_hash"</span>, <span class="text-green-400">"YOUR_HWID_HASH"</span> }
-        };
+    <span style="color:#f472b6">using var</span> client = <span style="color:#f472b6">new</span> HttpClient();
+    var values = <span style="color:#f472b6">new</span> Dictionary&lt;string, string&gt; {
+        { <span style="color:#4ade80">"card_code"</span>,<span style="color:#4ade80">"VIP-CODE-HERE"</span> },
+        { <span style="color:#4ade80">"device_hash"</span>, <span style="color:#4ade80">"YOUR_HWID_HASH"</span> }
+    };
 
-        var content = new FormUrlEncodedContent(values);
-        var response = await client.PostAsync(<span class="text-green-400">"http://site.com/Verifyfile/api.php"</span>, content);
-        var responseString = await response.Content.ReadAsStringAsync();
-        
-        JObject json = JObject.Parse(responseString);
-        
-        if ((int)json[<span class="text-green-400">"code"</span>] == 200) {
-            Console.WriteLine(<span class="text-green-400">"Success: "</span> + json[<span class="text-green-400">"data"</span>][<span class="text-green-400">"expire_time"</span>]);
-        } else {
-            Console.WriteLine(<span class="text-green-400">"Failed: "</span> + json[<span class="text-green-400">"msg"</span>]);
-        }
-    }
+    var response = <span style="color:#f472b6">await</span> client.PostAsync(
+        <span style="color:#4ade80">"http://site.com/Verifyfile/api.php"</span>,
+        <span style="color:#f472b6">new</span> FormUrlEncodedContent(values)
+    );
+    var json = JObject.Parse(<span style="color:#f472b6">await</span> response.Content.ReadAsStringAsync());
+
+    <span style="color:#f472b6">if</span> ((<span style="color:#f472b6">int</span>)json[<span style="color:#4ade80">"code"</span>] == <span style="color:#fbbf24">200</span>)
+        Console.WriteLine(<span style="color:#4ade80">"✓ "</span> + json[<span style="color:#4ade80">"data"</span>][<span style="color:#4ade80">"expire_time"</span>]);
+    <span style="color:#f472b6">else</span>
+        Console.WriteLine(<span style="color:#4ade80">"✗ "</span> + json[<span style="color:#4ade80">"msg"</span>]);
 }</pre>
-                        </div>
+                    </div>
 
-                         <!-- Java -->
-                        <div id="code-java" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
-<pre><span class="text-pink-400">import</span> java.net.HttpURLConnection;
-<span class="text-pink-400">import</span> java.net.URL;
-<span class="text-pink-400">import</span> java.io.OutputStream;
-<span class="text-pink-400">import</span> java.util.Scanner;
+                    <!-- Java -->
+                    <div id="code-java" class="terminal-body code-block" style="display:none">
+<pre style="margin:0"><span style="color:#f472b6">import</span> java.net.*;
+<span style="color:#f472b6">import</span> java.io.*;
 
-<span class="text-pink-400">public class</span> Main {
-    <span class="text-pink-400">public static void</span> main(String[] args) <span class="text-pink-400">throws</span> Exception {
-        URL url = <span class="text-pink-400">new</span> URL(<span class="text-green-400">"http://site.com/Verifyfile/api.php"</span>);
+<span style="color:#f472b6">public class</span> <span style="color:#60a5fa">GuYiVerify</span> {
+    <span style="color:#f472b6">public static void</span> main(String[] args) <span style="color:#f472b6">throws</span> Exception {
+        URL url = <span style="color:#f472b6">new</span> URL(<span style="color:#4ade80">"http://site.com/Verifyfile/api.php"</span>);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod(<span class="text-green-400">"POST"</span>);
-        conn.setDoOutput(<span class="text-pink-400">true</span>);
-        
-        String params = <span class="text-green-400">"card_code=VIP-123&device_hash=java_client_hash"</span>;
-        <span class="text-pink-400">try</span> (OutputStream os = conn.getOutputStream()) {
-            os.write(params.getBytes());
+        conn.setRequestMethod(<span style="color:#4ade80">"POST"</span>);
+        conn.setDoOutput(<span style="color:#fbbf24">true</span>);
+        conn.setConnectTimeout(<span style="color:#fbbf24">5000</span>);
+
+        String params = <span style="color:#4ade80">"card_code=VIP-123&device_hash=java_client_hash"</span>;
+        <span style="color:#f472b6">try</span> (OutputStream os = conn.getOutputStream()) {
+            os.write(params.getBytes(<span style="color:#4ade80">"UTF-8"</span>));
         }
-        
-        Scanner scanner = <span class="text-pink-400">new</span> Scanner(conn.getInputStream());
-        String response = scanner.useDelimiter(<span class="text-green-400">"\\A"</span>).next();
-        System.out.println(response); <span class="text-gray-500">// 推荐使用 Gson 解析 JSON</span>
-    }
+
+        Scanner sc = <span style="color:#f472b6">new</span> Scanner(conn.getInputStream());
+        System.out.println(sc.useDelimiter(<span style="color:#4ade80">"\\A"</span>).next());
+        <span style="color:rgba(255,255,255,0.25)">// 推荐用 Gson / Jackson解析 JSON</span>}
 }</pre>
-                        </div>
+                    </div>
 
-                        <!-- Node.js -->
-                        <div id="code-node" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
-<pre><span class="text-pink-400">const</span> axios = require(<span class="text-green-400">'axios'</span>);
+                    <!-- Node.js -->
+                    <div id="code-node" class="terminal-body code-block" style="display:none">
+<pre style="margin:0"><span style="color:#f472b6">const</span> axios = require(<span style="color:#4ade80">'axios'</span>); <span style="color:rgba(255,255,255,0.25)">// npm i axios</span>
 
-<span class="text-pink-400">async function</span> verify() {
-    <span class="text-pink-400">try</span> {
-        <span class="text-pink-400">const</span> res = <span class="text-pink-400">await</span> axios.post(<span class="text-green-400">'http://site.com/Verifyfile/api.php'</span>, {
-            card_code: <span class="text-green-400">'VIP-123456'</span>,
-            device_hash: <span class="text-green-400">'node_hwid_hash'</span>
-        });
-
-        <span class="text-pink-400">if</span> (res.data.code === <span class="text-yellow-300">200</span>) {
-            console.log(<span class="text-green-400">'Expires:'</span>, res.data.data.expire_time);
-        } <span class="text-pink-400">else</span> {
-            console.log(<span class="text-green-400">'Error:'</span>, res.data.msg);
-        }
-    } <span class="text-pink-400">catch</span> (error) {
-        console.error(<span class="text-green-400">'Request Failed'</span>);
+<span style="color:#f472b6">async function</span> <span style="color:#60a5fa">verify</span>() {
+    <span style="color:#f472b6">try</span> {
+        <span style="color:#f472b6">const</span> { data } = <span style="color:#f472b6">await</span> axios.post(
+            <span style="color:#4ade80">'http://site.com/Verifyfile/api.php'</span>,
+            <span style="color:#f472b6">new</span> URLSearchParams({
+                card_code:<span style="color:#4ade80">'VIP-123456'</span>,
+                device_hash: <span style="color:#4ade80">'node_hwid_hash'</span>,
+            })
+        );<span style="color:#f472b6">if</span> (data.code === <span style="color:#fbbf24">200</span>)
+            console.log(<span style="color:#4ade80">'✓ Expires:'</span>, data.data.expire_time);
+        <span style="color:#f472b6">else</span>
+            console.log(<span style="color:#4ade80">'✗ Error:'</span>, data.msg);
+    } <span style="color:#f472b6">catch</span> (e) {
+        console.error(<span style="color:#4ade80">'Request failed'</span>, e.message);
     }
 }
 verify();</pre>
-                        </div>
+                    </div>
 
-                        <!-- Go -->
-                        <div id="code-go" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
-<pre><span class="text-pink-400">package</span> main
+                    <!-- Go -->
+                    <div id="code-go" class="terminal-body code-block" style="display:none">
+<pre style="margin:0"><span style="color:#f472b6">package</span> main
 
-<span class="text-pink-400">import</span> (
-	<span class="text-green-400">"fmt"</span>
-	<span class="text-green-400">"net/http"</span>
-	<span class="text-green-400">"net/url"</span>
-	<span class="text-green-400">"io/ioutil"</span>
+<span style="color:#f472b6">import</span> (
+    <span style="color:#4ade80">"fmt"</span>; <span style="color:#4ade80">"io"</span>; <span style="color:#4ade80">"net/http"</span>; <span style="color:#4ade80">"net/url"</span>
 )
 
-<span class="text-pink-400">func</span> main() {
-	api := <span class="text-green-400">"http://site.com/Verifyfile/api.php"</span>
-	data := url.Values{
-		<span class="text-green-400">"card_code"</span>:   {<span class="text-green-400">"VIP-123"</span>},
-		<span class="text-green-400">"device_hash"</span>: {<span class="text-green-400">"go_client_hash"</span>},
-	}
-
-	resp, _ := http.PostForm(api, data)
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-	
-	fmt.Println(string(body))
-}</pre>
-                        </div>
-
-                         <!-- C++ -->
-                        <div id="code-cpp" class="code-block p-4 overflow-x-auto text-gray-300 font-mono text-sm hidden">
-<pre><span class="text-pink-400">#include</span> &lt;curl/curl.h&gt; <span class="text-gray-500">// 依赖 libcurl</span>
-<span class="text-pink-400">#include</span> &lt;iostream&gt;
-<span class="text-pink-400">#include</span> &lt;string&gt;
-
-<span class="text-pink-400">int</span> main() {
-    CURL *curl;
-    CURLcode res;
-    
-    curl = curl_easy_init();
-    if(curl) {
-        std::string postFields = <span class="text-green-400">"card_code=VIP-123&device_hash=hwid_hash"</span>;
-        
-        curl_easy_setopt(curl, CURLOPT_URL, <span class="text-green-400">"http://site.com/Verifyfile/api.php"</span>);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields.c_str());
-        
-        <span class="text-gray-500">// 发送请求...</span>
-        res = curl_easy_perform(curl);
-        
-        curl_easy_cleanup(curl);
+<span style="color:#f472b6">func</span> <span style="color:#60a5fa">main</span>() {
+    api := <span style="color:#4ade80">"http://site.com/Verifyfile/api.php"</span>
+    data := url.Values{
+        <span style="color:#4ade80">"card_code"</span>:   {<span style="color:#4ade80">"VIP-123"</span>},
+        <span style="color:#4ade80">"device_hash"</span>: {<span style="color:#4ade80">"go_client_hash"</span>},
     }
-    return 0;
+    resp, err := http.PostForm(api, data)
+    <span style="color:#f472b6">if</span> err != nil { panic(err) }
+    <span style="color:#f472b6">defer</span> resp.Body.Close()
+    body, _ := io.ReadAll(resp.Body)
+    fmt.Println(string(body))
 }</pre>
-                        </div>
-
                     </div>
-                </section>
 
-                <hr class="border-gray-100 my-16">
+                    <!-- C++ -->
+                    <div id="code-cpp" class="terminal-body code-block" style="display:none">
+<pre style="margin:0"><span style="color:#f472b6">#include</span> &lt;curl/curl.h&gt; <span style="color:rgba(255,255,255,0.25)">//依赖 libcurl</span>
+<span style="color:#f472b6">#include</span> &lt;string&gt;
 
-                <!-- 7. 云变量 -->
-                <section id="api-variables" class="mb-20">
-                    <h2>云变量功能说明</h2>
-                    <p>GuYi System 提供了一套强大的云端变量下发系统，您可以在后台【应用列表 -> 变量管理】中进行配置。</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                        <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-100 relative overflow-hidden group">
-                            <div class="absolute right-0 top-0 w-20 h-20 bg-green-500 rounded-bl-full opacity-10 transition-opacity group-hover:opacity-20"></div>
-                            <h4 class="font-bold text-gray-900 mb-2 flex items-center gap-2"><i class="ri-lock-2-line text-green-500"></i> 私有变量 (Private)</h4>
-                            <p class="text-sm text-gray-600 mb-4 h-16">仅在 <strong>卡密验证通过</strong> 后才会返回给客户端。适用于传输加密Key、VIP直链、核心配置等敏感数据。</p>
-                            <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded">获取方式：登录成功自动返回</span>
-                        </div>
-                        
-                        <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-100 relative overflow-hidden group">
-                            <div class="absolute right-0 top-0 w-20 h-20 bg-blue-500 rounded-bl-full opacity-10 transition-opacity group-hover:opacity-20"></div>
-                            <h4 class="font-bold text-gray-900 mb-2 flex items-center gap-2"><i class="ri-earth-line text-blue-500"></i> 公开变量 (Public)</h4>
-                            <p class="text-sm text-gray-600 mb-4 h-16">只需提供 <code>app_key</code> 即可获取，<strong>无需消耗卡密</strong>。适用于软件公告、版本号检测、联系方式等公开数据。</p>
-                            <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded">获取方式：POST app_key 即可</span>
-                        </div>
+<span style="color:#f472b6">int</span> <span style="color:#60a5fa">main</span>() {
+    CURL *curl = curl_easy_init();
+    <span style="color:#f472b6">if</span> (!curl) <span style="color:#f472b6">return</span><span style="color:#fbbf24">1</span>;
+
+    std::string post = <span style="color:#4ade80">"card_code=VIP-123&device_hash=hwid_md5_hash"</span>;
+
+    curl_easy_setopt(curl, CURLOPT_URL,<span style="color:#4ade80">"http://site.com/Verifyfile/api.php"</span>);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post.c_str());
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT,   <span style="color:#fbbf24">5L</span>);
+
+    CURLcode res = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+    <span style="color:#f472b6">return</span> res == CURLE_OK ? <span style="color:#fbbf24">0</span> : <span style="color:#fbbf24">1</span>;
+}</pre>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <!-- 8. 安全指南 -->
-                <section id="security" class="mb-20">
-                    <h2>安全最佳实践</h2>
-                    <div class="bg-gray-50 rounded-xl p-6 border border-gray-100">
-                        <ul class="space-y-4">
-                            <li class="flex items-start gap-3">
-                                <i class="ri-checkbox-circle-fill text-green-500 mt-0.5 text-lg"></i>
-                                <div>
-                                    <strong class="block text-gray-900 text-sm">安装后清理</strong>
-                                    <span class="text-sm text-gray-500">部署完成后，请务必删除根目录的 <code>install.php</code>，防止站点被重置。</span>
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <i class="ri-lock-password-fill text-blue-500 mt-0.5 text-lg"></i>
-                                <div>
-                                    <strong class="block text-gray-900 text-sm">修改默认密码</strong>
-                                    <span class="text-sm text-gray-500">默认密码 <code>admin123</code> 仅用于首次登录，请进入【全局配置】页面修改。</span>
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <i class="ri-key-2-fill text-purple-500 mt-0.5 text-lg"></i>
-                                <div>
-                                    <strong class="block text-gray-900 text-sm">更新密钥</strong>
-                                    <span class="text-sm text-gray-500">编辑 <code>config.php</code>，修改 <code>SYS_SECRET</code> 为随机长字符串，增强 Cookie 安全性。</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </section>
 
-                <!-- 9. 支持 -->
-                <section id="support" class="mb-24">
-                    <h2>技术支持</h2>
-                    <div class="mt-8 relative overflow-hidden rounded-2xl bg-[#0f172a] text-white p-8 shadow-2xl">
-                        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div style="border-top:1px solid var(--border); margin:40px 0 60px;"></div>
+
+
+            <!-- ─────────────── 7. 云变量 ─────────────── -->
+            <section id="api-variables" class="mb-16">
+                <h2 class="doc-h2">云变量系统</h2>
+                <p class="doc-p">在后台【应用列表 → 变量管理】中配置，验证成功后自动随响应下发。</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5mt-6">
+                    <div class="feature-card">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+                            <div style="width:36px; height:36px; border-radius:10px; background:rgba(34,197,94,0.1); display:flex; align-items:center; justify-content:center; color:#4ade80; font-size:18px;">
+                                <i class="ri-lock-2-line"></i>
+                            </div>
                             <div>
-                                <h3 class="text-xl font-bold text-white mt-0 mb-2">GuYi Support Team</h3>
-                                <p class="text-gray-400 text-sm mb-6 max-w-md">如遇部署报错、接口异常或需要定制开发，请加入官方交流群或联系开发者。</p>
-                                
-                                <div class="flex flex-wrap gap-3">
-                                    <a href="https://qm.qq.com/q/R8q8Nt43aS" target="_blank" class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
-                                        <i class="ri-qq-fill"></i> QQ 群: 1077643184
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="p-4 bg-white/5 rounded-full border border-white/10">
-                                <i class="ri-customer-service-2-fill text-4xl text-blue-400"></i>
+                                <div style="font-size:14px; font-weight:600; color:var(--text);">私有变量</div>
+                                <span style="font-size:10.5px; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); color:#86efac; border-radius:99px; padding:1px 8px;">仅验证通过后下发</span>
                             </div>
                         </div>
+                        <p style="font-size:13.5px; color:var(--text-subtle); line-height:1.65; margin:0">卡密验证通过后才返回给客户端。适用于加密 Key、VIP 直链、核心配置等<strong style="color:var(--text)">敏感数据</strong>传输。</p>
                     </div>
-                </section>
 
-                <footer class="pt-8 border-t border-gray-100 text-xs text-gray-400 flex justify-between">
-                    <div>© 2026 GuYi Systems. All rights reserved.</div>
-                    <div>Documentation V2.1</div>
-                </footer>
+                    <div class="feature-card">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+                            <div style="width:36px; height:36px; border-radius:10px; background:rgba(59,130,246,0.1); display:flex; align-items:center; justify-content:center; color:#60a5fa; font-size:18px;">
+                                <i class="ri-earth-line"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:14px; font-weight:600; color:var(--text);">公开变量</div>
+                                <span style="font-size:10.5px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.2); color:#93c5fd; border-radius:99px; padding:1px 8px;">仅需app_key</span>
+                            </div>
+                        </div>
+                        <p style="font-size:13.5px; color:var(--text-subtle); line-height:1.65; margin:0">只需提交<code>app_key</code> 即可获取，<strong style="color:var(--text)">无需消耗卡密次数</strong>。适用于公告、版本号、联系方式等公开数据。</p>
+                    </div>
+                </div>
 
-            </div>
-        </main>
-    </div>
+                <div class="callout callout-info mt-6">
+                    <i class="ri-information-line"></i>
+                    <div>云变量支持动态更新，后台修改后立即生效，客户端下次验证时自动获取最新内容，<strong>无需重新发版</strong>。</div>
+                </div>
+            </section>
 
-    <script>
-        // 复制文本到剪贴板
-        function copyText(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('已复制: ' + text);
-            });
-        }
 
-        // 切换语言代码块
-        function switchLang(lang) {
-            document.querySelectorAll('.lang-tab').forEach(el => {
-                el.classList.remove('active');
-                el.classList.add('inactive');
-            });
-            event.target.classList.remove('inactive');
-            event.target.classList.add('active');
+            <!-- ─────────────── 8. 安全实践 ─────────────── -->
+            <section id="security" class="mb-16">
+                <h2 class="doc-h2">安全最佳实践</h2>
 
-            document.querySelectorAll('.code-block').forEach(el => el.classList.add('hidden'));
-            document.getElementById('code-' + lang).classList.remove('hidden');
-        }
-
-        function copyCurrentCode() {
-            const visibleCode = document.querySelector('.code-block:not(.hidden) pre').innerText;
-            copyText(visibleCode);
-        }
-
-        function showToast(msg) {
-            const container = document.getElementById('toast-container');
-            const el = document.createElement('div');
-            el.className = 'toast px-6 py-3 rounded-full border border-gray-200 flex items-center gap-2 text-sm font-medium text-black mb-3 shadow-lg';
-            el.innerHTML = `<i class="ri-check-line text-green-500 font-bold text-lg"></i> ${msg}`;
-            container.appendChild(el);
-            requestAnimationFrame(()=>el.classList.add('show'));
-            setTimeout(()=>{
-                el.classList.remove('show');
-                setTimeout(()=>el.remove(), 500);
-            }, 2000);
-        }
-
-        // 简单的导航高亮
-        const mainScroll = document.getElementById('main-scroll');
-        const sections = document.querySelectorAll('section');
-        const navItems = document.querySelectorAll('.nav-item');
-
-        mainScroll.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (mainScroll.scrollTop >= (sectionTop - 180)) {
-                    current = section.getAttribute('id');
-                }
-            });
-            navItems.forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('href') === '#' + current) {
-                    item.classList.add('active');
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:8px 24px;">
+                    <ul class="security-list">
+                        <li>
+                            <div class="icon-wrap" style="background:rgba(34,197,94,0.1); color:#4ade80;"><i class="ri-delete-bin-line"></i></div>
+                            <div>
+                                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:3px;">安装后清理</div>
+                                <div style="font-size:13px; color:var(--text-subtle); line-height:1.6">部署完成后立即删除 <code>install.php</code>，防止站点被恶意重置。</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="icon-wrap" style="background:rgba(59,130,246,0.1); color:#60a5fa;"><i class="ri-lock-password-line"></i></div>
+                            <div>
+                                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:3px;">修改默认密码</div>
+                                <div style="font-size:13px; color:var(--text-subtle); line-height:1.6">默认密码 <code>admin123</code> 仅供首次登录，请立即进入【全局配置】修改为强密码。</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="icon-wrap" style="background:rgba(167,139,250,0.1); color:#a78bfa;"><i class="ri-key-2-line"></i></div>
+                            <div>
+                                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:3px;">更新系统密钥</div>
+                                <div style="font-size:13px; color:var(--text-subtle); line-height:1.6">编辑 <code>config.php</code>，将 <code>SYS_SECRET</code> 替换为随机长字符串，增
