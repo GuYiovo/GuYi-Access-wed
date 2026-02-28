@@ -3,22 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>GuYi Access —轻量级授权验证系统</title>
+    <title>GuYi Aegis Pro — 企业级软件授权验证系统</title>
     <link rel="icon" href="http://q.qlogo.cn/headimg_dl?dst_uin=156440000&spec=640&img_type=jpg" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
     <style>
         :root {
-            --bg: #07070f;
-            --surface: #0e0e18;
-            --border: rgba(255,255,255,0.07);
-            --text: #f0f0f8;
-            --muted: #6b6b85;
-            --subtle: #9494ae;
-            --blue: #2563eb;
+            --bg: #04040c;
+            --surface: #080814;
+            --surface-2: #0d0d1a;
+            --border: rgba(255,255,255,0.06);
+            --border-hover: rgba(255,255,255,0.12);--text: #f0f0fa;
+            --muted: #5a5a72;
+            --subtle: #8888a8;
+            --blue: #3b82f6;
+            --blue-bright: #60a5fa;
+            --purple: #8b5cf6;
+            --cyan: #06b6d4;
+            --green: #10b981;
         }
 
-        *, *::before, *::after { box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { font-size: 16px; scroll-behavior: smooth; }
 
         body {
             font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -26,812 +33,1094 @@
             color: var(--text);
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
-            margin: 0;
         }
 
-        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 99px; }
 
-        /*── 导航 ── */
-        .nav-glass {
-            background: rgba(7, 7, 15, 0.85);
-            backdrop-filter: blur(24px) saturate(160%);
-            -webkit-backdrop-filter: blur(24px) saturate(160%);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+        /*══噪点纹理 ══ */
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; opacity: 0.6;
         }
 
-        /* ── 网格背景 ── */
-        .grid-bg {
-            background-image:
-                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-            background-size: 64px 64px;
+        /* ══ 导航 ══ */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            height: 60px;
+            display: flex; align-items: center;
+            transition: all 0.4s;}
+        .nav.scrolled {
+            background: rgba(4,4,12,0.88);
+            backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid rgba(255,255,255,0.055);
         }
-
-        /* ── 光晕 ── */
-        .glow {
-            position: absolute;
-            border-radius: 50%;
+        .nav-inner {
+            max-width: 1100px; width: 100%;
+            margin: 0 auto; padding: 0 24px;
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        }
+        .nav-logo {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; flex-shrink: 0;
+        }
+        .logo-mark {
+            width: 30px; height: 30px; border-radius: 9px;
+            background: linear-gradient(135deg, #3b82f6 0%, #6d28d9 100%);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 13px; font-weight: 800;
+            box-shadow: 0 0 20px rgba(59,130,246,0.45), 0 4px 12px rgba(0,0,0,0.4);
+            position: relative;
+        }
+        .logo-mark::after {
+            content: '';
+            position: absolute; inset: -1px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
             pointer-events: none;
         }
+        .nav-links {
+            display: flex; align-items: center; gap: 2px;
+            flex: 1; justify-content: center;}
+        .nav-link {
+            padding: 6px 14px; border-radius: 8px;
+            font-size: 13.5px; color: rgba(255,255,255,0.45);
+            text-decoration: none; transition: all 0.2s; white-space: nowrap;}
+        .nav-link:hover { color: #fff; background: rgba(255,255,255,0.06); }
+        .nav-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
-        /* ── 渐变文字 ── */
-        .gradient-text {
-            background: linear-gradient(135deg, #ffffff 0%, #c7d8ff 55%, #93c5fd 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .btn-nav-ghost {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 7px 15px; border-radius: 9px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.55); font-size: 13px; font-weight: 500;
+            text-decoration: none; transition: all 0.2s; white-space: nowrap;
+        }
+        .btn-nav-ghost:hover { background: rgba(255,255,255,0.09); color: #fff; border-color: rgba(255,255,255,0.14); }
+
+        .btn-nav-primary {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 7px 16px; border-radius: 9px;
+            background: linear-gradient(135deg, #3b82f6, #6d28d9);
+            color: #fff; font-size: 13px; font-weight: 600;
+            text-decoration: none; transition: all 0.25s; white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+        }
+        .btn-nav-primary:hover {
+            box-shadow: 0 6px 20px rgba(59,130,246,0.45);
+            transform: translateY(-1px);
         }
 
-        /* ── Hero标题 ── */
-        .hero-title {
-            font-size: clamp(40px, 7.5vw, 90px);
-            font-weight: 700;
-            line-height: 1.04;
-            letter-spacing: -0.03em;
+        /* ══ Hero══ */
+        .hero {
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+            position: relative; overflow: hidden;
         }
 
-        /* ── 徽章 ── */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 5px 14px 5px 8px;
-            border-radius: 99px;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.02em;
-            background: rgba(37, 99, 235, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.25);
-            color: #93c5fd;
-        }.badge-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
+        /*网格背景 */
+        .hero-grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+            background-size: 72px 72px;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+        }
+
+        /*极光光晕 */
+        .aurora {
+            position: absolute; pointer-events: none;
+            border-radius: 50%; filter: blur(100px);
+        }
+        .aurora-1 {
+            width: 800px; height: 500px;
+            background: radial-gradient(ellipse, rgba(59,130,246,0.22) 0%, transparent 70%);
+            top: -100px; left: 50%; transform: translateX(-50%);
+        }
+        .aurora-2 {
+            width: 500px; height: 400px;
+            background: radial-gradient(ellipse, rgba(109,40,217,0.18) 0%, transparent 70%);
+            top: 10%; right: -100px;
+        }
+        .aurora-3 {
+            width: 400px; height: 400px;
+            background: radial-gradient(ellipse, rgba(6,182,212,0.12) 0%, transparent 70%);
+            bottom: 10%; left: -80px;
+        }
+        .aurora-4 {
+            width: 300px; height: 300px;
+            background: radial-gradient(ellipse, rgba(16,185,129,0.1) 0%, transparent 70%);
+            bottom: 20%; right: 5%;
+        }
+
+        /*徽章 */
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px 6px 8px; border-radius: 99px;
+            background: rgba(59,130,246,0.08);
+            border: 1px solid rgba(59,130,246,0.22);
+            font-size: 12px; font-weight: 500; color: #93c5fd;
+            margin-bottom: 28px;
+            animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .badge-pulse {
+            width: 7px; height: 7px; border-radius: 50%;
             background: #3b82f6;
-            flex-shrink: 0;animation: pulse-dot 2.2s infinite;
+            box-shadow: 0 0 8px #3b82f6;
+            animation: pulse 2.5s infinite;
         }
-        @keyframes pulse-dot {
-            0%, 100% { box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
-            50% { box-shadow: 0 0 0 6px rgba(59,130,246,0.06); }
+        @keyframes pulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.5); }
+            50% { box-shadow: 0 0 0 6px rgba(59,130,246,0); }
         }
 
-        /* ── 按钮 ── */
+        /* 主标题 */
+        .hero-title {
+            font-size: clamp(44px, 8vw, 96px);
+            font-weight: 800;
+            line-height: 1.02;
+            letter-spacing: -0.035em;
+            margin-bottom: 24px;
+            animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) 0.08s both;
+        }
+        .title-line-1 { color: #fff; display: block; }
+        .title-line-2 {
+            display: block;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #06b6d4 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
+        }
+        @keyframes gradientShift {
+            0%,100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 副标题 */
+        .hero-sub {
+            font-size: clamp(15px, 2.2vw, 19px);
+            color: rgba(255,255,255,0.38);
+            line-height: 1.75; font-weight: 300;
+            max-width: 520px; margin: 0 auto 40px;
+            animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) 0.16s both;
+        }
+
+        /* 按钮组 */
+        .hero-btns {
+            display: flex; flex-wrap: wrap;
+            align-items: center; justify-content: center; gap: 12px;
+            margin-bottom: 64px;
+            animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) 0.24s both;
+        }
         .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 24px;
-            border-radius: 12px;
-            background: linear-gradient(145deg, #2563eb, #1d4ed8);
-            color: #fff;
-            font-size: 15px;
-            font-weight: 500;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            white-space: nowrap;
-            flex-shrink: 0;
-            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 1px 0 1px rgba(37,99,235,0.4), 0 6px 20px rgba(37,99,235,0.22);
+            display: inline-flex; align-items: center; gap: 9px;
+            padding: 14px 28px; border-radius: 14px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: #fff; font-size: 15px; font-weight: 600;
+            text-decoration: none; transition: all 0.3s;
+            box-shadow: 0 2px 0 1px rgba(37,99,235,0.3), 0 8px 28px rgba(37,99,235,0.25);
+            position: relative; overflow: hidden;
         }
-        .btn-primary:hover {
-            background: linear-gradient(145deg, #3b82f6, #2563eb);
-            transform: translateY(-2px);
-            box-shadow: 0 1px 0 1px rgba(59,130,246,0.5), 0 12px 28px rgba(37,99,235,0.32);
+        .btn-primary::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+            opacity: 0; transition: opacity 0.3s;
         }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 2px 0 1px rgba(37,99,235,0.4), 0 16px 36px rgba(37,99,235,0.35); }
+        .btn-primary:hover::before { opacity: 1; }
         .btn-primary:active { transform: translateY(0); }
 
         .btn-ghost {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 24px;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.05);
+            display: inline-flex; align-items: center; gap: 9px;
+            padding: 14px 28px; border-radius: 14px;
+            background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.1);
-            color: #c8c8e0;
-            font-size: 15px;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            white-space: nowrap;
-            flex-shrink: 0;
-            transition: background 0.2s, border-color 0.2s, transform 0.2s;}
-        .btn-ghost:hover {
-            background: rgba(255,255,255,0.09);
-            border-color: rgba(255,255,255,0.18);
-            transform: translateY(-2px);
+            color: rgba(255,255,255,0.65); font-size: 15px; font-weight: 500;
+            text-decoration: none; transition: all 0.3s;
         }
+        .btn-ghost:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.18); color: #fff; transform: translateY(-2px); }
         .btn-ghost:active { transform: translateY(0); }
 
-        /* 导航小按钮 */
-        .nav-btn-ghost {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 14px;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.09);
-            color: rgba(255,255,255,0.6);
-            font-size: 13px;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.2s, color 0.2s;
+        /* 统计栏 */
+        .hero-stats {
+            display: flex; align-items: center; gap: 0;
+            animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) 0.32s both;
         }
-        .nav-btn-ghost:hover {
-            background: rgba(255,255,255,0.09);
-            color: #fff;
+        .stat-pill {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 18px;
+            border: 1px solid rgba(255,255,255,0.07);
+            font-size: 13px; color: rgba(255,255,255,0.4);
         }
+        .stat-pill:first-child { border-radius: 12px 0 0 12px; }
+        .stat-pill:last-child { border-radius: 0 12px 12px 0; border-left: none; }
+        .stat-pill:not(:first-child):not(:last-child) { border-left: none; }
+        .stat-val { font-weight: 700; color: #fff; font-size: 14px; }
 
-        .nav-btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 16px;
-            border-radius: 10px;
-            background: #2563eb;
-            color: #fff;
-            font-size: 13px;
-            font-weight: 500;
-            text-decoration: none;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.2s;
+        /* ══ 产品截图 ══ */
+        .screenshot-section {
+            padding: 0 24px 80px;
+            position: relative;
         }
-        .nav-btn-primary:hover { background: #3b82f6; }
-
-        /* ── 代码预览 ── */
-        .code-preview {
-            background: rgba(0,0,0,0.5);
+        .screenshot-glow {
+            position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+            width: 900px; height: 400px;
+            background: radial-gradient(ellipse, rgba(59,130,246,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .screenshot-frame {
+            max-width: 1000px; margin: 0 auto;
+            background: rgba(255,255,255,0.025);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px;
-            padding: 18px 22px;
-            font-family: "SF Mono", "Fira Code", monospace;
-            font-size: 13px;
-            line-height: 1.75;
-            overflow-x: auto;
-            text-align: left;
-        }
-
-        /* ── 截图框 ── */
-        .screenshot-wrap {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 40px 120px -20px rgba(0,0,0,0.7);
+            border-radius: 20px; overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.04),
+                0 50px 140px -20px rgba(0,0,0,0.8),
+                0 0 80px rgba(59,130,246,0.08);
         }
         .screenshot-bar {
-            height: 38px;
-            background: rgba(255,255,255,0.035);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            display: flex;
-            align-items: center;
-            padding: 0 14px;
-            gap: 7px;
-        }
-        .tl { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
-
-        /* ── 统计条 ── */
-        .stat-item {
-            flex: 1;
-            min-width: 140px;
-            text-align: center;
-            padding: 28px 16px;
-            border-right: 1px solid rgba(255,255,255,0.06);
-        }
-        .stat-item:last-child { border-right: none; }
-
-        /* ── Bento卡片 ── */
-        .bento {
+            height: 42px;
             background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 20px;
-            padding: 32px;
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.3s, background0.3s, transform 0.35s cubic-bezier(0.16,1,0.3,1);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; padding: 0 16px; gap: 8px;
         }
-        .bento::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(500px circle at var(--mx, 50%) var(--my, 50%),
-                rgba(37,99,235,0.07), transparent42%);
-            opacity: 0;
-            transition: opacity 0.35s;pointer-events: none;
+        .dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+
+        /* ══ 分隔线 ══ */
+        .divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin: 0;}
+
+        /* ══ 统计条带 ══ */
+        .stats-strip {
+            display: flex; flex-wrap: wrap;
+            max-width: 900px; margin: 0 auto;
+        }
+        .stats-item {
+            flex: 1; min-width: 160px;
+            padding: 32px 20px; text-align: center;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+        .stats-item:last-child { border-right: none; }
+        .stats-num {
+            font-size: 36px; font-weight: 800;
+            letter-spacing: -0.04em; line-height: 1;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff0%, rgba(255,255,255,0.55) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;}
+        .stats-label { font-size: 12px; color: rgba(255,255,255,0.3); font-weight: 500; letter-spacing: 0.03em; }
+
+        /* ══ Section 通用 ══ */
+        .section { padding: 100px 24px; position: relative; }
+        .section-inner { max-width: 1080px; margin: 0 auto; }
+        .section-eyebrow {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--blue-bright);
+            margin-bottom: 14px;
+        }
+        .section-title {
+            font-size: clamp(30px, 4.5vw, 52px);
+            font-weight: 800; letter-spacing: -0.03em; line-height: 1.06;
+            color: #fff; margin-bottom: 16px;
+        }
+        .section-sub {
+            font-size: 16px; color: rgba(255,255,255,0.38);
+            line-height: 1.7; max-width: 440px;}
+
+        /* ══ Bento 网格 ══ */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 14px;
+        }
+        .bento {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px; padding: 28px;
+            position: relative; overflow: hidden;
+            transition: border-color 0.3s, background 0.3s, transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s;
         }
         .bento:hover {
-            border-color: rgba(59,130,246,0.22);
+            border-color: rgba(59,130,246,0.2);
+            background: var(--surface-2);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(59,130,246,0.06);
+        }
+        /*鼠标跟随光晕 */
+        .bento::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(350px circle at var(--mx,50%) var(--my,50%),
+                rgba(59,130,246,0.07), transparent 50%);
+            opacity: 0; transition: opacity 0.4s; pointer-events: none;
+        }
+        .bento:hover::after { opacity: 1; }
+
+        .bento-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; margin-bottom: 20px; flex-shrink: 0;position: relative;
+        }
+
+        /* span 列 */
+        .col-5{ grid-column: span 5; }
+        .col-7  { grid-column: span 7; }
+        .col-4  { grid-column: span 4; }
+        .col-8  { grid-column: span 8; }
+        .col-6  { grid-column: span 6; }
+        .col-12 { grid-column: span 12; }
+
+        /*══ 终端组件 ══ */
+        .terminal {
+            background: #060610;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 12px; overflow: hidden;}
+        .terminal-bar {
+            height: 36px;
+            background: rgba(255,255,255,0.025);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; padding: 0 12px; gap: 6px;
+        }
+        .terminal-body {
+            padding: 16px 18px;
+            font-family: "SF Mono", "Fira Code", monospace;
+            font-size: 12.5px; line-height: 1.9;
+            color: rgba(255,255,255,0.45);
+        }
+
+        /* ══ 流程线 ══ */
+        .flow-step {
+            display: flex; align-items: flex-start; gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .flow-step:last-child { border-bottom: none; }
+        .flow-num {
+            width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700; color: #60a5fa;
+        }
+
+        /* ══ API卡片 ══ */
+        .api-section {
+            background: rgba(255,255,255,0.018);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;}
+        .api-tab-bar {
+            display: flex; border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,0.015);
+        }
+        .api-tab {
+            padding: 12px 20px;
+            font-size: 13px; font-weight: 500;
+            color: rgba(255,255,255,0.35);
+            cursor: pointer; transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;}
+        .api-tab.active { color: #60a5fa; border-bottom-color: #3b82f6; background: rgba(59,130,246,0.05); }
+        .api-tab:hover:not(.active) { color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.03); }
+
+        /* ══ 安全徽章矩阵 ══ */
+        .security-badge {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 16px; border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            font-size: 13px; color: rgba(255,255,255,0.55);
+            transition: all 0.25s;
+        }
+        .security-badge:hover {
             background: rgba(255,255,255,0.05);
-            transform: translateY(-3px);
+            border-color: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8);
         }
-        .bento:hover::before { opacity: 1; }
+        .security-badge i { font-size: 16px; flex-shrink: 0; }
 
-        .feature-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 21px;
-            margin-bottom: 18px;
-            flex-shrink: 0;
-        }
-
-        /* ── 语言标签 ── */
+        /* ══ 语言芯片 ══ */
         .lang-chip {
-            display: inline-flex;
-            align-items: center;
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            color: rgba(255,255,255,0.55);
-            text-decoration: none;
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 13px; border-radius: 9px;
+            font-family: monospace; font-size: 12.5px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            color: rgba(255,255,255,0.45);
+            text-decoration: none; transition: all 0.2s;
         }
+        .lang-chip:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); }
 
-        /* ── CTA 卡片 ── */
-        .cta-card {
-            background: linear-gradient(135deg, rgba(20,20,55,0.95) 0%, rgba(10,14,45,0.95) 100%);
-            border: 1px solid rgba(59,130,246,0.18);
-            border-radius: 28px;
-            overflow: hidden;
+        /* ══ CTA ══ */
+        .cta-section {
+            padding: 80px 24px 100px;
             position: relative;
         }
-        .cta-card::before {
-            content: '';
-            position: absolute;
-            top: -120px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 500px;
-            height: 300px;
-            background: radial-gradient(ellipse, rgba(37,99,235,0.18), transparent 70%);
+        .cta-card {
+            max-width: 780px; margin: 0 auto;
+            background: linear-gradient(135deg, rgba(15,15,40,0.95) 0%, rgba(8,8,28,0.98) 100%);
+            border: 1px solid rgba(59,130,246,0.18);
+            border-radius: 28px; padding: 70px 48px;
+            text-align: center; position: relative; overflow: hidden;
+        }
+        .cta-glow {
+            position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+            width: 600px; height: 300px;
+            background: radial-gradient(ellipse, rgba(59,130,246,0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .cta-grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
             pointer-events: none;
         }
 
-        /* ── 移动端抽屉 ── */
+        /* ══ Footer ══ */
+        .footer {
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 48px 24px;
+        }
+        .footer-inner { max-width: 1080px; margin: 0 auto; }
+        .footer-link {
+            color: rgba(255,255,255,0.3); font-size: 13px;
+            text-decoration: none; transition: color 0.2s;
+        }
+        .footer-link:hover { color: rgba(255,255,255,0.7); }
+
+        /* ══ 移动端抽屉 ══ */
         .drawer {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: min(320px, 100vw);
-            height: 100dvh;
-            background: rgba(8,8,18,0.97);
-            backdrop-filter: blur(24px);
-            border-left: 1px solid rgba(255,255,255,0.07);
+            position: fixed; top: 0; right: 0;
+            width: min(320px, 100vw); height: 100dvh;
+            background: rgba(4,4,14,0.97);
+            backdrop-filter: blur(28px);
+            border-left: 1px solid rgba(255,255,255,0.06);
             transform: translateX(100%);
-            transition: transform 0.42s cubic-bezier(0.16,1,0.3,1);
-            z-index: 60;
-            display: flex;
-            flex-direction: column;
-            padding: 0 20px 28px;
+            transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+            z-index: 200; display: flex; flex-direction: column;padding: 0 20px 32px;
         }
         .drawer.open { transform: translateX(0); }
         .drawer-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 55;
-            background: rgba(0,0,0,0.55);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
+            position: fixed; inset: 0; z-index: 150;
+            background: rgba(0,0,0,0.6);
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
         .drawer-overlay.open { opacity: 1; pointer-events: all; }
 
-        /* ── 动画 ── */
+        /* ══ 动画 ══ */
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(28px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(32px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .aup { animation: fadeUp 0.85s cubic-bezier(0.16,1,0.3,1) both; }
-        .d1 { animation-delay: 0.06s; }
-        .d2 { animation-delay: 0.15s; }
-        .d3 { animation-delay: 0.24s; }
-        .d4 { animation-delay: 0.33s; }
-        .d5 { animation-delay: 0.42s; }
-
         .reveal {
-            opacity: 0;
-            transform: translateY(22px);
-            transition: opacity 0.75s cubic-bezier(0.16,1,0.3,1), transform 0.75s cubic-bezier(0.16,1,0.3,1);
+            opacity: 0; transform: translateY(24px);
+            transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
         }
         .reveal.in { opacity: 1; transform: none; }
+        .reveal-d1 { transition-delay: 0.05s; }
+        .reveal-d2 { transition-delay: 0.12s; }
+        .reveal-d3 { transition-delay: 0.19s; }
+        .reveal-d4 { transition-delay: 0.26s; }
+        .reveal-d5 { transition-delay: 0.33s; }
+        .reveal-d6 { transition-delay: 0.40s; }
 
-        /* ── Footer ── */
-        .fl {
-            color: var(--subtle);
-            font-size: 12.5px;
-            text-decoration: none;
-            transition: color 0.2s;
+        /* 扫光动画 */
+        @keyframes sweep {
+            0% { transform: translateX(-100%) skewX(-20deg); }
+            100% { transform: translateX(400%) skewX(-20deg); }
         }
-        .fl:hover { color: var(--text); }</style>
+        .sweep::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+            animation: sweep 3s ease-in-out infinite 2s;
+        }
+
+        /* ══ 响应式 ══ */
+        @media (max-width: 900px) {
+            .col-5, .col-7, .col-4, .col-8 { grid-column: span 12; }
+            .col-6 { grid-column: span 12; }
+        }
+        @media (max-width: 640px) {
+            .bento-grid { grid-template-columns: 1fr; gap: 10px; }
+            .col-5,.col-7,.col-4,.col-8,.col-6,.col-12 { grid-column: span 1; }
+            .stat-pill:not(:first-child) { border-left: 1px solid rgba(255,255,255,0.07); }
+            .hero-stats { flex-wrap: wrap; gap: 8px; }
+            .stat-pill { border-radius: 10px !important; border: 1px solid rgba(255,255,255,0.07) !important; }
+            .cta-card { padding: 48px 24px; }}
+        @media (max-width: 767px) {
+            #nav-links-desktop, #nav-actions-desktop { display: none !important; }
+            #menu-btn { display: flex !important; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- ════════════════════════════导航栏（完全重写布局）
-════════════════════════════ -->
-<nav id="nav" class="nav-glass fixed top-0 left-0 right-0 z-50" style="height:56px;">
-    <div style="
-        max-width: 1080px;
-        margin: 0 auto;
-        height: 56px;
-        padding: 0 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-    ">
-        <!-- Logo -->
-        <a href="index.html" style="
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            flex-shrink: 0;
-        ">
-            <div style="
-                width: 28px; height: 28px;
-                border-radius: 8px;
-                background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-                display: flex; align-items: center; justify-content: center;
-                color: white; font-size: 12px; font-weight: 700;
-                flex-shrink: 0;box-shadow: 0 4px 12px rgba(37,99,235,0.4);
-            ">G</div>
-            <span style="font-size:15px; font-weight:600; color:#fff; letter-spacing:-0.02em; white-space:nowrap;">
-                GuYi <span style="color:rgba(255,255,255,0.35); font-weight:400;">Access</span>
+<!-- ████████ 导航 ████████ -->
+<nav class="nav" id="main-nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+            <div class="logo-mark">G</div>
+            <span style="font-size:15px; font-weight:700; color:#fff; letter-spacing:-0.02em;">
+                GuYi<span style="color:rgba(255,255,255,0.3); font-weight:400;">Aegis</span>
             </span>
         </a>
 
-        <!-- 桌面中间导航链接 -->
-        <div id="nav-links" style="
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            flex: 1;
-            justify-content: center;
-        ">
-            <a href="document.html" style="
-                padding: 7px 14px; border-radius: 9px;
-                font-size: 13px; color: rgba(255,255,255,0.55);
-                text-decoration: none; white-space: nowrap;
-                transition: color 0.2s, background0.2s;
-            " onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.06)'"onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.background='transparent'">
-                文档
+        <div class="nav-links" id="nav-links-desktop">
+            <a href="#features" class="nav-link">功能</a>
+            <a href="#api"class="nav-link">API</a>
+            <a href="#security" class="nav-link">安全</a>
+            <a href="document.html" class="nav-link">文档</a>
+            <a href="https://github.com/GuYiovo/GuYi-Aegis" class="nav-link">GitHub</a>
+        </div>
+
+        <div class="nav-actions" id="nav-actions-desktop">
+            <a href="https://github.com/GuYiovo/GuYi-Aegis" target="_blank" class="btn-nav-ghost">
+                <i class="ri-github-fill" style="font-size:15px;"></i> Star
             </a>
-            <a href="https://github.com/GuYiovo/GuYi-Aegis" style="
-                padding: 7px 14px; border-radius: 9px;
-                font-size: 13px; color: rgba(255,255,255,0.55);
-                text-decoration: none; white-space: nowrap;
-                transition: color 0.2s, background 0.2s;
-            " onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.06)'"
-               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.background='transparent'">
-                GitHub
-            </a>
-            <a href="https://qm.qq.com/q/R8q8Nt43aS" style="
-                padding: 7px 14px; border-radius: 9px;
-                font-size: 13px; color: rgba(255,255,255,0.55);
-                text-decoration: none; white-space: nowrap;
-                transition: color 0.2s, background 0.2s;
-            " onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.06)'"
-               onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.background='transparent'">
-                支持
+            <a href="document.html" class="btn-nav-primary">
+                开始使用 <i class="ri-arrow-right-line" style="font-size:13px;"></i>
             </a>
         </div>
 
-        <!-- 桌面右侧按钮 -->
-        <div id="nav-actions" style="
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-        ">
-            <a href="https://github.com/GuYiovo/GuYi-Aegis" target="_blank" class="nav-btn-ghost">
-                <i class="ri-github-fill" style="font-size:14px;"></i>
-                <span>Star</span>
-            </a>
-            <a href="document.html" class="nav-btn-primary">
-                开始构建 <i class="ri-arrow-right-line" style="font-size:13px;"></i>
-            </a>
-        </div>
-
-        <!-- 移动端汉堡按钮 -->
-        <button id="menu-btn" onclick="toggleDrawer()" style="
-            display: none;
-            width: 36px; height: 36px;
-            border: none; background: rgba(255,255,255,0.06);
-            border-radius: 9px; cursor: pointer;
-            align-items: center; justify-content: center;
-            color: rgba(255,255,255,0.7);
-            flex-shrink: 0;
-        ">
+        <!--汉堡 -->
+        <button id="menu-btn" onclick="toggleDrawer()" style="display:none; width:36px; height:36px; border:none; background:rgba(255,255,255,0.05); border-radius:9px; cursor:pointer; align-items:center; justify-content:center; color:rgba(255,255,255,0.7); flex-shrink:0;">
             <i id="menu-icon" class="ri-menu-3-line" style="font-size:18px;"></i>
-        </button>
-    </div>
+        </button></div>
 </nav>
 
-<!-- 响应式：隐藏/显示导航元素 -->
-<style>
-    @media (max-width: 767px) {
-        #nav-links  { display: none !important; }
-        #nav-actions { display: none !important; }
-        #menu-btn   { display: flex !important; }
-    }
-</style>
-
-<!-- 抽屉遮罩 -->
+<!-- 抽屉遮罩 &抽屉 -->
 <div id="drawer-overlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
-
-<!-- 移动端抽屉 -->
 <div id="mobile-drawer" class="drawer">
-    <!-- 抽屉顶部 -->
-    <div style="display:flex; align-items:center; justify-content:space-between; height:60px; flex-shrink:0;">
+    <div style="display:flex; align-items:center; justify-content:space-between; height:64px; flex-shrink:0;">
         <span style="font-size:14px; font-weight:600; color:#fff;">菜单</span>
-        <button onclick="toggleDrawer()" style="
-            width:32px; height:32px; border:none;
-            background:rgba(255,255,255,0.06); border-radius:8px;
-            cursor:pointer; display:flex; align-items:center; justify-content:center;
-            color:rgba(255,255,255,0.5);"><i class="ri-close-line" style="font-size:17px;"></i></button>
+        <button onclick="toggleDrawer()" style="width:32px; height:32px; border:none; background:rgba(255,255,255,0.05); border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.5);">
+            <i class="ri-close-line" style="font-size:17px;"></i>
+        </button>
     </div>
-
-    <!-- 菜单项 -->
     <div style="flex:1; display:flex; flex-direction:column; gap:2px;">
-        <p style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.2); text-transform:uppercase; letter-spacing:0.1em; padding:0 8px; margin-bottom:8px;">导航</p>
-        <a href="document.html" style="display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; color:rgba(255,255,255,0.75); font-size:15px; font-weight:500; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='rgba(255,255,255,0.75)'">
-            <i class="ri-book-2-line" style="color:#60a5fa; width:20px; text-align:center;"></i> 开发文档
-        </a>
-        <a href="https://github.com/GuYiovo/GuYi-Aegis" style="display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; color:rgba(255,255,255,0.75); font-size:15px; font-weight:500; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='rgba(255,255,255,0.75)'">
-            <i class="ri-github-fill" style="color:#a78bfa; width:20px; text-align:center;"></i> GitHub 仓库
-        </a>
-        <a href="https://github.com/GuYiovo/GuYi-Aegis" style="display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; color:rgba(255,255,255,0.75); font-size:15px; font-weight:500; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='rgba(255,255,255,0.75)'">
-            <i class="ri-download-cloud-line" style="color:#4ade80; width:20px; text-align:center;"></i> 立即下载
-        </a><a href="https://qm.qq.com/q/R8q8Nt43aS" style="display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; color:rgba(255,255,255,0.75); font-size:15px; font-weight:500; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='rgba(255,255,255,0.75)'">
-            <i class="ri-customer-service-line" style="color:#fb923c; width:20px; text-align:center;"></i> 联系支持
-        </a>
+        <a href="#features"style="display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; color:rgba(255,255,255,0.7); font-size:15px; font-weight:500; text-decoration:none;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'"><i class="ri-flashlight-line" style="color:#60a5fa;"></i> 核心功能</a>
+        <a href="#api"style="display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; color:rgba(255,255,255,0.7); font-size:15px; font-weight:500; text-decoration:none;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'"><i class="ri-plug-line"style="color:#a78bfa;"></i> API文档</a>
+        <a href="#security"    style="display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; color:rgba(255,255,255,0.7); font-size:15px; font-weight:500; text-decoration:none;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'"><i class="ri-shield-line"style="color:#4ade80;"></i> 安全体系</a>
+        <a href="document.html"style="display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; color:rgba(255,255,255,0.7); font-size:15px; font-weight:500; text-decoration:none;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'"><i class="ri-book-2-line"    style="color:#fbbf24;"></i> 开发文档</a>
+        <a href="https://github.com/GuYiovo/GuYi-Aegis" style="display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; color:rgba(255,255,255,0.7); font-size:15px; font-weight:500; text-decoration:none;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'"><i class="ri-github-fill"    style="color:#e2e8f0;"></i> GitHub</a>
+        <a href="https://qm.qq.com/q/R8q8Nt43aS" style="display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; color:rgba(255,255,255,0.7); font-size:15px; font-weight:500; text-decoration:none;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'"><i class="ri-customer-service-line" style="color:#fb923c;"></i> 联系支持</a>
     </div>
-
-    <!-- 抽屉底部按钮 -->
     <div style="display:flex; flex-direction:column; gap:10px; padding-bottom:env(safe-area-inset-bottom);">
-        <a href="https://github.com/GuYiovo/GuYi-Aegis" target="_blank" class="btn-ghost" style="border-radius:14px; padding:14px;">
+        <a href="https://github.com/GuYiovo/GuYi-Aegis" target="_blank" class="btn-ghost" style="border-radius:14px; padding:14px; justify-content:center;">
             <i class="ri-github-fill"></i> GitHub
         </a>
-        <a href="document.html" class="btn-primary" style="border-radius:14px; padding:14px;">
-            开始构建 <i class="ri-arrow-right-line"></i>
+        <a href="document.html" class="btn-primary" style="border-radius:14px; padding:14px; justify-content:center;">
+            开始使用 <i class="ri-arrow-right-line"></i>
         </a>
     </div>
 </div>
 
 
-<!-- ════════════════════════════
-     Hero Section
-════════════════════════════ -->
-<section class="grid-bg" style="
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 120px 20px 80px;
-    overflow: hidden;
-">
-    <!-- 背景光晕 -->
-    <div class="glow" style="width:700px; height:500px; background:rgba(37,99,235,0.18); top:-100px; left:50%; transform:translateX(-50%); filter:blur(130px);"></div>
-    <div class="glow" style="width:350px; height:350px; background:rgba(124,58,237,0.12); bottom:5%; right:-5%; filter:blur(90px);"></div>
-    <div class="glow" style="width:280px; height:280px; background:rgba(6,182,212,0.08); bottom:15%; left:-5%; filter:blur(80px);"></div><div style="position:relative; z-index:10; width:100%; max-width:860px; margin:0 auto;">
+<!-- ████████ Hero████████ -->
+<section class="hero" id="hero">
+    <div class="hero-grid"></div>
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+    <div class="aurora aurora-4"></div>
 
-        <!-- 徽章 -->
-        <div class="aup d1" style="display:flex; justify-content:center; margin-bottom:28px;">
-            <div class="badge">
-                <span class="badge-dot"></span>
-                V26Pro Enterprise · 正式发布
+    <div style="position:relative; z-index:10; width:100%; max-width:900px;">
+
+        <!--徽章 -->
+        <div style="display:flex; justify-content:center;">
+            <div class="hero-badge">
+                <span class="badge-pulse"></span>
+                V26Pro Enterprise · 全新发布
             </div>
         </div>
 
         <!-- 主标题 -->
-        <h1 class="hero-title gradient-text aup d2" style="margin:0 0 24px;">
-            软件验证，<br>重新定义。
+        <h1 class="hero-title">
+            <span class="title-line-1">软件授权，</span>
+            <span class="title-line-2">工程级重构。</span>
         </h1>
 
         <!-- 副标题 -->
-        <p class="aup d3" style="
-            font-size: clamp(15px, 2.5vw, 20px);
-            color: rgba(255,255,255,0.45);
-            line-height: 1.7;
-            font-weight: 300;
-            max-width: 520px;
-            margin: 0 auto 36px;
-        ">
-            极致轻量的PHP鉴权 API。<br>
-            多应用管理、云端变量下发、设备指纹绑定。
+        <p class="hero-sub">
+            Headless REST API 架构，毫秒级鉴权响应。<br>
+            多应用隔离 · 设备指纹绑定 · 云端变量下发<br>
+            为独立开发者与中小企业而生。
         </p>
 
-        <!-- 按钮组 -->
-        <div class="aup d4" style="
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 52px;
-        ">
+        <!-- 按钮 -->
+        <div class="hero-btns">
             <a href="document.html" class="btn-primary">
-                <i class="ri-book-3-line" style="font-size:15px;"></i>
-                查阅文档
+                <i class="ri-book-3-line"></i> 阅读文档
             </a>
             <a href="https://github.com/GuYiovo/GuYi-Aegis" target="_blank" class="btn-ghost">
-                <i class="ri-github-fill" style="font-size:15px;"></i>
-                在GitHub 获取
+                <i class="ri-github-fill"></i> GitHub 获取
             </a>
         </div>
 
-        <!-- 代码预览 -->
-        <div class="code-preview aup d5" style="max-width:520px; margin:0 auto;">
-            <!-- 标题栏 -->
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
-                <span style="width:10px; height:10px; border-radius:50%; background:rgba(239,68,68,0.7); flex-shrink:0;"></span>
-                <span style="width:10px; height:10px; border-radius:50%; background:rgba(234,179,8,0.7); flex-shrink:0;"></span>
-                <span style="width:10px; height:10px; border-radius:50%; background:rgba(34,197,94,0.7); flex-shrink:0;"></span>
-                <span style="margin-left:8px; color:rgba(255,255,255,0.2); font-size:11px;">quick_verify.py</span>
+        <!-- 统计栏 -->
+        <div style="display:flex; justify-content:center;">
+            <div class="hero-stats">
+                <div class="stat-pill">
+                    <span class="stat-val">&lt;50ms</span>
+                    <span>平均响应</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-val">8+</span>
+                    <span>语言 SDK</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-val">∞</span>
+                    <span>应用上限</span>
+                </div>
+                <div class="stat-pill" style="border-radius:0 12px 12px 0; border-left:none;">
+                    <span class="stat-val">MySQL</span>
+                    <span>高并发内核</span>
+                </div>
             </div>
-            <!-- 代码 -->
-            <div style="color:rgba(255,255,255,0.55);">
-                <span style="color:#60a5fa;">import</span> requests, hashlib</div>
-            <div style="color:rgba(255,255,255,0.55); margin-top:4px;">
-                res = requests.<span style="color:#4ade80;">post</span>(<span style="color:#fbbf24;">"http://site/Verifyfile/api.php"</span>,</div>
-            <div style="color:rgba(255,255,255,0.55); padding-left:32px;">
-                data={<span style="color:#fbbf24;">"card_code"</span>: card, <span style="color:#fbbf24;">"device_hash"</span>: hwid})
-            </div>
-            <div style="color:rgba(255,255,255,0.55); margin-top:4px;">
-                <span style="color:#c084fc;">print</span>(res.json()[<span style="color:#fbbf24;">'data'</span>][<span style="color:#fbbf24;">'expire_time'</span>])<span style="color:rgba(255,255,255,0.2); font-size:12px;"> # 2026-12-31</span>
-            </div></div>
+        </div>
     </div>
 
-    <!-- 产品截图 -->
-    <div class="aup d5" style="
-        position: relative;
-        z-index: 10;
-        width: 100%;
-        max-width: 1000px;
-        margin: 64px auto 0;
-        padding: 0 8px;
-    ">
-        <div class="screenshot-wrap">
-            <div class="screenshot-bar">
-                <div class="tl" style="background:#ff5f57;"></div>
-                <div class="tl" style="background:#febc2e;"></div>
-                <div class="tl" style="background:#28c840;"></div>
-                <div style="flex:1; display:flex; justify-content:center;">
-                    <div style="
-                        font-size:11px; font-family:monospace; color:rgba(255,255,255,0.18);
-                        background:rgba(255,255,255,0.04); border-radius:6px;
-                        padding:2px 14px; max-width:280px; overflow:hidden; white-space:nowrap;">⚡ cards.php — GuYi Access Dashboard</div>
-                </div>
-                <div style="width:52px;"></div>
+    <!-- 代码预览浮动 -->
+    <div style="position:relative; z-index:10; width:100%; max-width:560px; margin:52px auto0;">
+        <div class="terminal" style="box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(59,130,246,0.08);">
+            <div class="terminal-bar">
+                <div class="dot" style="background:#ff5f57;"></div>
+                <div class="dot" style="background:#febc2e;"></div>
+                <div class="dot" style="background:#28c840;"></div>
+                <span style="margin-left:8px; font-family:monospace; font-size:11px; color:rgba(255,255,255,0.2);">quick_verify.py</span>
             </div>
-            <img src="https://youke.xn--y7xa690gmna.cn/s1/2026/02/02/6980ae52b5f45.webp"
-                 alt="Dashboard Interface"
-                 style="width:100%; height:auto; display:block;"
-                 onerror="this.src='https://placehold.co/1200x720/0d0d1a/1e293b?text=Dashboard+Preview'">
+            <div class="terminal-body">
+                <div><span style="color:#f472b6;">import</span> <span style="color:#e8e8f0;">requests</span>, <span style="color:#e8e8f0;">hashlib</span></div>
+                <div style="height:8px;"></div>
+                <div><span style="color:rgba(255,255,255,0.25);"># 一行代码接入卡密验证</span></div>
+                <div>res = requests.<span style="color:#4ade80;">post</span>(<span style="color:#fbbf24;">"http://site/Verifyfile/api.php"</span>,</div>
+                <div style="padding-left:28px;">json={<span style="color:#fbbf24;">"card_code"</span>: card, <span style="color:#fbbf24;">"device_hash"</span>: hwid})</div>
+                <div style="height:8px;"></div>
+                <div><span style="color:#f472b6;">if</span> res.json()[<span style="color:#fbbf24;">'code'</span>] == <span style="color:#60a5fa;">200</span>:</div>
+                <div style="padding-left:24px;"><span style="color:#c084fc;">print</span>(<span style="color:#fbbf24;">"✓ 验证通过"</span>, res.json()[<span style="color:#fbbf24;">'data'</span>][<span style="color:#fbbf24;">'expire_time'</span>])</div>
+                <div style="padding-left:0;"><span style="color:#f472b6;">else</span>: <span style="color:#c084fc;">print</span>(<span style="color:#fbbf24;">"✗"</span>, res.json()[<span style="color:#fbbf24;">'msg'</span>])</div>
+            </div>
         </div>
-        <!-- 底部渐隐遮罩 -->
-        <div style="
-            position:absolute; bottom:0; left:0; right:0; height:120px;
-            background: linear-gradient(to top, #07070f, transparent);
-            pointer-events:none;
-        "></div>
+        <!-- 发光效果 -->
+        <div style="position:absolute; bottom:-30px; left:50%; transform:translateX(-50%); width:400px; height:80px; background:radial-gradient(ellipse, rgba(59,130,246,0.15), transparent 70%); pointer-events:none;"></div>
     </div>
 </section>
 
 
-<!-- ════════════════════════════
-     统计条
-════════════════════════════ -->
-<section class="reveal" style="border-top:1px solid rgba(255,255,255,0.06); border-bottom:1px solid rgba(255,255,255,0.06);">
-    <div style="max-width:900px; margin:0 auto; display:flex; flex-wrap:wrap;">
-        <div class="stat-item">
-            <div style="font-size:32px; font-weight:700; color:#fff; letter-spacing:-0.03em; line-height:1; margin-bottom:6px;">10<span style="font-size:18px; color:rgba(255,255,255,0.4);">+</span></div>
-            <div style="font-size:12px; color:rgba(255,255,255,0.35); font-weight:500;">语言 SDK支持</div>
+<!-- ████████ 产品截图 ████████ -->
+<section class="screenshot-section reveal">
+    <div class="screenshot-glow"></div>
+    <div class="screenshot-frame">
+        <div class="screenshot-bar">
+            <div class="dot" style="background:#ff5f57;"></div>
+            <div class="dot" style="background:#febc2e;"></div>
+            <div class="dot" style="background:#28c840;"></div>
+            <div style="flex:1; display:flex; justify-content:center;">
+                <div style="font-family:monospace; font-size:11px; color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.04); border-radius:6px; padding:2px 16px;">⚡ GuYi Aegis Pro — 后台控制台</div>
+            </div>
         </div>
-        <div class="stat-item">
-            <div style="font-size:32px; font-weight:700; color:#fff; letter-spacing:-0.03em; line-height:1; margin-bottom:6px;">&lt;50<span style="font-size:18px; color:rgba(255,255,255,0.4);">ms</span></div>
-            <div style="font-size:12px; color:rgba(255,255,255,0.35); font-weight:500;">平均验证延迟</div>
-        </div>
-        <div class="stat-item">
-            <div style="font-size:32px; font-weight:700; color:#fff; letter-spacing:-0.03em; line-height:1; margin-bottom:6px;">∞</div>
-            <div style="font-size:12px; color:rgba(255,255,255,0.35); font-weight:500;">云端变量支持</div>
-        </div>
-        <div class="stat-item">
-            <div style="font-size:32px; font-weight:700; color:#fff; letter-spacing:-0.03em; line-height:1; margin-bottom:6px;">V26</div>
-            <div style="font-size:12px; color:rgba(255,255,255,0.35); font-weight:500;">Pro Enterprise</div>
-        </div>
+        <img src="https://youke.xn--y7xa690gmna.cn/s1/2026/02/02/6980ae52b5f45.webp"
+             alt="Dashboard"
+             style="width:100%; height:auto; display:block;"
+             onerror="this.src='https://placehold.co/1200x640/080814/0d0d1a?text=Dashboard+Preview'">
     </div>
 </section>
 
 
-<!-- ════════════════════════════
-     Bento 特性区
-════════════════════════════ -->
-<section style="padding: 100px 20px;">
-    <div style="max-width:980px; margin:0 auto;">
+<!-- ████████ 统计条████████ -->
+<hr class="divider">
+<div style="padding: 0;">
+    <div class="stats-strip reveal">
+        <div class="stats-item">
+            <div class="stats-num">50<span style="font-size:20px; color:rgba(255,255,255,0.3);">ms</span></div>
+            <div class="stats-label">平均验证延迟</div>
+        </div>
+        <div class="stats-item">
+            <div class="stats-num">8<span style="font-size:20px; color:rgba(255,255,255,0.3);">+</span></div>
+            <div class="stats-label">语言 SDK 支持</div>
+        </div>
+        <div class="stats-item">
+            <div class="stats-num">∞</div>
+            <div class="stats-label">云端变量</div>
+        </div>
+        <div class="stats-item">
+            <div class="stats-num">V26</div>
+            <div class="stats-label">Pro Enterprise</div>
+        </div>
+    </div>
+</div>
+<hr class="divider">
 
-        <!-- 标题 -->
-        <div class="reveal" style="text-align:center; margin-bottom:56px;">
-            <p style="font-size:11px; font-weight:700; color:#3b82f6; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:12px;">Core Features</p>
-            <h2 style="font-size:clamp(32px,5vw,50px); font-weight:700; color:#fff; letter-spacing:-0.025em; line-height:1.06; margin-bottom:14px;">
-                强大，从骨子里。
-            </h2><p style="font-size:17px; color:rgba(255,255,255,0.4); max-width:380px; margin:0 auto; line-height:1.6;">
-                不只是卡密系统，更是软件生态的数字中枢。
-            </p>
+
+<!-- ████████ 核心功能 Bento ████████ -->
+<section class="section" id="features">
+    <div class="section-inner">
+        <div style="text-align:center; margin-bottom:60px;" class="reveal">
+            <div class="section-eyebrow">Core Features</div>
+            <h2 class="section-title">强大功能，开箱即用。</h2>
+            <p class="section-sub" style="margin:0 auto;">每一项设计都经过工程师的深思熟虑，让授权验证变得前所未有的简单与安全。</p>
         </div>
 
-        <!-- 网格-->
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px;">
+        <div class="bento-grid">
 
-            <!-- 大卡：速度（占2列） -->
-            <div class="bento reveal" style="grid-column: span 2; transition-delay:0.05s;">
-                <div class="feature-icon" style="background:rgba(59,130,246,0.1); color:#60a5fa;">
-                    <i class="ri-flashlight-line"></i>
+            <!-- 大卡：极速响应 -->
+            <div class="bento col-7reveal reveal-d1 sweep">
+                <div class="bento-icon" style="background:rgba(59,130,246,0.1);">
+                    <i class="ri-flashlight-fill" style="color:#60a5fa;"></i>
                 </div>
-                <h3 style="font-size:20px; font-weight:600; color:#fff; margin-bottom:10px;">闪电般的验证速度</h3>
-                <p style="font-size:14px; color:rgba(255,255,255,0.4); line-height:1.7; margin-bottom:20px;">
-                    Headless REST API 架构，移除所有无用渲染层。<br>单次鉴权平均响应时间不超过 50ms。
-                </p><div style="background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:14px 18px; font-family:monospace; font-size:12.5px; color:rgba(255,255,255,0.5); line-height:1.8;">
-                    <span style="color:rgba(255,255,255,0.25);">POST /Verifyfile/api.php</span><br>
-                    <span style="color:#4ade80;">→ 200OK</span><span style="color:rgba(255,255,255,0.25);"> {"code":200,"msg":"OK"}</span><br>
-                    <span style="color:rgba(255,255,255,0.25);">Elapsed:</span><span style="color:#fbbf24;">38ms</span>
+                <div style="font-size:21px; font-weight:700; color:#fff; margin-bottom:10px; letter-spacing:-0.02em;">闪电级验证速度</div>
+                <p style="font-size:14px; color:rgba(255,255,255,0.38); line-height:1.75; margin-bottom:24px;">Headless REST API 架构，移除所有渲染层。单次鉴权平均响应 &lt;50ms，支持高并发并发场景。</p>
+                <div class="terminal">
+                    <div class="terminal-bar">
+                        <div class="dot" style="background:#ff5f57;"></div>
+                        <div class="dot" style="background:#febc2e;"></div>
+                        <div class="dot" style="background:#28c840;"></div>
+                    </div>
+                    <div class="terminal-body" style="padding:12px 16px;">
+                        <div><span style="color:rgba(255,255,255,0.25);">POST</span> /Verifyfile/api.php</div>
+                        <div><span style="color:#4ade80;">→ HTTP 200</span><span style="color:rgba(255,255,255,0.2);">{"code":200,"msg":"OK"}</span></div>
+                        <div><span style="color:rgba(255,255,255,0.25);">Elapsed:</span> <span style="color:#fbbf24;">38ms</span> <span style="color:rgba(255,255,255,0.12);">↙ 平均响应</span></div></div>
                 </div>
             </div>
 
-            <!-- 小卡：设备绑定 -->
-            <div class="bento reveal" style="transition-delay:0.1s;">
-                <div class="feature-icon" style="background:rgba(167,139,250,0.1); color:#a78bfa;">
-                    <i class="ri-fingerprint-line"></i>
+            <!-- 竖卡：设备绑定 -->
+            <div class="bento col-5 reveal reveal-d2">
+                <div class="bento-icon" style="background:rgba(167,139,250,0.1);">
+                    <i class="ri-fingerprint-fill" style="color:#a78bfa;"></i>
                 </div>
-                <h3 style="font-size:18px; font-weight:600; color:#fff; margin-bottom:10px;">设备指纹绑定</h3>
-                <p style="font-size:13.5px; color:rgba(255,255,255,0.4); line-height:1.65; margin-bottom:18px;">
-                    硬件 ID 一对一锁定，彻底杜绝卡密分享与异地盗用。
-                </p>
+                <div style="font-size:21px; font-weight:700; color:#fff; margin-bottom:10px; letter-spacing:-0.02em;">设备指纹绑定</div>
+                <p style="font-size:14px; color:rgba(255,255,255,0.38); line-height:1.75; margin-bottom:24px;">硬件 ID 一对一锁定，彻底杜绝卡密分享与异地盗用。后台支持一键解绑与批量管理。</p>
                 <div style="display:flex; flex-wrap:wrap; gap:8px;">
-                    <span style="font-size:12px; font-family:monospace; padding:4px 12px; border-radius:8px; background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.18); color:rgba(167,139,250,0.85);">MD5 Hash</span>
-                    <span style="font-size:12px; font-family:monospace; padding:4px 12px; border-radius:8px; background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.18); color:rgba(167,139,250,0.85);">设备锁定</span>
+                    <span style="font-size:12px; font-family:monospace; padding:5px 13px; border-radius:8px; background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.18); color:rgba(167,139,250,0.85);">MD5 Hash</span>
+                    <span style="font-size:12px; font-family:monospace; padding:5px 13px; border-radius:8px; background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.18); color:rgba(167,139,250,0.85);">设备锁定</span>
+                    <span style="font-size:12px; font-family:monospace; padding:5px 13px; border-radius:8px; background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.18); color:rgba(167,139,250,0.85);">一键解绑</span>
+                </div>
+                <!-- 指纹可视化 -->
+                <div style="margin-top:24px; display:flex; align-items:center; gap:12px; padding:14px 16px; background:rgba(167,139,250,0.05); border:1px solid rgba(167,139,250,0.12); border-radius:12px;">
+                    <i class="ri-fingerprint-line" style="font-size:28px; color:rgba(167,139,250,0.6);"></i>
+                    <div>
+                        <div style="font-family:monospace; font-size:11px; color:rgba(255,255,255,0.35);">device_hash</div>
+                        <div style="font-family:monospace; font-size:12px; color:rgba(167,139,250,0.7);">a3f9...b21c✓ 已绑定</div>
+                    </div>
                 </div>
             </div>
 
             <!-- 小卡：云变量 -->
-            <div class="bento reveal" style="transition-delay:0.15s;">
-                <div class="feature-icon" style="background:rgba(6,182,212,0.1); color:#22d3ee;">
-                    <i class="ri-cloud-line"></i>
+            <div class="bento col-4 reveal reveal-d3">
+                <div class="bento-icon" style="background:rgba(6,182,212,0.1);">
+                    <i class="ri-cloud-fill" style="color:#22d3ee;"></i>
                 </div>
-                <h3 style="font-size:18px; font-weight:600; color:#fff; margin-bottom:10px;">云端变量下发</h3>
-                <p style="font-size:13.5px; color:rgba(255,255,255,0.4); line-height:1.65; margin-bottom:18px;">
-                    无需发版即可更新公告、链接与配置。
-                </p>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px; font-weight:500;">
-                    <div style="background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.18); border-radius:9px; padding:8px; text-align:center; color:#4ade80;">Public</div>
-                    <div style="background:rgba(251,146,60,0.07); border:1px solid rgba(251,146,60,0.18); border-radius:9px; padding:8px; text-align:center; color:#fb923c;">Private</div>
-                </div>
-            </div>
-
-            <!-- 大卡：多语言（占 2 列） -->
-            <div class="bento reveal" style="grid-column: span 2; transition-delay:0.2s;">
-                <div class="feature-icon" style="background:rgba(52,211,153,0.1); color:#34d399;">
-                    <i class="ri-code-s-slash-line"></i>
-                </div>
-                <h3 style="font-size:20px; font-weight:600; color:#fff; margin-bottom:10px;">10种语言 SDK示例</h3>
-                <p style="font-size:14px; color:rgba(255,255,255,0.4); line-height:1.7; margin-bottom:20px;">
-                    无论您的软件使用何种技术栈，复制即可接入。
-                </p>
-                <div style="display:flex; flex-wrap:wrap; gap:8px;">
-                    <span class="lang-chip">Python</span>
-                    <span class="lang-chip">易语言</span>
-                    <span class="lang-chip">PHP</span>
-                    <span class="lang-chip">C#</span>
-                    <span class="lang-chip">Java</span>
-                    <span class="lang-chip">Node.js</span>
-                    <span class="lang-chip">Go</span>
-                    <span class="lang-chip">C++</span>
-                    <a href="document.html" style="font-size:12px; font-family:monospace; padding:5px 12px; border-radius:8px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.22); color:#93c5fd; text-decoration:none;">查看全部→</a>
+                <div style="font-size:18px; font-weight:700; color:#fff; margin-bottom:10px;">云端变量引擎</div>
+                <p style="font-size:13.5px; color:rgba(255,255,255,0.38); line-height:1.7; margin-bottom:18px;">后台配置，无需发版即可动态推送配置、公告、链接。</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px; font-weight:600;">
+                    <div style="background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.18); border-radius:10px; padding:10px; text-align:center; color:#4ade80;">
+                        <div style="font-size:18px; margin-bottom:4px;"><i class="ri-earth-line"></i></div>
+                        公开变量
+                    </div>
+                    <div style="background:rgba(251,146,60,0.07); border:1px solid rgba(251,146,60,0.18); border-radius:10px; padding:10px; text-align:center; color:#fb923c;">
+                        <div style="font-size:18px; margin-bottom:4px;"><i class="ri-lock-2-line"></i></div>
+                        私有变量
+                    </div>
                 </div>
             </div>
 
-            <!-- 小卡：防刷 -->
-            <div class="bento reveal" style="transition-delay:0.25s;">
-                <div class="feature-icon" style="background:rgba(239,68,68,0.1); color:#f87171;">
-                    <i class="ri-shield-keyhole-line"></i>
+            <!-- 小卡：多应用 -->
+            <div class="bento col-4 reveal reveal-d4">
+                <div class="bento-icon" style="background:rgba(251,191,36,0.1);">
+                    <i class="ri-apps-2-fill" style="color:#fbbf24;"></i>
                 </div>
-                <h3 style="font-size:18px; font-weight:600; color:#fff; margin-bottom:10px;">防刷保护</h3>
-                <p style="font-size:13.5px; color:rgba(255,255,255,0.4); line-height:1.65; margin-bottom:18px;">
-                    429 速率限制与 IP 封锁，保护接口免受暴力破解。
-                </p>
-                <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.18); border-radius:10px; padding:10px 14px; font-family:monospace; font-size:12px; color:#f87171;">
+                <div style="font-size:18px; font-weight:700; color:#fff; margin-bottom:10px;">多应用 SaaS 管理</div>
+                <p style="font-size:13.5px; color:rgba(255,255,255,0.38); line-height:1.7; margin-bottom:20px;">无限应用扩展，每个应用独立 App Key、卡密池与云变量空间。</p>
+                <div style="display:flex; align-items:center; gap:-6px;">
+                    <div style="display:flex;">
+                        <div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#1d4ed8); display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:700; border:2px solid var(--bg); margin-right:-8px; z-index:4;">A</div>
+                        <div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#8b5cf6,#6d28d9); display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:700; border:2px solid var(--bg); margin-right:-8px; z-index:3;">B</div>
+                <div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#10b981,#059669); display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:700; border:2px solid var(--bg); margin-right:-8px; z-index:2;">C</div><div style="width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.3); font-size:12px; border:2px solid var(--bg); z-index:1;">+</div>
+                    </div>
+                    <span style="font-size:12px; color:rgba(255,255,255,0.25); margin-left:16px;">无限扩展</span>
+                </div>
+            </div>
+
+            <!-- 小卡：防刷限流 -->
+            <div class="bento col-4 reveal reveal-d5">
+                <div class="bento-icon" style="background:rgba(239,68,68,0.1);">
+                    <i class="ri-shield-flash-fill" style="color:#f87171;"></i>
+                </div>
+                <div style="font-size:18px; font-weight:700; color:#fff; margin-bottom:10px;">滑动窗口限流</div>
+                <p style="font-size:13.5px; color:rgba(255,255,255,0.38); line-height:1.7; margin-bottom:16px;">LOCK_EX 文件锁 + 60s 滑动窗口，彻底解决并发竞争，防暴力破解。</p>
+                <div style="background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.18); border-radius:10px; padding:10px 14px; font-family:monospace; font-size:12px; color:#f87171;">
                     HTTP 429 Too Many Requests
                 </div>
             </div>
 
-            <!-- 大卡：多应用（占 2 列） -->
-            <div class="bento reveal" style="grid-column: span 2; transition-delay:0.3s;">
-                <div class="feature-icon" style="background:rgba(251,191,36,0.1); color:#fbbf24;">
-                    <i class="ri-apps-line"></i>
-                </div>
-                <h3 style="font-size:20px; font-weight:600; color:#fff; margin-bottom:10px;">多应用独立管理</h3>
-                <p style="font-size:14px; color:rgba(255,255,255,0.4); line-height:1.7; margin-bottom:20px;">
-                    一套系统管理多个软件，每个应用拥有独立的app_key、卡密池与云端变量空间。
-                </p>
-                <div style="display:flex; align-items:center; gap:16px;">
-                    <div style="display:flex;">
-                        <div style="width:36px; height:36px; border-radius:50%; background:#3b82f6; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:700; border:2px solid #07070f; margin-right:-8px;">A</div>
-                        <div style="width:36px; height:36px; border-radius:50%; background:#8b5cf6; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:700; border:2px solid #07070f; margin-right:-8px;">B</div>
-                        <div style="width:36px; height:36px; border-radius:50%; background:#10b981; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:700; border:2px solid #07070f; margin-right:-8px;">C</div>
-                        <div style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.35); font-size:12px; border:2px solid #07070f;">+</div>
+            <!-- 宽卡：多语言 SDK -->
+            <div class="bento col-8 reveal reveal-d1">
+                <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap;">
+                    <div>
+                        <div class="bento-icon" style="background:rgba(52,211,153,0.1); margin-bottom:14px;">
+                            <i class="ri-code-s-slash-fill" style="color:#34d399;"></i>
+                        </div>
+                        <div style="font-size:21px; font-weight:700; color:#fff; margin-bottom:8px; letter-spacing:-0.02em;">8+ 语言 SDK</div>
+                        <p style="font-size:14px; color:rgba(255,255,255,0.38); line-height:1.7; max-width:320px;">无论何种技术栈，Copy-Paste 即可接入，加速软件上线。</p>
                     </div>
-                    <span style="font-size:13px; color:rgba(255,255,255,0.3);">无限应用扩展</span>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <span class="lang-chip"><i class="ri-python-fill" style="color:#fbbf24;"></i> Python</span>
+                    <span class="lang-chip"><i class="ri-code-line" style="color:#60a5fa;"></i>易语言</span>
+                    <span class="lang-chip"><i class="ri-code-s-slash-line" style="color:#a78bfa;"></i> PHP</span>
+                    <span class="lang-chip"><i class="ri-terminal-box-line" style="color:#4ade80;"></i> C#</span>
+                    <span class="lang-chip"><i class="ri-cup-fill" style="color:#fb923c;"></i> Java</span>
+                    <span class="lang-chip"><i class="ri-nodejs-fill" style="color:#86efac;"></i> Node.js</span>
+                    <span class="lang-chip"><i class="ri-code-line" style="color:#22d3ee;"></i> Go</span>
+                    <span class="lang-chip"><i class="ri-code-line" style="color:#c084fc;"></i> C++</span>
+                    <a href="document.html" style="display:inline-flex; align-items:center; gap:6px; padding:6px 13px; border-radius:9px; font-size:12.5px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.22); color:#93c5fd; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.background='rgba(59,130,246,0.18)'" onmouseout="this.style.background='rgba(59,130,246,0.1)'">
+                        查看全部 <i class="ri-arrow-right-line"></i>
+                    </a>
                 </div>
             </div>
 
             <!-- 小卡：零依赖 -->
-            <div class="bento reveal" style="transition-delay:0.35s;">
-                <div class="feature-icon" style="background:rgba(99,102,241,0.1); color:#818cf8;">
-                    <i class="ri-server-line"></i>
+            <div class="bento col-4 reveal reveal-d2">
+                <div class="bento-icon" style="background:rgba(99,102,241,0.1);">
+                    <i class="ri-server-fill" style="color:#818cf8;"></i>
                 </div>
-                <h3 style="font-size:18px; font-weight:600; color:#fff; margin-bottom:10px;">零依赖部署</h3>
-                <p style="font-size:13.5px; color:rgba(255,255,255,0.4); line-height:1.65; margin-bottom:18px;">
-                纯 PHP + MySQL，任意虚拟主机均可运行，1分钟完成安装。
-                </p>
-                <div style="display:flex; flex-direction:column; gap:6px; font-size:12.5px; font-family:monospace; color:rgba(255,255,255,0.3);">
-                    <span><i class="ri-check-line" style="color:#4ade80;"></i> PHP &gt; 7.2</span>
-                    <span><i class="ri-check-line" style="color:#4ade80;"></i> MySQL 5.6+</span>
+                <div style="font-size:18px; font-weight:700; color:#fff; margin-bottom:10px;">零依赖部署</div>
+                <p style="font-size:13.5px; color:rgba(255,255,255,0.38); line-height:1.7; margin-bottom:18px;">纯 PHP + MySQL，任意虚拟主机均可运行，1分钟完成安装向导。</p>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:rgba(255,255,255,0.4);">
+                        <i class="ri-check-line" style="color:#4ade80;"></i> PHP≥ 7.4 + GD扩展
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:rgba(255,255,255,0.4);">
+                        <i class="ri-check-line" style="color:#4ade80;"></i> MySQL5.7 / 8.0
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:rgba(255,255,255,0.4);">
+                        <i class="ri-check-line" style="color:#4ade80;"></i> Nginx / Apache
+                    </div>
                 </div>
-            </div></div>
+            </div>
 
-        <!-- 移动端响应式：小屏单列 -->
-        <style>
-            @media (max-width: 640px) {
-                .bento[style*="grid-column: span 2"] { grid-column: span 1!important; }
-                section > div > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
-            }
-            @media (min-width: 641px) and (max-width: 900px) {
-                .bento[style*="grid-column: span 2"] { grid-column: span 1 !important; }
-                section > div > div[style*="grid-template-columns:repeat(3"] { grid-template-columns: repeat(2,1fr) !important; }
-            }
-        </style>
+        </div><!-- /bento-grid -->
     </div>
 </section>
 
 
-<!-- ════════════════════════════
-     CTA 区域
-════════════════════════════ -->
-<section style="padding: 20px 20px 100px;">
-    <div style="max-width:700px; margin:0 auto;" class="reveal">
-        <div class="cta-card" style="padding: 60px 40px; text-align:center;">
-            <div style="position:relative; z-index:10;">
-                <p style="font-size:11px; font-weight:700; color:#3b82f6; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:14px;">Get Started Free</p>
-                <h2 style="font-size:clamp(28px,4vw,42px); font-weight:700; color:#fff; letter-spacing:-0.025em; line-height:1.1; margin-bottom:14px;">
-                    准备好构建了吗？
-                </h2>
-                <p style="font-size:15px; color:rgba(255,255,255,0.45); line-height:1.7; margin-bottom:32px; max-width:340px; margin-left:auto; margin-right:auto;">
-                    立即下载 GuYi Access，为您的软件接入企业级授权验证能力。完全免费开源。
-                </p>
-                <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px;">
-                    <a href="https://github.com/GuYiovo/GuYi-Aegis" target="_blank" class="btn-primary" style="padding:14px 32px; border-radius:14px;">
-                        <i class="ri-download-cloud-line"></i> 免费下载
-                    </a>
-                    <a href="document.html" class="btn-ghost" style="padding:14px 32px; border-radius:14px;">
-                        阅读文档 <i class="ri-arrow-right-line"></i>
-                    </a>
+<!-- ████████ API 演示 ████████ -->
+<section class="section" id="api" style="padding-top:20px;">
+    <div class="section-inner">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start;">
+
+            <!-- 左侧文字 -->
+            <div class="reveal">
+                <div class="section-eyebrow">API Reference</div>
+                <h2 class="section-title" style="font-size:clamp(28px,3.5vw,42px);">一个接口，<br>搞定所有场景。</h2>
+                <p style="font-size:15px; color:rgba(255,255,255,0.38); line-height:1.75; margin-bottom:32px;">统一的 JSON 响应结构，支持 GET / POST，参数按优先级独立读取，彻底杜绝参数污染。</p>
+
+                <!-- 调用模式 -->
+                <div style="display:flex; flex-direction:column; gap:0;">
+                    <div class="flow-step">
+                        <div class="flow-num">1</div>
+                        <div>
+                            <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">卡密验证模式</div>
+                            <div style="font-size:13px; color:rgba(255,255,255,0.35); line-height:1.6;">提交 <code style="font-family:monospace; font-size:12px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.08); padding:1px 6px; border-radius:5px; color:#93c5fd;">card_code</code> +<code style="font-family:monospace; font-size:12px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.08); padding:1px 6px; border-radius:5px; color:#93c5fd;">device_hash</code>，返回到期时间与全部云变量。</div>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-num">2</div>
+                        <div>
+                            <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">公开变量模式</div>
+                            <div style="font-size:13px; color:rgba(255,255,255,0.35); line-height:1.6;">仅提交 <code style="font-family:monospace; font-size:12px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.08); padding:1px 6px; border-radius:5px; color:#93c5fd;">app_key</code>，无需卡密，自动返回 <code style="font-family:monospace; font-size:12px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.08); padding:1px 6px; border-radius:5px; color:#93c5fd;">is_public=1</code> 变量。私有变量安全隔离。</div>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-num">3</div>
+                        <div>
+                            <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">统一响应结构</div>
+                            <div style="font-size:13px; color:rgba(255,255,255,0.35); line-height:1.6;">所有响应通过 <code style="font-family:monospace; font-size:12px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.08); padding:1px 6px; border-radius:5px; color:#93c5fd;">jsonOut()</code> 统一输出 <code style="font-family:monospace; font-size:12px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.08); padding:1px 6px; border-radius:5px; color:#93c5fd;">{code, msg, data}</code> 结构。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧代码 -->
+            <div class="reveal reveal-d2">
+                <div class="api-section">
+                    <div class="api-tab-bar" id="api-tabs">
+                        <div class="api-tab active" onclick="switchApiTab('request')">请求示例</div>
+                        <div class="api-tab" onclick="switchApiTab('success')">成功响应</div>
+                        <div class="api-tab" onclick="switchApiTab('error')">错误响应</div>
+                    </div>
+
+                    <!-- 请求 -->
+                    <div id="api-request" style="padding:20px;">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px; padding:10px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:10px; font-family:monospace; font-size:12.5px; color:rgba(255,255,255,0.45);">
+                            <span style="background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); color:#60a5fa; font-size:10px; font-weight:700; letter-spacing:0.06em; padding:3px 8px; border-radius:6px; flex-shrink:0;">POST</span>
+                            /Verifyfile/api.php
+                        </div>
+                        <div class="terminal">
+                            <div class="terminal-bar">
+                                <div class="dot" style="background:#ff5f57;"></div>
+                                <div class="dot" style="background:#febc2e;"></div>
+                                <div class="dot" style="background:#28c840;"></div>
+                                <span style="margin-left:8px; font-family:monospace; font-size:11px; color:rgba(255,255,255,0.2);">JSON Body</span>
+                            </div>
+                            <div class="terminal-body">
+<pre style="margin:0">{
+  <span style="color:#c084fc">"card_code"</span>:<span style="color:#4ade80">"VIP-88888888"</span>,
+  <span style="color:#c084fc">"device_hash"</span>: <span style="color:#4ade80">"a3f9...b21c"</span>,
+  <span style="color:#c084fc">"app_key"</span>:     <span style="color:#4ade80">"your_app_key"</span>
+}</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 成功响应 -->
+                    <div id="api-success" style="display:none; padding:20px;">
+                        <div class="terminal">
+                            <div class="terminal-bar">
+                                <div class="dot" style="background:#ff5f57;"></div>
+                                <div class="dot" style="background:#febc2e;"></div>
+                                <div class="dot" style="background:#28c840;"></div>
+                                <span style="margin-left:8px; font-family:monospace; font-size:11px; color:rgba(255,255,255,0.2);">验证通过 · HTTP 200</span>
+                            </div>
+                            <div class="terminal-body">
+<pre style="margin:0">{
+  <span style="color:#c084fc">"code"</span>: <span style="color:#fbbf24">200</span>,
+  <span style="color:#c084fc">"msg"</span>:  <span style="color:#4ade80">"OK"</span>,
+  <span style="color:#c084fc">"data"</span>: {
+    <span style="color:#c084fc">"expire_time"</span>: <span style="color:#4ade80">"2026-12-31 23:59:59"</span>,
+    <span style="color:#c084fc">"variables"</span>: {
+      <span style="color:#c084fc">"notice"</span>: <span style="color:#4ade80">"最新公告..."</span>,
+      <span style="color:#c084fc">"download_url"</span>: <span style="color:#4ade80">"https://..."</span>
+    }
+  }
+}</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 错误响应 -->
+                    <div id="api-error" style="display:none; padding:20px;">
+                        <div class="terminal">
+                            <div class="terminal-bar">
+                                <div class="dot" style="background:#ff5f57;"></div>
+                                <div class="dot" style="background:#febc2e;"></div>
+                                <div class="dot" style="background:#28c840;"></div>
+                                <span style="margin-left:8px; font-family:monospace; font-size:11px; color:rgba(255,255,255,0.2);">错误场景</span>
+                            </div>
+                            <div class="terminal-body">
+<pre style="margin:0"><span style="color:rgba(255,255,255,0.25)">// 参数非法</span>
+{ <span style="color:#c084fc">"code"</span>: <span style="color:#fbbf24">400</span>, <span style="color:#c084fc">"msg"</span>: <span style="color:#f87171">"缺少 device_hash"</span> }
+
+<span style="color:rgba(255,255,255,0.25)">//卡密无效</span>
+{ <span style="color:#c084fc">"code"</span>: <span style="color:#fbbf24">403</span>, <span style="color:#c084fc">"msg"</span>: <span style="color:#f87171">"卡密不存在或已过期"</span> }
+
+<span style="color:rgba(255,255,255,0.25)">// 触发限流</span>
+{ <span style="color:#c084fc">"code"</span>: <span style="color:#fbbf24">429</span>, <span style="color:#c084fc">"msg"</span>: <span style="color:#fbbf24">"Too Many Requests"</span> }
+
+<span style="color:rgba(255,255,255,0.25)">// 服务器错误（已脱敏）</span>
+{ <span style="color:#c084fc">"code"</span>: <span style="color:#fbbf24">500</span>, <span style="color:#c084fc">"msg"</span>: <span style="color:#f87171">"服务器内部错误"</span>}</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div></div>
+    </div>
+    <!--响应式：小屏单列 -->
+    <style>
+        @media (max-width: 820px) {
+            #api .section-inner > div { grid-template-columns: 1fr !important; }
+        }
+    </style>
+</section>
+
+
+<!-- ████████ 安全体系 ████████ -->
+<section class="section" id="security" style="padding-top:20px;">
+    <div class="section-inner">
+        <div style="text-align:center; margin-bottom:56px;" class="reveal">
+            <div class="section-eyebrow">Security</div>
+            <h2 class="section-title">金融级安全防护。</h2>
+            <p class="section-sub" style="margin:0 auto;">从网络层到应用层的多维防御矩阵，确保每一个请求都经过严格的安全审查。</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:10px;" class="reveal">
+            <div class="security-badge">
+                <i class="ri-speed-line" style="color:#60a5fa;"></i><div>
+                    <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:2px;">滑动窗口限流</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.3);">60s 窗口 + LOCK_EX 排他锁，防并发竞争</div>
+                </div>
+            </div>
+            <div class="security-badge">
+                <i class="ri-database-lock-line" style="color:#a78bfa;"></i>
+                <div>
+                    <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:2px;">PDO 预处理</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.3);">全面防SQL 注入，参数绑定不可绕过</div>
+                </div>
+            </div>
+            <div class="security-badge">
+                <i class="ri-fingerprint-line" style="color:#4ade80;"></i>
+                <div>
+                    <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:2px;">强制设备指纹</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.3);">拒绝 IP 哈希兜底，防多用户共用指纹</div>
+                </div>
+            </div>
+            <div class="security-badge">
+                <i class="ri-lock-2-line" style="color:#fbbf24;"></i>
+                <div>
+                    <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:2px;">私有变量隔离</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.3);">仅卡密验证通过后才下发私有变量</div>
+                </div>
+            </div>
+            <div class="security-badge">
+                <i class="ri-shield-check-line" style="color:#22d3ee;"></i>
+                <div>
+                    <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:2px;">HMAC-SHA256 Cookie</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.3);">绑定 UA + 密码哈希，改密立即失效</div>
+                </div>
+            </div>
+            <div class="security-badge">
+                <i class="ri-error-warning-line" style="color:#f87171;"></i>
+                <div>
+                    <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:2px;">错误信息脱敏</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.3);">捕获 Throwable，生产环境不暴露堆栈</div>
+                </div>
+            </div>
+            <div class="security-badge">
+                <i class="ri-global-line" style="color:#fb923c;"></i>
+                <div>
+                    <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:2px;">安全响应头全覆盖</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.3);">X-Frame-Options / CSP / no-store</div>
+                </div>
+            </div><div class="security-badge">
+                <i class="ri-image-line" style="color:#c084fc;"></i>
+                <div>
+                    <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:2px;">强化图形验证码</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.3);">TTF旋转 + 32 字符集 + 多层干扰</div>
+                </div>
+            </div>
+            <div class="security-badge">
+                <i class="ri-git-branch-line" style="color:#86efac;"></i>
+                <div>
+                    <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:2px;">参数隔离读取</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.3);">JSON > POST > GET优先级，杜绝参数污染</div>
                 </div>
             </div>
         </div>
@@ -839,29 +1128,96 @@
 </section>
 
 
-<!-- ════════════════════════════
-     Footer
-════════════════════════════ -->
-<footer style="border-top:1px solid rgba(255,255,255,0.06); padding:48px 20px;">
-    <div style="max-width:980px; margin:0 auto;">
+<!-- ████████ CTA ████████ -->
+<section class="cta-section reveal">
+    <div class="cta-card">
+        <div class="cta-glow"></div>
+        <div class="cta-grid"></div>
+        <div style="position:relative; z-index:10;">
+            <div style="display:inline-flex; align-items:center; gap:8px; padding:5px 14px 5px 8px; border-radius:99px; background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.2); font-size:12px; font-weight:500; color:#93c5fd; margin-bottom:24px;">
+                <span style="width:6px; height:6px; border-radius:50%; background:#3b82f6; box-shadow:0 0 8px #3b82f6;"></span>
+                完全免费开源
+            </div>
+            <h2 style="font-size:clamp(32px,5vw,56px); font-weight:800; letter-spacing:-0.03em; color:#fff; line-height:1.06; margin-bottom:16px;">
+                准备开始了吗？
+            </h2>
+            <p style="font-size:16px; color:rgba(255,255,255,0.38); line-height:1.75; margin-bottom:36px; max-width:420px; margin-left:auto; margin-right:auto;">
+                5 分钟完成部署，立即为您的软件接入企业级授权验证能力。
+            </p><div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px;">
+                <a href="https://github.com/GuYiovo/GuYi-Aegis" target="_blank" class="btn-primary" style="padding:15px 32px; border-radius:15px; font-size:15.5px;"><i class="ri-download-cloud-2-line"></i> 免费下载
+                </a>
+                <a href="document.html" class="btn-ghost" style="padding:15px 32px; border-radius:15px; font-size:15.5px;">阅读文档 <i class="ri-arrow-right-line"></i>
+                </a>
+            </div>
+            <!-- 环境说明 -->
+            <div style="margin-top:28px; display:flex; align-items:center; justify-content:center; gap:20px; flex-wrap:wrap;">
+                <span style="font-size:12px; color:rgba(255,255,255,0.2); display:flex; align-items:center; gap:6px;"><i class="ri-check-line" style="color:#4ade80;"></i> PHP7.4+</span>
+                <span style="font-size:12px; color:rgba(255,255,255,0.2); display:flex; align-items:center; gap:6px;"><i class="ri-check-line" style="color:#4ade80;"></i> MySQL 5.7+</span>
+                <span style="font-size:12px; color:rgba(255,255,255,0.2); display:flex; align-items:center; gap:6px;"><i class="ri-check-line" style="color:#4ade80;"></i> Nginx / Apache</span>
+                <span style="font-size:12px; color:rgba(255,255,255,0.2); display:flex; align-items:center; gap:6px;"><i class="ri-check-line" style="color:#4ade80;"></i> MIT 开源协议</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ████████ Footer ████████ -->
+<footer class="footer">
+    <div class="footer-inner">
         <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:32px;">
-            <!-- 左侧 -->
+            <!-- Logo &描述 -->
             <div>
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-                    <div style="width:24px; height:24px; border-radius:7px; background:linear-gradient(135deg,#3b82f6,#1d4ed8); display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px; font-weight:700;">G</div>
-                    <span style="font-size:14px; font-weight:600; color:#fff;">GuYi Access</span>
+                    <div class="logo-mark" style="width:26px; height:26px; font-size:11px;">G</div>
+                    <span style="font-size:15px; font-weight:700; color:#fff;">GuYi Aegis Pro</span>
                 </div>
-                <p style="font-size:12px; color:rgba(255,255,255,0.25); line-height:1.8; margin:0;">
-                    © 2026 GuYi Systems. All rights reserved.<br>
-                    Designed with♥ by GuYi.
+                <p style="font-size:12.5px; color:rgba(255,255,255,0.2); line-height:1.8; max-width:220px; margin-bottom:16px;">
+                    企业级软件授权验证系统<br>
+                    为独立开发者而生
                 </p>
+                <!-- 社交 -->
+                <div style="display:flex; gap:8px;">
+                    <a href="https://github.com/GuYiovo/GuYi-Aegis" target="_blank" style="width:32px; height:32px; border-radius:9px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.4); text-decoration:none; transition:all 0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.color='rgba(255,255,255,0.4)'"><i class="ri-github-fill"></i></a>
+                    <a href="https://qm.qq.com/q/R8q8Nt43aS" target="_blank" style="width:32px; height:32px; border-radius:9px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.4); text-decoration:none; transition:all 0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.color='rgba(255,255,255,0.4)'"><i class="ri-qq-fill"></i></a>
+                </div>
             </div>
-            <!-- 右侧链接 -->
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px 48px;">
-                <a href="document.html" class="fl">开发文档</a>
-                <a href="https://github.com/GuYiovo/GuYi-Aegis" class="fl">GitHub</a>
-                <a href="https://qm.qq.com/q/R8q8Nt43aS" class="fl">技术支持</a><a href="https://qm.qq.com/q/R8q8Nt43aS" class="fl">QQ 群</a>
-                <a href="#" class="fl">隐私政策</a><a href="#" class="fl">使用条款</a>
+
+            <!-- 链接列-->
+            <div style="display:grid; grid-template-columns:repeat(3, 120px); gap:0 32px;">
+                <div>
+                    <div style="font-size:11px; font-weight:700; color:rgba(255,255,255,0.2); text-transform:uppercase; letter-spacing:0.09em; margin-bottom:12px;">产品</div>
+                    <div style="display:flex; flex-direction:column; gap:9px;">
+                        <a href="#features"class="footer-link">功能特性</a>
+                        <a href="#api"          class="footer-link">API接口</a>
+                        <a href="#security"     class="footer-link">安全体系</a>
+                        <a href="document.html" class="footer-link">更新日志</a>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size:11px; font-weight:700; color:rgba(255,255,255,0.2); text-transform:uppercase; letter-spacing:0.09em; margin-bottom:12px;">资源</div>
+                    <div style="display:flex; flex-direction:column; gap:9px;">
+                        <a href="document.html"class="footer-link">开发文档</a>
+                        <a href="https://github.com/GuYiovo/GuYi-Aegis" class="footer-link">GitHub</a>
+                        <a href="cards.php"                        class="footer-link">后台管理</a>
+                </div>
+                </div>
+                <div>
+                    <div style="font-size:11px; font-weight:700; color:rgba(255,255,255,0.2); text-transform:uppercase; letter-spacing:0.09em; margin-bottom:12px;">支持</div>
+                    <div style="display:flex; flex-direction:column; gap:9px;">
+                        <a href="https://qm.qq.com/q/R8q8Nt43aS" class="footer-link">QQ 群：1077643184</a>
+                        <a href="https://github.com/GuYiovo/GuYi-Aegis" class="footer-link">提交 Issue</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部版权 -->
+        <div style="margin-top:40px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.05); display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px;">
+            <span style="font-size:12px; color:rgba(255,255,255,0.18);">© 2026 GuYi Aegis Pro. All Rights Reserved.</span>
+            <div style="display:flex; gap:20px;">
+                <a href="#" class="footer-link">隐私政策</a>
+                <a href="#" class="footer-link">使用条款</a>
+                <a href="document.html" class="footer-link">文档</a>
             </div>
         </div>
     </div>
@@ -869,46 +1225,66 @@
 
 
 <script>
-    /*──抽屉 ── */
-    function toggleDrawer() {
-        const d= document.getElementById('mobile-drawer');
-        const ov = document.getElementById('drawer-overlay');
-        const ic = document.getElementById('menu-icon');
-        const open = d.classList.contains('open');
-        d.classList.toggle('open', !open);
-        ov.classList.toggle('open', !open);
-        ic.className = open ? 'ri-menu-3-line' : 'ri-close-line';
-        ic.style.fontSize = '18px';
-        document.body.style.overflow = open ? '' : 'hidden';
-    }
+// ── 导航滚动效果 ──────────────────────────────────────────
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
 
-    /* ── Bento 鼠标光晕 ── */
-    document.querySelectorAll('.bento').forEach(card => {
-        card.addEventListener('mousemove', e => {
-            const r = card.getBoundingClientRect();
-            card.style.setProperty('--mx', ((e.clientX - r.left) / r.width  * 100) + '%');
-            card.style.setProperty('--my', ((e.clientY - r.top)  / r.height * 100) + '%');
-        });
+// ── Bento鼠标光晕 ──────────────────────────────────────
+document.querySelectorAll('.bento').forEach(card => {
+    card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', ((e.clientX - r.left) / r.width  * 100) + '%');
+        card.style.setProperty('--my', ((e.clientY - r.top)  / r.height * 100) + '%');
     });
+});
 
-    /* ── 滚动 Reveal── */
-    const io = new IntersectionObserver(entries => {
-        entries.forEach((entry, i) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => entry.target.classList.add('in'), i * 60);
-                io.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+// ── Scroll Reveal ────────────────────────────────────────
+const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            io.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-    /* ── 导航滚动效果 ── */
-    window.addEventListener('scroll', () => {
-        document.getElementById('nav').style.borderBottomColor =
-            window.scrollY > 40
-                ? 'rgba(255,255,255,0.09)'
-                : 'rgba(255,255,255,0.04)';
-    }, { passive: true });
+// ── API Tab切换 ─────────────────────────────────────────
+function switchApiTab(tab) {
+    ['request','success','error'].forEach(t => {
+        document.getElementById('api-' + t).style.display = (t === tab) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.api-tab').forEach((el, i) => {
+        const map = ['request','success','error'];
+        el.classList.toggle('active', map[i] === tab);
+    });
+}
+
+// ── 移动端抽屉 ───────────────────────────────────────────
+function toggleDrawer() {
+    const d= document.getElementById('mobile-drawer');
+    const ov = document.getElementById('drawer-overlay');
+    const ic = document.getElementById('menu-icon');
+    const open = d.classList.contains('open');
+    d.classList.toggle('open', !open);
+    ov.classList.toggle('open', !open);
+    ic.className = (open ? 'ri-menu-3-line' : 'ri-close-line') + ' ri-icon';ic.style.fontSize = '18px';
+    document.body.style.overflow = open ? '' : 'hidden';
+}
+
+// ── 平滑锚点（补偿 nav 高度）────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (!target) return;
+        e.preventDefault();
+        const top = target.getBoundingClientRect().top + window.scrollY - 72;
+        window.scrollTo({ top, behavior: 'smooth' });// 关闭抽屉
+        if (document.getElementById('mobile-drawer').classList.contains('open')) toggleDrawer();
+    });
+});
 </script>
 </body>
 </html>

@@ -2,12 +2,11 @@
 <html lang="zh-CN" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>开发文档 — GuYi Access System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>开发文档 — GuYi Aegis Pro</title>
     <link rel="icon" href="http://q.qlogo.cn/headimg_dl?dst_uin=156440000&spec=640&img_type=jpg" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
-
     <style>
         :root {
             --bg: #0c0c12;
@@ -20,10 +19,11 @@
             --text-subtle: #9292a8;
             --blue: #3b82f6;
             --blue-dim: rgba(59,130,246,0.12);
+            --topbar-h: 52px;
+            --mobile-nav-h: 56px;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         html { font-size: 16px; }
 
         body {
@@ -35,45 +35,119 @@
             display: flex; flex-direction: column;
         }
 
-        /* ──滚动条 ── */
+        /* ── 移动端解除overflow:hidden ── */
+        @media (max-width: 1023px) {
+            body { height: auto; overflow: auto; overflow-x: hidden; }
+        }
+
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
 
-        /* ── 顶部导航 ── */
+        /* ════════════════════顶部导航 ════════════════════ */
         .topbar {
-            height: 52px;
-            background: rgba(12,12,18,0.85);
+            height: var(--topbar-h);
+            background: rgba(12,12,18,0.9);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
-            flex-shrink: 0;display: flex; align-items: center;
-            position: relative; z-index: 50;
+            flex-shrink: 0; display: flex; align-items: center;
+            position: relative; z-index: 60;
+        }
+        @media (max-width: 1023px) {
+            .topbar {
+                position: fixed; top: 0; left: 0; right: 0;
+                z-index: 60;
+            }
         }
 
-        /* ── 侧边栏 ── */
+        /* ════════════════════ 移动端底部导航栏 ════════════════════ */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: var(--mobile-nav-h);
+            background: rgba(10,10,18,0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            z-index: 55;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .mobile-bottom-nav-inner {
+            display: flex; align-items: center; justify-content: space-around;
+            height: var(--mobile-nav-h);
+        }
+        .mob-nav-btn {
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            padding: 6px 12px; border-radius: 10px;
+            color: rgba(255,255,255,0.35); font-size: 10px; font-weight: 500;
+            text-decoration: none; transition: all 0.2s; border: none;
+            background: transparent; cursor: pointer; min-width: 52px;
+        }
+        .mob-nav-btn i { font-size: 20px; }
+        .mob-nav-btn.active { color: var(--blue); }
+        .mob-nav-btn:active { transform: scale(0.92); }
+        @media (max-width: 1023px) {
+            .mobile-bottom-nav { display: block; }
+        }
+
+        /* ════════════════════ 移动端侧边栏抽屉 ════════════════════ */
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 70;
+            background: rgba(0,0,0,0.6);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .sidebar-overlay.open { opacity: 1; pointer-events: all; }
+        @media (max-width: 1023px) {
+            .sidebar-overlay { display: block; }
+        }
+
+        .sidebar-drawer {
+            position: fixed; top: 0; left: 0; bottom: 0;
+            width: min(300px, 88vw);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            z-index: 75;
+            transform: translateX(-100%);
+            transition: transform 0.38s cubic-bezier(0.16,1,0.3,1);
+            display: flex; flex-direction: column;
+            overflow-y: auto;
+        }
+        .sidebar-drawer.open { transform: translateX(0); }
+        .sidebar-drawer-head {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 16px 12px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        /* ════════════════════侧边栏（桌面） ════════════════════ */
         .sidebar {
             width: 248px;
             background: var(--surface);
             border-right: 1px solid var(--border);
-            flex-shrink: 0;
-            overflow-y: auto;
+            flex-shrink: 0;overflow-y: auto;
             padding: 20px 12px 40px;
         }
+        @media (max-width: 1023px) { .sidebar { display: none; } }
 
-        /* ── 导航条目 ── */
         .nav-group-label {
             font-size: 10.5px; font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase; letter-spacing: 0.08em;
-            padding: 0 8px; margin: 20px 0 6px;}
+            padding: 0 8px; margin: 20px 0 6px;
+        }
         .nav-group-label:first-child { margin-top: 0; }
 
         .nav-item {
             display: flex; align-items: center; gap: 8px;
-            padding: 7px 10px; border-radius: 8px;
+            padding: 8px 10px; border-radius: 8px;
             font-size: 13.5px; color: var(--text-subtle);
             text-decoration: none; cursor: pointer;
-            transition: background0.15s, color 0.15s;margin-bottom: 1px; user-select: none;
+            transition: background 0.15s, color 0.15s;
+            margin-bottom: 1px; user-select: none;
             border: 1px solid transparent;
         }
         .nav-item i { font-size: 14px; flex-shrink: 0; }
@@ -84,126 +158,126 @@
             border-color: rgba(59,130,246,0.18);
             font-weight: 500;
         }
-        .nav-item.active i { opacity: 1; }
 
-        /* ── 主内容 ── */
-        .main-scroll {
-            flex: 1;
-            overflow-y: auto;
-            background: var(--bg);
+        /* ════════════════════ 主内容 ════════════════════ */
+        .main-scroll { flex: 1; overflow-y: auto; background: var(--bg); }
+        @media (max-width: 1023px) {
+            .main-scroll {
+                overflow-y: unset;
+                margin-top: var(--topbar-h);padding-bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom) + 24px);
+            }
         }
+
         .content-body {
-            max-width: 820px;
-            margin: 0 auto;
+            max-width: 820px; margin: 0 auto;
             padding: 56px 40px 120px;
         }
-        @media (max-width: 768px) {
-            .content-body { padding: 40px 20px 80px; }
-        }
+        @media (max-width: 768px) { .content-body { padding: 36px 16px 80px; } }
+        @media (max-width: 480px) { .content-body { padding: 28px 14px 60px; } }
 
-        /* ── 排版 ── */
+        /* ════════════════════ 排版 ════════════════════ */
         .doc-h1 {
-            font-size: clamp(32px, 4vw, 48px);
+            font-size: clamp(28px, 6vw, 48px);
             font-weight: 700; line-height: 1.1;
-            letter-spacing: -0.025em;
-            color: #fff;
+            letter-spacing: -0.025em; color: #fff;
             margin-bottom: 16px;
         }
         .doc-h2 {
-            font-size: 26px; font-weight: 600;
-            letter-spacing: -0.015em;
-            color: #fff;
-            padding-top: 64px; margin-bottom: 20px; margin-top: 0;
-            border-bottom: 1px solid var(--border);padding-bottom: 12px;
+            font-size: clamp(20px, 4vw, 26px); font-weight: 600;
+            letter-spacing: -0.015em; color: #fff;
+            padding-top: 56px; margin-bottom: 20px;
+            border-bottom: 1px solid var(--border); padding-bottom: 12px;
         }
         .doc-h3 {
-            font-size: 18px; font-weight: 600;
-            color: var(--text);
-            margin-top: 36px; margin-bottom: 12px;
+            font-size: clamp(16px, 3vw, 18px); font-weight: 600;
+            color: var(--text); margin-top: 32px; margin-bottom: 12px;
         }
         .doc-p {
-            font-size: 15px; line-height: 1.75;
-            color: var(--text-subtle);
-            margin-bottom: 18px;
+            font-size: clamp(14px, 2.5vw, 15px); line-height: 1.75;
+            color: var(--text-subtle); margin-bottom: 18px;
         }
 
-        /* ── 行内代码 ── */
         code {
             font-family: "SF Mono", "Fira Code", monospace;
-            font-size: 0.85em;
+            font-size: 0.82em;
             background: rgba(255,255,255,0.07);
             border: 1px solid rgba(255,255,255,0.08);
             padding: 1px 6px; border-radius: 5px;
             color: #93c5fd;
+            word-break: break-all;
         }
 
-        /* ── 提示框 ── */
+        /* ════════════════════ 提示框 ════════════════════ */
         .callout {
-            display: flex; gap: 14px; align-items: flex-start;
-            padding: 16px 18px; border-radius: 12px;
-            font-size: 14px; line-height: 1.6;
-            margin-bottom: 24px;
-            border: 1px solid;}
-        .callout-warning {
-            background: rgba(234,179,8,0.07);
-            border-color: rgba(234,179,8,0.2);
-            color: #fde68a;
-        }
+            display: flex; gap: 12px; align-items: flex-start;
+            padding: 14px 16px; border-radius: 12px;
+            font-size: 13.5px; line-height: 1.6;
+            margin-bottom: 20px; border: 1px solid;}
+        .callout-warning { background: rgba(234,179,8,0.07); border-color: rgba(234,179,8,0.2); color: #fde68a; }
         .callout-warning i { color: #f59e0b; font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-        .callout-info {
-            background: rgba(59,130,246,0.07);
-            border-color: rgba(59,130,246,0.2);
-            color: #bfdbfe;
-        }
+        .callout-info { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.2); color: #bfdbfe; }
         .callout-info i { color: #60a5fa; font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+        .callout-success { background: rgba(34,197,94,0.07); border-color: rgba(34,197,94,0.2); color: #bbf7d0; }
+        .callout-success i { color: #4ade80; font-size: 18px; flex-shrink: 0; margin-top: 1px; }
 
-        /* ── 终端 ── */
+        /* ════════════════════ 终端 ════════════════════ */
         .terminal {
             background: #090912;
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px;
-            overflow: hidden;
-            margin: 20px 0;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            border-radius: 12px; overflow: hidden;
+            margin: 16px 0;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.35);
         }
         .terminal-header {
             background: rgba(255,255,255,0.03);
             border-bottom: 1px solid rgba(255,255,255,0.06);
-            padding: 10px 14px;
+            padding: 9px 14px;
             display: flex; align-items: center; justify-content: space-between;}
         .tl-group { display: flex; gap: 6px; }
-        .tl { width: 11px; height: 11px; border-radius: 50%; }
+        .tl { width: 10px; height: 10px; border-radius: 50%; }
         .terminal-title { font-size: 11px; color: rgba(255,255,255,0.2); font-family: monospace; }
         .terminal-body {
-            padding: 20px 22px;
+            padding: 16px 18px;
             font-family: "SF Mono", "Fira Code", monospace;
-            font-size: 13px; line-height: 1.8;
+            font-size: clamp(11px, 2.5vw, 13px); line-height: 1.8;
             color: rgba(255,255,255,0.55);
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        @media (max-width: 480px) {
+            .terminal-body { padding: 12px 14px; font-size: 11px; }
         }
 
-        /* ── API 端点栏 ── */
+        /* ════════════════════ API端点栏 ════════════════════ */
         .endpoint-bar {
-            display: flex; align-items: center; gap: 12px;
+            display: flex; align-items: center; gap: 10px;
             background: rgba(255,255,255,0.03);
             border: 1px solid var(--border);
-            border-radius: 10px; padding: 10px 16px;
-            font-family: monospace; font-size: 13px;
+            border-radius: 10px; padding: 9px 14px;
+            font-family: monospace; font-size: clamp(11px, 2vw, 13px);
             color: rgba(255,255,255,0.6);
-            margin-bottom: 24px;
+            margin-bottom: 12px;
+            overflow-x: auto; -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
         }
         .method-badge {
             background: rgba(59,130,246,0.15);
             border: 1px solid rgba(59,130,246,0.3);
-            color: #60a5fa;
-            font-size: 11px; font-weight: 700;
+            color: #60a5fa; font-size: 11px; font-weight: 700;
             letter-spacing: 0.06em;
-            padding: 3px 8px; border-radius: 6px;
-            flex-shrink: 0;
+            padding: 3px 8px; border-radius: 6px; flex-shrink: 0;
+        }
+        .method-badge-get {
+            background: rgba(34,197,94,0.12);
+            border: 1px solid rgba(34,197,94,0.3);
+            color: #4ade80; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 3px 8px; border-radius: 6px; flex-shrink: 0;
         }
 
-        /* ── 参数表 ── */
-        .param-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+        /* ════════════════════ 参数表 ════════════════════ */
+        .param-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 24px; }
+        .param-table { width: 100%; border-collapse: collapse; min-width: 480px; }
         .param-table thead tr th {
             text-align: left; font-size: 11px; font-weight: 600;
             color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
@@ -211,46 +285,59 @@
             border-bottom: 1px solid var(--border);
         }
         .param-table tbody tr td {
-            padding: 14px 12px;
+            padding: 12px 12px;
             border-bottom: 1px solid rgba(255,255,255,0.04);
-            font-size: 13.5px;
-            vertical-align: top;
+            font-size: 13px; vertical-align: top;
         }
         .param-table tbody tr:last-child td { border-bottom: none; }
-        .param-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
-        .param-name { font-family: monospace; font-size: 13px; font-weight: 600; color: var(--blue); }
+        .param-name { font-family: monospace; font-size: 12.5px; font-weight: 600; color: var(--blue); }
         .param-required { font-size: 11px; font-weight: 600; }
         .param-yes { color: #f87171; }
+        .param-cond { color: #fbbf24; }
         .param-no { color: var(--text-muted); }
-        .param-desc { color: var(--text-subtle); font-size: 13.5px; }
+        .param-desc { color: var(--text-subtle); font-size: 13px; }
 
-        /* ── 语言Tabs ── */
+        /* 移动端参数卡片（替代表格） */
+        .param-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+        }
+        .param-card-name {
+            font-family: monospace; font-size: 13px; font-weight: 700;
+            color: var(--blue); margin-bottom: 6px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .param-card-desc { font-size: 13px; color: var(--text-subtle); line-height: 1.65; }
+
+        /* ════════════════════ 语言Tabs ════════════════════ */
         .lang-tabs-bar {
             display: flex; gap: 4px;
             overflow-x: auto; padding-bottom: 2px;
-            margin-bottom: 0;
+            -webkit-overflow-scrolling: touch;
         }
         .lang-tabs-bar::-webkit-scrollbar { display: none; }
         .lang-tab {
             flex-shrink: 0;
-            padding: 6px 14px; border-radius: 8px;
+            padding: 6px 13px; border-radius: 8px;
             font-size: 13px; font-weight: 500;
             cursor: pointer; transition: all 0.18s;
-            border: 1px solid transparent;
-            white-space: nowrap;}
-        .lang-tab.active {
-            background: rgba(59,130,246,0.15);
-            border-color: rgba(59,130,246,0.3);
-            color: #93c5fd;
+            border: 1px solid transparent; white-space: nowrap;
         }
-        .lang-tab.inactive {
-            background: rgba(255,255,255,0.04);
-            color: var(--text-muted);
-        }
+        .lang-tab.active { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.3); color: #93c5fd; }
+        .lang-tab.inactive { background: rgba(255,255,255,0.04); color: var(--text-muted); }
         .lang-tab.inactive:hover { background: rgba(255,255,255,0.07); color: var(--text); }
+        @media (max-width: 480px) {
+            .lang-tab { padding: 5px 11px; font-size: 12px; }
+        }
 
-        /* ── 步骤线 ── */
-        .step-line { border-left: 2px solid rgba(255,255,255,0.08); padding-left: 20px; position: relative; padding-bottom: 24px; }
+        /* ════════════════════ 步骤线 ════════════════════ */
+        .step-line {
+            border-left: 2px solid rgba(255,255,255,0.08);
+            padding-left: 20px; position: relative; padding-bottom: 24px;
+        }
         .step-line:last-child { border-color: transparent; padding-bottom: 0; }
         .step-line::before {
             content: attr(data-step);
@@ -259,37 +346,36 @@
             background: #1e1e2e; border: 1.5px solid rgba(59,130,246,0.5);
             color: var(--blue); font-size: 11px; font-weight: 700;
             display: flex; align-items: center; justify-content: center;
-            line-height: 1;
         }
-        .step-line::before { content: attr(data-step); }
 
-        /* ── 凭证卡片 ── */
+        /* ════════════════════ 凭证卡片 ════════════════════ */
         .cred-card {
             background: linear-gradient(135deg, #0f0f1e 0%, #12122a 100%);
             border: 1px solid rgba(59,130,246,0.2);
-            border-radius: 18px; padding: 28px;
-            position: relative; overflow: hidden;}
+            border-radius: 16px; padding: 24px;
+            position: relative; overflow: hidden;
+        }
         .cred-card::before {
             content: '';
             position: absolute; top: -60px; right: -60px;
-            width: 200px; height: 200px;
+            width: 180px; height: 180px;
             background: radial-gradient(circle, rgba(59,130,246,0.15), transparent70%);
             pointer-events: none;
         }
 
-        /* ── 特性卡片 ── */
+        /* ════════════════════ 特性卡片 ════════════════════ */
         .feature-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 16px; padding: 24px;
+            border-radius: 14px; padding: 20px;
             position: relative; overflow: hidden;transition: border-color 0.25s, background 0.25s;
         }
-        .feature-card:hover {
-            border-color: var(--border-hover);
-            background: var(--surface-2);
-        }
+        .feature-card:hover { border-color: var(--border-hover); background: var(--surface-2); }
 
-        /* ── Toast ── */
+        /* ════════════════════ 状态码卡片 ════════════════════ */
+        .code-badge { border-radius: 10px; padding: 12px 14px; }
+
+        /* ════════════════════ Toast════════════════════ */
         .toast-wrap {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             z-index: 999; display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -302,216 +388,450 @@
             font-size: 13.5px; color: var(--text);
             box-shadow: 0 8px 32px rgba(0,0,0,0.4);
             opacity: 0; transform: translateY(-12px);
-            transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
-            white-space: nowrap;
+            transition: all 0.35s cubic-bezier(0.16,1,0.3,1); white-space: nowrap;
         }
         .toast.show { opacity: 1; transform: translateY(0); }
 
-        /* ── 安全列表 ── */
+        /* ════════════════════ 安全列表 ════════════════════ */
         .security-list { list-style: none; }
         .security-list li {
-            display: flex; gap: 14px; align-items: flex-start;
-            padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; gap: 12px; align-items: flex-start;
+            padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .security-list li:last-child { border-bottom: none; padding-bottom: 0; }
         .security-list li .icon-wrap {
-            width: 34px; height: 34px; border-radius: 10px;
+            width: 32px; height: 32px; border-radius: 9px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 16px; flex-shrink: 0;
+            font-size: 15px; flex-shrink: 0;
         }
 
-        /* ── 支持区域 ── */
+        /* ════════════════════ 支持区域 ════════════════════ */
         .support-card {
             background: linear-gradient(135deg, #0d0d22 0%, #0f1525 100%);
             border: 1px solid rgba(59,130,246,0.15);
-            border-radius: 20px; padding: 40px;
+            border-radius: 18px; padding: 32px 28px;
             position: relative; overflow: hidden;
+        }
+        @media (max-width: 480px) {
+            .support-card { padding: 24px 18px; }
         }
         .support-card::after {
             content: '';
             position: absolute; bottom: -80px; right: -80px;
-            width: 300px; height: 300px;
+            width: 260px; height: 260px;
             background: radial-gradient(circle, rgba(59,130,246,0.1), transparent 60%);
         }
 
-        /* ── TOC 进度线 ── */
+        /* ════════════════════ TOC 进度线 ════════════════════ */
         .toc-progress {
-            position: fixed; top: 52px; left: 0;
-            width: 2px; height: calc(100% - 52px);
+            position: fixed; top: var(--topbar-h); left: 0;
+            width: 2px; height: calc(100% - var(--topbar-h));
             background: transparent; z-index: 40;
         }
         .toc-progress-fill {
-            width: 100%; background: linear-gradient(to bottom, var(--blue), transparent);
+            width: 100%;
+            background: linear-gradient(to bottom, var(--blue), transparent);
             transition: height 0.1s;
         }
+        @media (max-width: 1023px) { .toc-progress { display: none; } }
+
+        /* ════════════════════ 变更日志 ════════════════════ */
+        .changelog-item {
+            display: flex; gap: 8px; align-items: baseline;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 13px; color: var(--text-subtle);
+            flex-wrap: wrap;
+        }
+        .changelog-item:last-child { border-bottom: none; }
+        .cl-tag {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+            padding: 2px 7px; border-radius: 5px; flex-shrink: 0;
+        }
+        .cl-new { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); color: #4ade80; }
+        .cl-fix { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.2); color: #fbbf24; }
+        .cl-sec { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #f87171; }
+        .cl-imp { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); color: #a5b4fc; }
+
+        /* ════════════════════ 移动端导航目录（底部弹出） ════════════════════ */
+        .toc-sheet-overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 70;
+            background: rgba(0,0,0,0.55);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .toc-sheet-overlay.open { opacity: 1; pointer-events: all; }
+
+        .toc-sheet {
+            position: fixed; left: 0; right: 0; bottom: 0;
+            z-index: 75;
+            background: #131320;
+            border-top: 1px solid var(--border);
+            border-radius: 20px 20px 0 0;
+            padding: 0 0 env(safe-area-inset-bottom);
+            transform: translateY(100%);
+            transition: transform 0.42s cubic-bezier(0.16,1,0.3,1);
+            max-height: 80dvh;
+            display: flex; flex-direction: column;}
+        .toc-sheet.open { transform: translateY(0); }
+        .toc-sheet-handle {
+            width: 36px; height: 4px; border-radius: 2px;
+            background: rgba(255,255,255,0.12);
+            margin: 12px auto4px; flex-shrink: 0;
+        }
+        .toc-sheet-head {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 20px 12px; flex-shrink: 0;
+            border-bottom: 1px solid var(--border);}
+        .toc-sheet-body {
+            overflow-y: auto; padding: 12px 16px 16px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .toc-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 11px 12px; border-radius: 10px;
+            font-size: 14px; color: rgba(255,255,255,0.55);
+            text-decoration: none; transition: all 0.18s;
+            border: 1px solid transparent;
+        }
+        .toc-item i { font-size: 15px; flex-shrink: 0; width: 18px; text-align: center; }
+        .toc-item:active, .toc-item:hover {
+            background: rgba(59,130,246,0.08);
+            border-color: rgba(59,130,246,0.15);
+            color: #93c5fd;
+        }
+        .toc-group-label {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+            color: var(--text-muted); text-transform: uppercase;
+            padding: 10px 12px 4px; display: block;
+        }
+        @media (max-width: 1023px) {
+            .toc-sheet-overlay { display: block; }
+        }
+
+        /* ════════════════════ 移动端搜索按钮 ════════════════════ */
+        .mobile-search-btn {
+            display: none;
+            align-items: center; gap: 6px;
+            padding: 6px 12px; border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.35); font-size: 12px;
+            cursor: not-allowed;
+        }
+        @media (max-width: 640px) { .mobile-search-btn { display: flex; } }
+
+        /* ════════════════════ 响应式工具 ════════════════════ */
+        @media (max-width: 640px) {
+            .sm-hide { display: none !important; }
+            .sm-stack { flex-direction: column !important; }
+            .sm-full { width: 100% !important; }
+            /* 参数表在小屏隐藏，改用卡片 */
+            .param-table-wrap { display: none; }
+            .param-cards-mobile { display: block !important; }
+        }
+        .param-cards-mobile { display: none; }
+
+        @media (max-width: 768px) {
+            .md-stack { flex-direction: column !important; }
+            .md-full { width: 100% !important; }
+        }
+
+        /*版本徽章 */
+        .version-box {
+            margin: 16px 12px 0;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(59,130,246,0.06);
+            border: 1px solid rgba(59,130,246,0.12);
+        }
+
+        /* 复制按钮通用*/
+        .copy-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px; padding: 4px 10px;
+            color: rgba(255,255,255,0.4); font-size: 11px;
+            cursor: pointer; display: flex; align-items: center; gap: 4px;
+            transition: color 0.2s; flex-shrink: 0;white-space: nowrap;
+        }
+        .copy-btn:hover { color: rgba(255,255,255,0.8); }
+
+        /* 移动端友好的网格 */
+        @media (max-width: 640px) {
+            .grid-1-sm { grid-template-columns: 1fr !important; }
+            .gap-sm-3 { gap: 10px !important; }
+        }
+
+        /* 在移动端隐藏顶部导航的部分元素 */
+        @media (max-width: 640px) {
+            .topbar-title { display: none; }
+            .topbar-dash { display: none; }}
     </style>
 </head>
 
 <body>
 <div id="toast-wrap" class="toast-wrap"></div>
 
-<!-- ══════顶部导航 ══════ -->
-<header class="topbar px-5">
-    <div class="flex items-center justify-between w-full max-w-[1440px] mx-auto">
-        <div class="flex items-center gap-3">
-            <a href="index.html" class="flex items-center gap-2 no-underline group">
-                <div class="w-6 h-6 rounded-md bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold shadow-lg shadow-blue-900/40">G</div>
-                <span class="font-semibold text-[14px] text-white/90">GuYi<span class="text-white/35font-normal">Access</span></span>
-            </a>
-            <div class="h-4 w-px bg-white/10 mx-1"></div>
-            <span class="text-[13px] text-white/40">开发文档</span>
-        </div>
+<!--════════════════════ 侧边栏遮罩 ════════════════════ -->
+<div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 
+<!-- ════════════════════ 移动端侧边栏抽屉 ════════════════════ -->
+<div id="sidebar-drawer" class="sidebar-drawer">
+    <div class="sidebar-drawer-head">
+        <div style="display:flex; align-items:center; gap:8px;">
+            <div style="width:22px; height:22px; border-radius:6px; background:linear-gradient(135deg,#3b82f6,#6d28d9); display:flex; align-items:center; justify-content:center; color:#fff; font-size:9px; font-weight:800;">G</div>
+            <span style="font-size:13px; font-weight:600; color:#fff;">开发文档</span>
+        </div>
+        <button onclick="closeSidebar()" style="width:28px; height:28px; border:none; background:rgba(255,255,255,0.06); border-radius:7px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.5);">
+            <i class="ri-close-line" style="font-size:16px;"></i>
+        </button>
+    </div>
+    <div style="flex:1; overflow-y:auto; padding:16px 10px 24px;">
+        <!-- 导航内容（与桌面侧边栏相同） -->
+        <div class="nav-group-label">入门指南</div>
+        <a href="#intro" class="nav-item" onclick="closeSidebar()"><i class="ri-home-4-line"></i> 简介</a>
+        <a href="#install" class="nav-item" onclick="closeSidebar()"><i class="ri-install-line"></i> 安装与登录</a>
+        <a href="#structure" class="nav-item" onclick="closeSidebar()"><i class="ri-folder-3-line"></i> 目录结构</a>
+        <div class="nav-group-label">API对接</div>
+        <a href="#api-connect" class="nav-item" onclick="closeSidebar()"><i class="ri-plug-line"></i> 接口定义</a>
+        <a href="#api-mode" class="nav-item" onclick="closeSidebar()"><i class="ri-git-branch-line"></i> 两种调用模式</a><a href="#api-response" class="nav-item" onclick="closeSidebar()"><i class="ri-braces-line"></i> 响应格式</a>
+        <a href="#api-ratelimit" class="nav-item" onclick="closeSidebar()"><i class="ri-speed-line"></i> 限流机制</a>
+        <a href="#api-examples" class="nav-item" onclick="closeSidebar()"><i class="ri-code-box-line"></i> 多语言 SDK</a>
+        <div class="nav-group-label">高级功能</div>
+        <a href="#api-variables" class="nav-item" onclick="closeSidebar()"><i class="ri-cloud-line"></i> 云变量系统</a>
+        <a href="#captcha" class="nav-item" onclick="closeSidebar()"><i class="ri-shield-check-line"></i> 验证码系统</a>
+        <a href="#security" class="nav-item" onclick="closeSidebar()"><i class="ri-shield-keyhole-line"></i> 安全实践</a>
+        <div class="nav-group-label">帮助</div>
+        <a href="#changelog" class="nav-item" onclick="closeSidebar()"><i class="ri-history-line"></i> 更新日志</a>
+        <a href="#support" class="nav-item" onclick="closeSidebar()"><i class="ri-customer-service-line"></i> 联系支持</a>
+        <div class="version-box">
+            <div style="font-size:11px; color:rgba(59,130,246,0.8); font-weight:600; margin-bottom:4px;"><i class="ri-sparkling-line"></i> 当前版本</div>
+            <div style="font-size:13px; color:rgba(255,255,255,0.6); font-family:monospace;">V26Pro Enterprise</div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.2); margin-top:2px;">Documentation3.0</div>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════════ 目录 Bottom Sheet ════════════════════ -->
+<div id="toc-overlay" class="toc-sheet-overlay" onclick="closeToc()"></div>
+<div id="toc-sheet" class="toc-sheet">
+    <div class="toc-sheet-handle"></div>
+    <div class="toc-sheet-head">
+        <span style="font-size:14px; font-weight:600; color:#fff;">文档目录</span>
+        <button onclick="closeToc()" style="width:28px; height:28px; border:none; background:rgba(255,255,255,0.06); border-radius:7px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.5);">
+            <i class="ri-close-line" style="font-size:16px;"></i>
+        </button>
+    </div>
+    <div class="toc-sheet-body">
+        <span class="toc-group-label">入门指南</span><a href="#intro" class="toc-item" onclick="closeToc()"><i class="ri-home-4-line"></i> 简介</a>
+        <a href="#install" class="toc-item" onclick="closeToc()"><i class="ri-install-line"></i> 安装与登录</a>
+        <a href="#structure" class="toc-item" onclick="closeToc()"><i class="ri-folder-3-line"></i> 目录结构</a>
+        <span class="toc-group-label">API 对接</span>
+        <a href="#api-connect" class="toc-item" onclick="closeToc()"><i class="ri-plug-line"></i> 接口定义</a>
+        <a href="#api-mode" class="toc-item" onclick="closeToc()"><i class="ri-git-branch-line"></i> 两种调用模式</a>
+        <a href="#api-response" class="toc-item" onclick="closeToc()"><i class="ri-braces-line"></i> 响应格式</a>
+        <a href="#api-ratelimit" class="toc-item" onclick="closeToc()"><i class="ri-speed-line"></i> 限流机制</a>
+        <a href="#api-examples" class="toc-item" onclick="closeToc()"><i class="ri-code-box-line"></i> 多语言 SDK</a>
+        <span class="toc-group-label">高级功能</span>
+        <a href="#api-variables" class="toc-item" onclick="closeToc()"><i class="ri-cloud-line"></i> 云变量系统</a>
+        <a href="#captcha" class="toc-item" onclick="closeToc()"><i class="ri-shield-check-line"></i> 验证码系统</a>
+        <a href="#security" class="toc-item" onclick="closeToc()"><i class="ri-shield-keyhole-line"></i> 安全实践</a>
+        <span class="toc-group-label">帮助</span>
+        <a href="#changelog" class="toc-item" onclick="closeToc()"><i class="ri-history-line"></i> 更新日志</a>
+        <a href="#support" class="toc-item" onclick="closeToc()"><i class="ri-customer-service-line"></i> 联系支持</a>
+    </div>
+</div>
+
+<!-- ════════════════════ 顶部导航 ════════════════════ -->
+<header class="topbar px-4">
+    <div class="flex items-center justify-between w-full max-w-[1440px] mx-auto">
         <div class="flex items-center gap-2">
-            <!--搜索 (装饰) -->
-            <div class="hidden md:flex items-center gap-2 bg-white/04 border border-white/07 rounded-lg px-3 py-1.5 text-[12px] text-white/30 cursor-not-allowed select-none w-44">
+            <!-- 移动端汉堡 -->
+            <button onclick="openSidebar()" class="lg:hidden flex items-center justify-center w-8 h-8 rounded-lg mr-1"
+                    style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); color:rgba(255,255,255,0.6); flex-shrink:0;">
+                <i class="ri-menu-2-line text-[16px]"></i>
+            </button>
+            <a href="index.html" class="flex items-center gap-2 no-underline">
+                <div class="w-6 h-6 rounded-md flex items-center justify-center text-white text-[10px] font-bold"
+                     style="background:linear-gradient(135deg,#3b82f6,#6d28d9);">G</div>
+                <span class="font-semibold text-[14px] text-white/90">GuYi<span class="text-white/35font-normal">Aegis</span></span>
+            </a><div class="h-4 w-px bg-white/10 mx-1 topbar-dash"></div>
+            <span class="text-[12px] text-white/40 topbar-title">开发文档</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <!--桌面搜索 -->
+            <div class="hidden md:flex items-center gap-2 rounded-lg px-3 py-1.5 text-[12px] text-white/30cursor-not-allowed select-none w-40"
+                 style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07);">
                 <i class="ri-search-line text-sm"></i>
                 <span>搜索文档…</span>
                 <span class="ml-auto font-mono text-[10px]">⌘K</span>
-            </div><a href="cards.php"class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/15 border border-blue-500/25 text-blue-400 text-[12.5px] hover:bg-blue-600/25 transition-all">
-                <i class="ri-dashboard-3-line text-sm"></i> 后台管理
-            </a></div>
+            </div>
+            <!-- 移动端搜索 -->
+            <div class="mobile-search-btn sm-hide">
+                <i class="ri-search-line"></i>
+            </div>
+            <a href="cards.php" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-blue-400 text-[12px] transition-all"style="background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.25);">
+                <i class="ri-dashboard-3-line text-sm"></i>
+                <span class="hidden sm:inline">后台管理</span>
+            </a>
+        </div>
     </div>
 </header>
 
-<!-- ══════ 主体══════ -->
+<!-- ════════════════════ 主体════════════════════ -->
 <div class="flex flex-1 overflow-hidden">
 
-    <!-- 进度线 -->
-    <div class="toc-progress hidden lg:block">
+    <!-- 进度线（桌面） -->
+    <div class="toc-progress">
         <div class="toc-progress-fill" id="progress-fill" style="height:0%"></div>
     </div>
 
-    <!-- ── 侧边栏 ── -->
-    <aside class="sidebar hidden lg:block"><div class="nav-group-label">入门指南</div>
+    <!-- 桌面侧边栏 -->
+    <aside class="sidebar hidden lg:block">
+        <div class="nav-group-label">入门指南</div>
         <a href="#intro" class="nav-item active"><i class="ri-home-4-line"></i> 简介</a>
         <a href="#install" class="nav-item"><i class="ri-install-line"></i> 安装与登录</a>
         <a href="#structure" class="nav-item"><i class="ri-folder-3-line"></i> 目录结构</a>
-
         <div class="nav-group-label">API 对接</div>
         <a href="#api-connect" class="nav-item"><i class="ri-plug-line"></i> 接口定义</a>
+        <a href="#api-mode" class="nav-item"><i class="ri-git-branch-line"></i> 两种调用模式</a>
         <a href="#api-response" class="nav-item"><i class="ri-braces-line"></i> 响应格式</a>
+        <a href="#api-ratelimit" class="nav-item"><i class="ri-speed-line"></i> 限流机制</a>
         <a href="#api-examples" class="nav-item"><i class="ri-code-box-line"></i> 多语言 SDK</a>
-
         <div class="nav-group-label">高级功能</div>
         <a href="#api-variables" class="nav-item"><i class="ri-cloud-line"></i> 云变量系统</a>
+        <a href="#captcha" class="nav-item"><i class="ri-shield-check-line"></i> 验证码系统</a>
         <a href="#security" class="nav-item"><i class="ri-shield-keyhole-line"></i> 安全实践</a>
-
         <div class="nav-group-label">帮助</div>
+        <a href="#changelog" class="nav-item"><i class="ri-history-line"></i> 更新日志</a>
         <a href="#support" class="nav-item"><i class="ri-customer-service-line"></i> 联系支持</a>
-
-        <!--版本信息 -->
-        <div class="mt-8mx-2 p-3 rounded-xl bg-blue-500/06 border border-blue-500/12">
-            <div class="text-[11px] text-blue-400/80 font-semibold mb-1flex items-center gap-1.5">
-                <i class="ri-sparkling-line"></i> 当前版本
-            </div>
-            <div class="text-[13px] text-white/60 font-mono">V26Pro Enterprise</div>
-            <div class="text-[11px] text-white/25 mt-0.5">Documentation2.1</div>
+        <div class="version-box">
+            <div style="font-size:11px; color:rgba(59,130,246,0.8); font-weight:600; margin-bottom:4px;"><i class="ri-sparkling-line"></i> 当前版本</div>
+            <div style="font-size:13px; color:rgba(255,255,255,0.6); font-family:monospace;">V26 Pro Enterprise</div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.2); margin-top:2px;">Documentation 3.0</div>
         </div>
     </aside>
 
-    <!-- ── 主内容 ── -->
-    <main class="main-scroll" id="main-scroll">
-        <div class="content-body">
+    <!--════════════════════ 主内容 ════════════════════ -->
+    <main class="main-scroll" id="main-scroll"><div class="content-body">
 
-            <!-- ─────────────── 1. 简介 ─────────────── -->
+            <!-- ─── 1. 简介 ─── -->
             <section id="intro" class="mb-16">
-                <div class="flex items-center gap-2 mb-5">
-                    <span class="text-[11px] font-semibold text-blue-400uppercase tracking-widest">V26 Pro Enterprise</span>
+                <div class="flex items-center gap-2 mb-4 flex-wrap">
+                    <span class="text-[11px] font-semibold text-blue-400 uppercase tracking-widest">V26 Pro Enterprise</span>
                     <span class="text-[11px] bg-green-500/10 border border-green-500/20 text-green-400 px-2 py-0.5 rounded-full">稳定版</span>
                 </div>
-                <h1 class="doc-h1">GuYi 授权验证系统<br><span style="color:#3b82f6">开发文档</span></h1>
-                <p class="doc-p" style="font-size:17px;">轻量级、高性能的单码验证 API 系统。支持多应用管理、云端变量下发、设备指纹绑定以及完善的防刷机制。可集成至 EXE、APK 或任意脚本语言。</p>
+                <h1 class="doc-h1">GuYi Aegis Pro<br><span style="color:#3b82f6">开发文档</span></h1>
+                <p class="doc-p" style="font-size:clamp(15px,3vw,17px);">轻量级、高性能的Headless API 软件授权系统。支持多应用管理、云端变量下发、设备指纹绑定，以及滑动窗口限流、图形验证码等全栈安全防护。</p>
 
                 <div class="callout callout-warning">
                     <i class="ri-alert-fill"></i>
                     <div>
                         <strong style="color:#fcd34d; display:block; margin-bottom:4px;">安全提示</strong>
-                        安装完成后请立即删除根目录的 <code>install.php</code> 文件，并在【全局配置】中修改默认密码，防止站点被恶意重置。
+                        安装完成后请立即删除 <code>install.php</code>，并修改默认密码，防止站点被恶意重置。
                     </div>
                 </div>
 
-                <!--快速概览 -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+                <div class="grid grid-cols-3 gap-3mt-4">
                     <div class="feature-card text-center">
-                        <div class="text-2xl mb-2 text-blue-400"><i class="ri-flashlight-line"></i></div>
-                        <div class="text-[14px] font-semibold text-white mb-1">极速响应</div>
-                        <div class="text-[12px]" style="color:var(--text-muted)">平均延迟 &lt;50ms</div>
+                        <div class="text-xl mb-2 text-blue-400"><i class="ri-flashlight-line"></i></div>
+                        <div style="font-size:13px; font-weight:600; color:#fff; margin-bottom:4px;">极速响应</div>
+                        <div style="font-size:11px; color:var(--text-muted);">&lt;50ms</div>
                     </div>
                     <div class="feature-card text-center">
-                        <div class="text-2xl mb-2 text-purple-400"><i class="ri-code-s-slash-line"></i></div>
-                        <div class="text-[14px] font-semibold text-white mb-1">10+ 语言</div>
-                        <div class="text-[12px]" style="color:var(--text-muted)">开箱即用 SDK</div>
+                        <div class="text-xl mb-2 text-purple-400"><i class="ri-code-s-slash-line"></i></div>
+                        <div style="font-size:13px; font-weight:600; color:#fff; margin-bottom:4px;">8+ 语言</div>
+                        <div style="font-size:11px; color:var(--text-muted);">SDK 示例</div>
                     </div>
                     <div class="feature-card text-center">
-                        <div class="text-2xl mb-2 text-green-400"><i class="ri-cloud-line"></i></div>
-                        <div class="text-[14px] font-semibold text-white mb-1">云变量</div>
-                        <div class="text-[12px]" style="color:var(--text-muted)">无需发版即可更新</div>
+                        <div class="text-xl mb-2 text-green-400"><i class="ri-shield-keyhole-line"></i></div>
+                        <div style="font-size:13px; font-weight:600; color:#fff; margin-bottom:4px;">全栈安全</div>
+                        <div style="font-size:11px; color:var(--text-muted);">限流·指纹</div>
                     </div>
                 </div>
             </section>
 
-
-            <!-- ─────────────── 2. 安装─────────────── -->
+            <!-- ─── 2. 安装 ─── -->
             <section id="install" class="mb-16">
                 <h2 class="doc-h2">安装与默认账号</h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8mt-6">
-                    <!-- 安装步骤 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                     <div>
                         <h3 class="doc-h3" style="margin-top:0">部署步骤</h3>
-                        <div class="mt-4 space-y-0">
+                        <div class="mt-4">
                             <div class="step-line" data-step="1">
                                 <h4 style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">上传源码</h4>
-                                <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0">将所有文件上传至服务器根目录，确保 PHP 版本 &gt; 7.2，MySQL &gt; 5.6。</p>
+                                <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0">将所有文件上传至服务器根目录。需要 PHP≥7.4、MySQL≥5.7、GD 扩展。</p>
                             </div>
                             <div class="step-line" data-step="2" style="margin-top:20px">
-                                <h4 style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">运行安装程序</h4>
-                                <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0">浏览器访问 <code>http://你的域名/install.php</code>，填写数据库信息并执行安装。</p>
+                                <h4 style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">放置 TTF 字体（可选）</h4>
+                                <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0">将字体文件命名为 <code>font.ttf</code> 放入 <code>Verifyfile/</code> 目录，自动启用高强度验证码。</p>
                             </div>
                             <div class="step-line" data-step="3" style="margin-top:20px">
+                                <h4 style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">运行安装程序</h4>
+                                <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0">浏览器访问 <code>http://你的域名/install.php</code>，填写数据库信息完成安装。</p>
+                            </div><div class="step-line" data-step="4" style="margin-top:20px">
                                 <h4 style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">完成部署</h4>
-                                <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0">安装成功，删除 <code>install.php</code> 后即可访问后台管理界面。</p>
+                                <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0">删除 <code>install.php</code> 后访问后台，立即修改默认密码。</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 凭证卡片 -->
                     <div>
                         <h3 class="doc-h3" style="margin-top:0">初始管理员凭证</h3>
                         <div class="cred-card mt-4">
-                            <div class="relative z-10 space-y-5">
+                            <div class="relative z-10" style="display:flex; flex-direction:column; gap:16px;">
                                 <div>
-                                    <div style="font-size:10.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.07em; font-weight:600; margin-bottom:6px;">登录地址</div>
-                                <a href="cards.php" style="font-family:monospace; font-size:13px; color:#60a5fa; text-decoration:none; word-break:break-all;">http://你的域名/cards.php</a>
+                                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.07em; font-weight:600; margin-bottom:6px;">登录地址</div>
+                                <a href="cards.php" style="font-family:monospace; font-size:12px; color:#60a5fa; text-decoration:none; word-break:break-all;">http://你的域名/cards.php</a>
                                 </div>
                                 <div class="grid grid-cols-2 gap-3">
-                                    <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px;">
-                                        <div style="font-size:10.5px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em;">账号</div>
-                                        <div style="font-family:monospace; font-size:18px; font-weight:700; color:#fff; letter-spacing:0.05em;">GuYi</div>
+                                    <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:12px;">
+                                        <div style="font-size:10px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em;">账号</div>
+                                        <div style="font-family:monospace; font-size:17px; font-weight:700; color:#fff;">GuYi</div>
                 </div>
-                                    <div onclick="copyText('admin123')"
-                                         style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px; cursor:pointer; transition:all 0.2s;"
-                                         onmouseenter="this.style.borderColor='rgba(59,130,246,0.3)'; this.style.background='rgba(59,130,246,0.08)'"
-                                         onmouseleave="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.background='rgba(255,255,255,0.05)'">
-                                        <div style="font-size:10.5px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em; display:flex; justify-content:space-between; align-items:center;">
-                                            密码 <i class="ri-file-copy-line" style="opacity:0.5; font-size:12px;"></i>
-                                        </div>
-                                        <div style="font-family:monospace; font-size:18px; font-weight:700; color:#4ade80; letter-spacing:0.05em;">admin123</div>
+                                    <div onclick="copyText('admin123')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:12px; cursor:pointer; transition:all 0.2s;"
+                                         onmouseenter="this.style.borderColor='rgba(59,130,246,0.3)'"
+                                         onmouseleave="this.style.borderColor='rgba(255,255,255,0.08)'">
+                                        <div style="font-size:10px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em; display:flex; justify-content:space-between; align-items:center;">密码 <i class="ri-file-copy-line" style="opacity:0.5; font-size:11px;"></i></div>
+                                        <div style="font-family:monospace; font-size:17px; font-weight:700; color:#4ade80;">admin123</div>
                                     </div>
                                 </div>
-                                <div style="font-size:11px; color:var(--text-muted); padding-top:12px; border-top:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; gap:6px;">
+                                <div style="font-size:11px; color:var(--text-muted); padding-top:10px; border-top:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; gap:6px;">
                                     <i class="ri-shield-check-line" style="color:#3b82f6;"></i>
-                                    首次登录后请立即在【全局配置】中修改密码
+                                    首次登录后请立即修改密码
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <h3 class="doc-h3">环境要求</h3>
+                <!--桌面表格 -->
+                <div class="param-table-wrap">
+                    <table class="param-table">
+                        <thead><tr><th style="width:140px">组件</th><th style="width:100px">最低版本</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr><td><span class="param-name">PHP</span></td><td style="color:var(--text)">7.4</td><td class="param-desc">推荐 PHP 8.1+</td></tr>
+                            <tr><td><span class="param-name">MySQL</span></td><td style="color:var(--text)">5.7</td><td class="param-desc">推荐 8.0，全表InnoDB 引擎</td></tr>
+                            <tr><td><span class="param-name">GD 扩展</span></td><td style="color:var(--text)">必须</td><td class="param-desc">用于生成验证码，缺失返回 JSON 错误</td></tr>
+                            <tr><td><span class="param-name">PDO + pdo_mysql</span></td><td style="color:var(--text)">必须</td><td class="param-desc">数据库操作核心依赖</td></tr>
+                            <tr><td><span class="param-name">font.ttf</span></td><td style="color:var(--text)">可选</td><td class="param-desc">放入<code>Verifyfile/</code> 自动启用 TTF 验证码</td></tr>
+                        </tbody>
+                    </table>
+                </div><!-- 移动端卡片 -->
+                <div class="param-cards-mobile">
+                    <div class="param-card"><div class="param-card-name"><span class="param-name">PHP</span><span class="param-required param-cond" style="font-size:11px;">≥7.4</span></div><div class="param-card-desc">推荐 PHP 8.1+</div></div>
+                    <div class="param-card"><div class="param-card-name"><span class="param-name">MySQL</span><span class="param-required param-cond" style="font-size:11px;">≥5.7</span></div><div class="param-card-desc">推荐 8.0，全表 InnoDB 引擎</div></div>
+                    <div class="param-card"><div class="param-card-name"><span class="param-name">GD 扩展</span><span class="param-yes" style="font-size:11px; font-weight:600;">必须</span></div><div class="param-card-desc">用于生成验证码，缺失时返回 JSON 错误</div></div>
+                    <div class="param-card"><div class="param-card-name"><span class="param-name">PDO + pdo_mysql</span><span class="param-yes" style="font-size:11px; font-weight:600;">必须</span></div><div class="param-card-desc">数据库操作核心依赖</div></div>
+                    <div class="param-card"><div class="param-card-name"><span class="param-name">font.ttf</span><span class="param-no" style="font-size:11px; font-weight:600;">可选</span></div><div class="param-card-desc">放入 <code>Verifyfile/</code> 目录后自动启用 TTF 验证码</div></div>
+                </div>
             </section>
 
-
-            <!-- ─────────────── 3. 目录结构 ─────────────── -->
+            <!-- ─── 3. 目录结构 ─── -->
             <section id="structure" class="mb-16">
                 <h2 class="doc-h2">目录结构说明</h2>
                 <p class="doc-p">了解系统文件结构有助于二次开发与故障排查。</p>
@@ -522,124 +842,215 @@
                             <div class="tl" style="background:#febc2e"></div>
                             <div class="tl" style="background:#28c840"></div>
                         </div>
-                        <div class="terminal-title">~/guyi-access/ — bash</div>
-                        <div style="width:50px"></div>
+                        <div class="terminal-title">~/guyi-aegis/</div>
+                        <div style="width:40px"></div>
                     </div>
                     <div class="terminal-body">
                         <div style="color:rgba(255,255,255,0.3)">/ (网站根目录)</div>
-                        <div class="pl-4">├── <span style="color:#fbbf24">cards.php</span><span style="color:rgba(255,255,255,0.2); font-size:12px">// 后台管理入口（可重命名隐藏）</span></div>
+                        <div class="pl-4">├── <span style="color:#fbbf24">cards.php</span><span style="color:rgba(255,255,255,0.2); font-size:11px">// 后台管理入口</span></div>
                         <div class="pl-4">├── <span style="color:#60a5fa">Verifyfile/</span></div>
-                        <div class="pl-10">├── <span style="color:#4ade80">api.php</span>        <span style="color:rgba(255,255,255,0.2); font-size:12px">// ★核心验证接口</span></div>
-                        <div class="pl-10">└── <span style="color:#4ade80">captcha.php</span>    <span style="color:rgba(255,255,255,0.2); font-size:12px">// 登录验证码</span></div>
-                        <div class="pl-4">├── <span style="color:#c084fc">config.php</span>        <span style="color:rgba(255,255,255,0.2); font-size:12px">// 数据库配置 & SYS_SECRET</span></div>
-                        <div class="pl-4">├── <span style="color:#c084fc">database.php</span>      <span style="color:rgba(255,255,255,0.2); font-size:12px">// 数据库操作类</span></div>
-                        <div class="pl-4">├── <span style="color:#60a5fa">assets/</span>           <span style="color:rgba(255,255,255,0.2); font-size:12px">// CSS / JS 静态资源</span></div>
-                        <div class="pl-4">└── <span style="color:rgba(255,255,255,0.7)">index.php</span>         <span style="color:rgba(255,255,255,0.2); font-size:12px">// 404伪装页（保护隐私）</span></div>
+                        <div class="pl-10">├── <span style="color:#4ade80">api.php</span> <span style="color:rgba(255,255,255,0.2); font-size:11px">// ★核心鉴权接口</span></div>
+                        <div class="pl-10">├── <span style="color:#4ade80">captcha.php</span> <span style="color:rgba(255,255,255,0.2); font-size:11px">// 验证码（强化版）</span></div>
+                        <div class="pl-10">└── <span style="color:#f472b6">font.ttf</span> <span style="color:rgba(255,255,255,0.2); font-size:11px">// [可选] TTF字体</span></div>
+                        <div class="pl-4">├── <span style="color:#c084fc">config.php</span> <span style="color:rgba(255,255,255,0.2); font-size:11px">// 数据库配置</span></div>
+                        <div class="pl-4">├── <span style="color:#c084fc">database.php</span> <span style="color:rgba(255,255,255,0.2); font-size:11px">// PDO_MySQL 操作类</span></div>
+                        <div class="pl-4">├── <span style="color:#60a5fa">assets/</span> <span style="color:rgba(255,255,255,0.2); font-size:11px">// CSS / JS</span></div>
+                        <div class="pl-4">├── <span style="color:#fbbf24">install.php</span> <span style="color:rgba(255,255,255,0.2); font-size:11px">// 安装向导（删！）</span></div>
+                        <div class="pl-4">└── <span style="color:rgba(255,255,255,0.7)">index.php</span> <span style="color:rgba(255,255,255,0.2); font-size:11px">// 404伪装页</span></div>
                     </div>
                 </div>
             </section>
 
+            <div style="border-top:1px solid var(--border); margin:32px 0 48px;"></div>
 
-            <div style="border-top:1px solid var(--border); margin:40px 0 60px;"></div>
-
-
-            <!-- ─────────────── 4. API 定义 ─────────────── -->
+            <!-- ─── 4. API 定义 ─── -->
             <section id="api-connect" class="mb-16">
                 <h2 class="doc-h2">API 接口定义</h2>
-                <p class="doc-p">所有客户端均通过此唯一接口与服务器通信，使用 <code>POST</code> 方法提交表单数据。</p>
+                <p class="doc-p">所有客户端均通过此唯一接口通信，支持 <code>GET</code> 与 <code>POST</code>，推荐 <code>POST + JSON Body</code>。</p>
 
-                <div class="endpoint-bar">
-                    <span class="method-badge">POST</span>
-                    <span>http://您的域名/<span style="color:rgba(255,255,255,0.85)">Verifyfile/api.php</span></span>
+                <div class="endpoint-bar"><span class="method-badge">POST</span><span>http://域名/Verifyfile/api.php</span></div>
+                <div class="endpoint-bar"><span class="method-badge-get">GET</span><span>http://域名/Verifyfile/api.php?card_code=xxx&device_hash=yyy</span></div>
+
+                <div class="callout callout-info">
+                    <i class="ri-information-line"></i>
+                    <div><strong style="display:block; margin-bottom:4px;">参数读取优先级</strong>JSON Body &gt; POST表单 &gt; GET QueryString，互不污染。</div>
                 </div>
 
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th style="width:140px">参数名</th>
-                            <th style="width:60px">必填</th>
-                            <th>说明</th>
-                </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="param-name">card_code</span></td>
-                            <td><span class="param-required param-yes">必填</span></td>
-                            <td class="param-desc">用户输入的卡密（兼容参数名:<code>card</code>）</td>
-                        </tr>
-                        <tr>
-                            <td><span class="param-name">device_hash</span></td>
-                            <td><span class="param-required param-yes">必填</span></td>
-                            <td class="param-desc">设备唯一标识（机器码），建议 MD5 后传入（兼容参数名: <code>device</code>）</td>
-                        </tr>
-                        <tr>
-                            <td><span class="param-name">app_key</span></td>
-                            <td><span class="param-required param-no">可选</span></td>
-                            <td class="param-desc">应用密钥，用于区分多应用或获取云端变量（后台"应用管理"中获取）</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <!--桌面表格 -->
+                <div class="param-table-wrap">
+                    <table class="param-table">
+                        <thead><tr><th style="width:140px">参数名</th><th style="width:80px">必填</th><th>说明</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">card_code</span></td>
+                                <td><span class="param-required param-cond">条件必填</span></td>
+                                <td class="param-desc">用户输入的卡密，最长 64 字符。兼容旧参数名<code>card</code>。卡密验证模式时必填。</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">device_hash</span></td>
+                                <td><span class="param-required param-cond">条件必填</span></td>
+                                <td class="param-desc">设备唯一标识，MD5 后传入，最长 128 字符。兼容旧参数名 <code>device</code>。提交card_code 时必填。</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">app_key</span></td>
+                                <td><span class="param-required param-no">可选</span></td>
+                                <td class="param-desc">应用密钥，最长 64 字符。仅传<code>app_key</code>（不传 card_code）可获取该应用的公开云变量。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><!-- 移动端卡片 -->
+                <div class="param-cards-mobile">
+                    <div class="param-card">
+                        <div class="param-card-name"><span class="param-name">card_code</span><span class="param-cond" style="font-size:11px; font-weight:600;">条件必填</span></div>
+                        <div class="param-card-desc">用户输入的卡密，最长 64 字符。兼容旧参数名 <code>card</code>。卡密验证模式时必填。</div>
+                    </div>
+                    <div class="param-card">
+                        <div class="param-card-name"><span class="param-name">device_hash</span><span class="param-cond" style="font-size:11px; font-weight:600;">条件必填</span></div>
+                        <div class="param-card-desc">设备唯一标识，MD5 后传入，最长 128 字符。兼容旧参数名 <code>device</code>。</div>
+                    </div>
+                    <div class="param-card">
+                        <div class="param-card-name"><span class="param-name">app_key</span><span class="param-no" style="font-size:11px; font-weight:600;">可选</span></div>
+                        <div class="param-card-desc">应用密钥，最长 64 字符。仅传 <code>app_key</code> 可获取公开云变量。</div>
+                    </div>
+                </div><div class="callout callout-warning">
+                    <i class="ri-alert-fill"></i>
+                    <div>请求体最大 <strong>8KB</strong>，超出返回 <code>HTTP 413</code>。参数长度超限时返回 <code>400</code>。</div>
+                </div>
             </section>
 
-
-            <!-- ─────────────── 5. 响应格式 ─────────────── -->
-            <section id="api-response" class="mb-16">
-                <h2 class="doc-h2">响应格式</h2>
-                <p class="doc-p">服务端统一返回 JSON 格式数据，建议判断 <code>code</code> 字段处理结果。</p>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3mb-6">
-                    <div style="background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.2); border-radius:10px; padding:14px 16px;">
-                        <div style="font-family:monospace; font-size:20px; font-weight:700; color:#4ade80; margin-bottom:4px;">200</div>
-                        <div style="font-size:12px; color:rgba(255,255,255,0.4)">验证通过</div>
+            <!-- ─── 5. 两种调用模式 ─── -->
+            <section id="api-mode" class="mb-16">
+                <h2 class="doc-h2">两种调用模式</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4mt-4">
+                    <div class="feature-card">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                            <div style="width:34px; height:34px; border-radius:10px; background:rgba(59,130,246,0.1); display:flex; align-items:center; justify-content:center; color:#60a5fa; font-size:17px; flex-shrink:0;"><i class="ri-key-2-line"></i></div>
+                            <div>
+                                <div style="font-size:14px; font-weight:600; color:var(--text);">模式一：卡密验证</div>
+                                <span style="font-size:10px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.2); color:#93c5fd; border-radius:99px; padding:1px 8px;">card_code + device_hash</span>
+                            </div>
+                        </div>
+                        <p style="font-size:13px; color:var(--text-subtle); line-height:1.65; margin-bottom:10px;">验证通过后返回到期时间及全部云变量（公开+私有）。</p><div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:10px 12px; font-family:monospace; font-size:11.5px; color:rgba(255,255,255,0.5);">
+                            card_code=VIP-XXX<br>device_hash=md5(hwid)
+                        </div>
                     </div>
-                    <div style="background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2); border-radius:10px; padding:14px 16px;">
-                        <div style="font-family:monospace; font-size:20px; font-weight:700; color:#f87171; margin-bottom:4px;">403</div>
-                        <div style="font-size:12px; color:rgba(255,255,255,0.4)">验证失败 / 已过期</div>
-                    </div>
-                    <div style="background:rgba(251,191,36,0.07); border:1px solid rgba(251,191,36,0.2); border-radius:10px; padding:14px 16px;">
-                        <div style="font-family:monospace; font-size:20px; font-weight:700; color:#fbbf24; margin-bottom:4px;">429</div>
-                        <div style="font-size:12px; color:rgba(255,255,255,0.4)">请求过快（防刷）</div>
+                    <div class="feature-card">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                            <div style="width:34px; height:34px; border-radius:10px; background:rgba(34,197,94,0.1); display:flex; align-items:center; justify-content:center; color:#4ade80; font-size:17px; flex-shrink:0;"><i class="ri-earth-line"></i></div>
+                            <div>
+                                <div style="font-size:14px; font-weight:600; color:var(--text);">模式二：获取公开变量</div>
+                                <span style="font-size:10px; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); color:#86efac; border-radius:99px; padding:1px 8px;">仅 app_key</span>
+                            </div>
+                        </div>
+                        <p style="font-size:13px; color:var(--text-subtle); line-height:1.65; margin-bottom:10px;">只返回 <code>is_public=1</code> 的变量，私有变量不会泄露。</p>
+                        <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:10px 12px; font-family:monospace; font-size:11.5px; color:rgba(255,255,255,0.5);">
+                            app_key=your_app_key<br><span style="color:rgba(255,255,255,0.25)">// card_code 不填</span>
+                        </div>
                     </div>
                 </div>
+            </section>
 
+            <!-- ─── 6. 响应格式 ─── -->
+            <section id="api-response" class="mb-16">
+                <h2 class="doc-h2">响应格式</h2>
+                <p class="doc-p">服务端统一返回 JSON，建议通过 <code>code</code> 字段判断结果。</p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
+                    <div class="code-badge" style="background:rgba(34,197,94,0.07); border:1px solid rgba(34,197,94,0.2);"><div style="font-family:monospace; font-size:18px; font-weight:700; color:#4ade80; margin-bottom:3px;">200</div><div style="font-size:11px; color:rgba(255,255,255,0.4)">验证通过</div></div>
+                    <div class="code-badge" style="background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2);"><div style="font-family:monospace; font-size:18px; font-weight:700; color:#f87171; margin-bottom:3px;">400</div><div style="font-size:11px; color:rgba(255,255,255,0.4)">参数非法</div></div>
+                    <div class="code-badge" style="background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2);"><div style="font-family:monospace; font-size:18px; font-weight:700; color:#f87171; margin-bottom:3px;">403</div><div style="font-size:11px; color:rgba(255,255,255,0.4)">验证失败</div></div>
+                    <div class="code-badge" style="background:rgba(251,191,36,0.07); border:1px solid rgba(251,191,36,0.2);"><div style="font-family:monospace; font-size:18px; font-weight:700; color:#fbbf24; margin-bottom:3px;">429</div><div style="font-size:11px; color:rgba(255,255,255,0.4)">触发限流</div></div>
+                </div>
+
+                <h3 class="doc-h3">成功响应（卡密验证）</h3>
                 <div class="terminal">
                     <div class="terminal-header">
-                        <div class="tl-group">
-                            <div class="tl" style="background:#ff5f57"></div>
-                            <div class="tl" style="background:#febc2e"></div>
-                            <div class="tl" style="background:#28c840"></div>
-                        </div>
-                        <div class="terminal-title">Response Payload — application/json</div>
-                        <button onclick="copyText('{&quot;code&quot;:200,&quot;msg&quot;:&quot;OK&quot;}')"
-                                style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:3px 10px; color:rgba(255,255,255,0.4); font-size:11px; cursor:pointer; display:flex; align-items:center; gap:4px; transition:all 0.2s;"
-                                onmouseenter="this.style.color='rgba(255,255,255,0.8)'"
-                                onmouseleave="this.style.color='rgba(255,255,255,0.4)'">
-                            <i class="ri-file-copy-line"></i> 复制
-                        </button>
+                        <div class="tl-group"><div class="tl" style="background:#ff5f57"></div><div class="tl" style="background:#febc2e"></div><div class="tl" style="background:#28c840"></div></div>
+                        <div class="terminal-title">Response · code200</div>
+                        <button class="copy-btn" onclick="copyText('{&quot;code&quot;:200,&quot;msg&quot;:&quot;OK&quot;}')"><i class="ri-file-copy-line"></i> 复制</button>
                     </div>
                     <div class="terminal-body">
 <pre style="margin:0">{
   <span style="color:#c084fc">"code"</span>: <span style="color:#fbbf24">200</span>,
-  <span style="color:#c084fc">"msg"</span>: <span style="color:#4ade80">"OK"</span>,
+  <span style="color:#c084fc">"msg"</span>:  <span style="color:#4ade80">"OK"</span>,
   <span style="color:#c084fc">"data"</span>: {
     <span style="color:#c084fc">"expire_time"</span>: <span style="color:#4ade80">"2026-12-31 23:59:59"</span>,
-    <span style="color:#c084fc">"variables"</span>: {             <span style="color:rgba(255,255,255,0.2); font-size:12px">// 云变量（如已配置）</span>
-      <span style="color:#c084fc">"notice"</span>: <span style="color:#4ade80">"最新公告内容..."</span>,
+    <span style="color:#c084fc">"variables"</span>: {
+      <span style="color:#c084fc">"notice"</span>: <span style="color:#4ade80">"最新公告..."</span>,
       <span style="color:#c084fc">"download_url"</span>: <span style="color:#4ade80">"https://..."</span>
     }
   }
 }</pre>
                     </div>
                 </div>
+
+                <h3 class="doc-h3">错误响应示例</h3>
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="tl-group"><div class="tl" style="background:#ff5f57"></div><div class="tl" style="background:#febc2e"></div><div class="tl" style="background:#28c840"></div></div>
+                        <div class="terminal-title">错误场景</div>
+                    </div>
+                    <div class="terminal-body">
+<pre style="margin:0"><span style="color:rgba(255,255,255,0.3)">//缺少 device_hash</span>
+{ <span style="color:#c084fc">"code"</span>: <span style="color:#fbbf24">400</span>, <span style="color:#c084fc">"msg"</span>: <span style="color:#f87171">"缺少设备标识"</span> }
+
+<span style="color:rgba(255,255,255,0.3)">//卡密无效</span>
+{ <span style="color:#c084fc">"code"</span>: <span style="color:#fbbf24">403</span>, <span style="color:#c084fc">"msg"</span>: <span style="color:#f87171">"卡密不存在或已过期"</span> }
+
+<span style="color:rgba(255,255,255,0.3)">// 触发限流</span>
+{ <span style="color:#c084fc">"code"</span>: <span style="color:#fbbf24">429</span>, <span style="color:#c084fc">"msg"</span>: <span style="color:#fbbf24">"Too Many Requests"</span> }</pre>
+                    </div>
+                </div>
             </section>
 
+            <!-- ─── 7. 限流机制 ─── -->
+            <section id="api-ratelimit" class="mb-16">
+                <h2 class="doc-h2">限流机制</h2>
+                <p class="doc-p"><code>api.php</code> 内置<strong>滑动窗口限流</strong>，彻底解决并发竞争问题。</p>
 
-            <!-- ─────────────── 6. SDK 示例 ─────────────── -->
+                <div class="grid grid-cols-3 gap-3 mb-5">
+                    <div class="feature-card text-center">
+                        <div style="font-size:22px; font-weight:700; color:#3b82f6; margin-bottom:4px;">60</div>
+                        <div style="font-size:11px; color:var(--text-subtle)">次/IP/分钟</div>
+                    </div>
+                    <div class="feature-card text-center">
+                        <div style="font-size:14px; font-weight:700; color:#a78bfa; margin-bottom:4px;">LOCK_EX</div>
+                        <div style="font-size:11px; color:var(--text-subtle)">排他文件锁</div>
+                    </div>
+                    <div class="feature-card text-center">
+                        <div style="font-size:22px; font-weight:700; color:#4ade80; margin-bottom:4px;">429</div>
+                        <div style="font-size:11px; color:var(--text-subtle)">超限状态码</div>
+                    </div>
+                </div>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="tl-group"><div class="tl" style="background:#ff5f57"></div><div class="tl" style="background:#febc2e"></div><div class="tl" style="background:#28c840"></div></div>
+                        <div class="terminal-title">限流算法</div>
+                    </div>
+                    <div class="terminal-body">
+<pre style="margin:0"><span style="color:rgba(255,255,255,0.3)">// IP → /tmp/rl_{md5(ip)}.json
+// 请求到达：
+//1. flock(LOCK_EX)排他锁
+//  2. now - ts >= 60 → 重置窗口
+//  3. count++
+//  4. count > 60 → HTTP 429
+//  5. 写回 → flock(LOCK_UN)
+// 1% 概率清理 5分钟前的过期文件</span></pre>
+                    </div>
+                </div>
+
+                <div class="callout callout-info">
+                    <i class="ri-information-line"></i>
+                    <div>文件系统不可写时限流自动降级放行，不会中断正常请求。</div>
+                </div>
+            </section>
+
+            <!-- ─── 8. SDK 示例 ─── -->
             <section id="api-examples" class="mb-16">
                 <h2 class="doc-h2">多语言 SDK 示例</h2>
-                <p class="doc-p">复制以下代码，替换 <code>你的域名</code> 与卡密参数即可快速接入。</p>
+                <p class="doc-p">复制代码，替换 <code>你的域名</code> 与参数即可接入。</p>
 
-                <!-- Tab Bar -->
                 <div class="lang-tabs-bar mb-0" id="lang-tabs">
                     <div class="lang-tab active" onclick="switchLang('python')">Python</div>
                     <div class="lang-tab inactive" onclick="switchLang('elang')">易语言</div>
@@ -648,50 +1059,39 @@
                     <div class="lang-tab inactive" onclick="switchLang('java')">Java</div>
                     <div class="lang-tab inactive" onclick="switchLang('node')">Node.js</div>
                     <div class="lang-tab inactive" onclick="switchLang('go')">Go</div>
-                <div class="lang-tab inactive" onclick="switchLang('cpp')">C++</div>
+                    <div class="lang-tab inactive" onclick="switchLang('cpp')">C++</div>
                 </div>
 
-                <!-- 代码容器 -->
-                <div class="terminal" style="margin-top:8px; border-radius:0 14px 14px 14px;">
+                <div class="terminal" style="margin-top:6px; border-radius:012px 12px 12px;">
                     <div class="terminal-header">
-                        <div class="tl-group">
-                            <div class="tl" style="background:#ff5f57"></div>
-                            <div class="tl" style="background:#febc2e"></div>
-                            <div class="tl" style="background:#28c840"></div>
-                        </div>
+                        <div class="tl-group"><div class="tl" style="background:#ff5f57"></div><div class="tl" style="background:#febc2e"></div><div class="tl" style="background:#28c840"></div></div>
                         <div class="terminal-title" id="code-filename">verify.py</div>
-                        <button onclick="copyCurrentCode()"
-                                style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:3px 10px; color:rgba(255,255,255,0.4); font-size:11px; cursor:pointer; display:flex; align-items:center; gap:4px; transition:all 0.2s;"
-                                onmouseenter="this.style.color='rgba(255,255,255,0.8)'"
-                                onmouseleave="this.style.color='rgba(255,255,255,0.4)'">
-                            <i class="ri-file-copy-line"></i> 复制代码
-                        </button>
+                        <button class="copy-btn" onclick="copyCurrentCode()"><i class="ri-file-copy-line"></i> 复制</button>
                     </div>
 
                     <!-- Python -->
                     <div id="code-python" class="terminal-body code-block">
-<pre style="margin:0"><span style="color:#f472b6">import</span> <span style="color:#e8e8f0">requests, hashlib</span>
+<pre style="margin:0"><span style="color:#f472b6">import</span> requests, hashlib
 
-<span style="color:rgba(255,255,255,0.25)"># ① 配置</span>
-api_url = <span style="color:#4ade80">"http://你的域名/Verifyfile/api.php"</span>
-card    = <span style="color:#4ade80">"VIP-88888888"</span>
-hwid    = hashlib.md5(<span style="color:#4ade80">"my_computer_id"</span>.encode()).hexdigest()
+API_URL = <span style="color:#4ade80">"http://你的域名/Verifyfile/api.php"</span>
+card = <span style="color:#4ade80">"VIP-88888888"</span>
+hwid = hashlib.md5(<span style="color:#4ade80">"my_computer_id"</span>.encode()).hexdigest()
 
-<span style="color:rgba(255,255,255,0.25)"># ② 请求</span>
 <span style="color:#f472b6">try</span>:
-    res = requests.post(api_url, data={
+    res = requests.post(API_URL, json={
         <span style="color:#4ade80">"card_code"</span>: card,
         <span style="color:#4ade80">"device_hash"</span>: hwid,
-        <span style="color:#4ade80">"app_key"</span>: <span style="color:#4ade80">""</span>   <span style="color:rgba(255,255,255,0.25)"># 可选</span>
+        <span style="color:#4ade80">"app_key"</span>: <span style="color:#4ade80">""</span>
     }, timeout=<span style="color:#fbbf24">5</span>).json()
 
-    <span style="color:rgba(255,255,255,0.25)"># ③ 处理结果</span><span style="color:#f472b6">if</span> res[<span style="color:#4ade80">'code'</span>] == <span style="color:#fbbf24">200</span>:
-        <span style="color:#f472b6">print</span>(<span style="color:#4ade80">f"✓ 验证通过，到期时间：{res['data']['expire_time']}"</span>)
+    <span style="color:#f472b6">if</span> res[<span style="color:#4ade80">'code'</span>] == <span style="color:#fbbf24">200</span>:
+        <span style="color:#f472b6">print</span>(<span style="color:#4ade80">f"✓ 到期={res['data']['expire_time']}"</span>)
+    <span style="color:#f472b6">elif</span> res[<span style="color:#4ade80">'code'</span>] == <span style="color:#fbbf24">429</span>:
+        <span style="color:#f472b6">print</span>(<span style="color:#4ade80">"✗ 请求过于频繁"</span>)
     <span style="color:#f472b6">else</span>:
-        <span style="color:#f472b6">print</span>(<span style="color:#4ade80">f"✗ 验证失败：{res['msg']}"</span>)
-
-<span style="color:#f472b6">except</span> Exception:
-    <span style="color:#f472b6">print</span>(<span style="color:#4ade80">"网络连接失败"</span>)</pre>
+        <span style="color:#f472b6">print</span>(<span style="color:#4ade80">f"✗ {res['msg']}"</span>)
+<span style="color:#f472b6">except</span> Exception<span style="color:#f472b6">as</span> e:
+    <span style="color:#f472b6">print</span>(<span style="color:#4ade80">f"连接失败：{e}"</span>)</pre>
                     </div>
 
                     <!-- 易语言 -->
@@ -706,15 +1106,14 @@ hwid    = hashlib.md5(<span style="color:#4ade80">"my_computer_id"</span>.encode
 <span style="color:#f472b6">.局部变量</span> json, 类_json
 
 网址 ＝<span style="color:#4ade80">"http://你的域名/Verifyfile/api.php"</span>
-提交数据 ＝ <span style="color:#4ade80">"card_code="</span>＋ 编辑框_卡密.内容 ＋<span style="color:#4ade80">"&device_hash="</span> ＋ <span style="color:#4ade80">"YOUR_HWID_MD5"</span>
-
-返回文本 ＝编码_Utf8到Ansi(网页_访问_对象(网址, 1, 提交数据, , , , , , , , , , , , , , , , ))
+提交数据 ＝ <span style="color:#4ade80">"card_code="</span> ＋ 编辑框_卡密.内容 ＋ <span style="color:#4ade80">"&device_hash=YOUR_HWID_MD5"</span>
+返回文本 ＝ 编码_Utf8到Ansi(网页_访问_对象(网址, 1, 提交数据, , , , , , , , , , , , , , , , ))
 
 json.解析(返回文本)
-<span style="color:#f472b6">如果</span> (json.取属性数值(<span style="color:#4ade80">"code"</span>) ＝ 200)
-    信息框(<span style="color:#4ade80">"登录成功！到期："</span> ＋ json.取通用属性(<span style="color:#4ade80">"data.expire_time"</span>),0, , )
+<span style="color:#f472b6">如果</span> (json.取属性数值(<span style="color:#4ade80">"code"</span>)＝ 200)
+    信息框(<span style="color:#4ade80">"✓ 到期："</span> ＋ json.取通用属性(<span style="color:#4ade80">"data.expire_time"</span>),0, , )
 <span style="color:#f472b6">否则</span>
-    信息框(<span style="color:#4ade80">"登录失败："</span> ＋ json.取通用属性(<span style="color:#4ade80">"msg"</span>), #错误图标, , )
+    信息框(<span style="color:#4ade80">"✗ "</span> ＋ json.取通用属性(<span style="color:#4ade80">"msg"</span>), #错误图标, , )
 <span style="color:#f472b6">如果结束</span></pre>
                     </div>
 
@@ -722,98 +1121,91 @@ json.解析(返回文本)
                     <div id="code-php" class="terminal-body code-block" style="display:none">
 <pre style="margin:0"><span style="color:#f472b6">&lt;?php</span>
 $url= <span style="color:#4ade80">"http://你的域名/Verifyfile/api.php"</span>;
-$data = [
-    <span style="color:#4ade80">'card_code'</span>=> <span style="color:#4ade80">'VIP-123456'</span>,
-    <span style="color:#4ade80">'device_hash'</span> => md5(<span style="color:#4ade80">'server_unique_id'</span>),
-];
+$data = [<span style="color:#4ade80">'card_code'</span> => <span style="color:#4ade80">'VIP-123456'</span>, <span style="color:#4ade80">'device_hash'</span> => md5(<span style="color:#4ade80">'unique_id'</span>)];
 
 $ch = curl_init();
 curl_setopt_array($ch, [
     CURLOPT_URL            => $url,
-    CURLOPT_POST           =><span style="color:#fbbf24">true</span>,
-    CURLOPT_POSTFIELDS     => http_build_query($data),
+    CURLOPT_POST           => <span style="color:#fbbf24">true</span>,
+    CURLOPT_POSTFIELDS     => json_encode($data),
+    CURLOPT_HTTPHEADER     => [<span style="color:#4ade80">'Content-Type: application/json'</span>],
     CURLOPT_RETURNTRANSFER => <span style="color:#fbbf24">true</span>,
     CURLOPT_TIMEOUT        => <span style="color:#fbbf24">5</span>,
 ]);
-$json = json_decode(curl_exec($ch), <span style="color:#fbbf24">true</span>);
+$res = json_decode(curl_exec($ch), <span style="color:#fbbf24">true</span>);
 curl_close($ch);
 
-if ($json[<span style="color:#4ade80">'code'</span>] === <span style="color:#fbbf24">200</span>) {
-    echo <span style="color:#4ade80">"✓ 到期时间: "</span> . $json[<span style="color:#4ade80">'data'</span>][<span style="color:#4ade80">'expire_time'</span>];
-} else {
-    echo <span style="color:#4ade80">"✗ 错误: "</span> . $json[<span style="color:#4ade80">'msg'</span>];
-}
+<span style="color:#f472b6">echo</span> $res[<span style="color:#4ade80">'code'</span>] === <span style="color:#fbbf24">200</span>? <span style="color:#4ade80">"✓ "</span> . $res[<span style="color:#4ade80">'data'</span>][<span style="color:#4ade80">'expire_time'</span>]
+    : <span style="color:#4ade80">"✗ "</span> . $res[<span style="color:#4ade80">'msg'</span>];
 <span style="color:#f472b6">?></span></pre>
                     </div>
 
                     <!-- C# -->
                     <div id="code-csharp" class="terminal-body code-block" style="display:none">
 <pre style="margin:0"><span style="color:#f472b6">using</span> System.Net.Http;
-<span style="color:#f472b6">using</span> Newtonsoft.Json.Linq; <span style="color:rgba(255,255,255,0.25)">// Nuget: Newtonsoft.Json</span>
+<span style="color:#f472b6">using</span> System.Text;
+<span style="color:#f472b6">using</span> Newtonsoft.Json.Linq;
 
 <span style="color:#f472b6">public async void</span> <span style="color:#60a5fa">VerifyCard</span>()
 {
-    <span style="color:#f472b6">using var</span> client = <span style="color:#f472b6">new</span> HttpClient();
-    var values = <span style="color:#f472b6">new</span> Dictionary&lt;string, string&gt; {
-        { <span style="color:#4ade80">"card_code"</span>,<span style="color:#4ade80">"VIP-CODE-HERE"</span> },
-        { <span style="color:#4ade80">"device_hash"</span>, <span style="color:#4ade80">"YOUR_HWID_HASH"</span> }
+    <span style="color:#f472b6">using var</span> client = <span style="color:#f472b6">new</span> HttpClient {
+        Timeout = TimeSpan.FromSeconds(<span style="color:#fbbf24">5</span>)
     };
-
-    var response = <span style="color:#f472b6">await</span> client.PostAsync(
-        <span style="color:#4ade80">"http://site.com/Verifyfile/api.php"</span>,
-        <span style="color:#f472b6">new</span> FormUrlEncodedContent(values)
+    var payload = <span style="color:#f472b6">new</span> {
+        card_code = <span style="color:#4ade80">"VIP-CODE"</span>, device_hash = <span style="color:#4ade80">"HWID"</span>
+    };
+    var content = <span style="color:#f472b6">new</span> StringContent(
+        System.Text.Json.JsonSerializer.Serialize(payload),
+        Encoding.UTF8, <span style="color:#4ade80">"application/json"</span>
     );
-    var json = JObject.Parse(<span style="color:#f472b6">await</span> response.Content.ReadAsStringAsync());
-
-    <span style="color:#f472b6">if</span> ((<span style="color:#f472b6">int</span>)json[<span style="color:#4ade80">"code"</span>] == <span style="color:#fbbf24">200</span>)
-        Console.WriteLine(<span style="color:#4ade80">"✓ "</span> + json[<span style="color:#4ade80">"data"</span>][<span style="color:#4ade80">"expire_time"</span>]);
-    <span style="color:#f472b6">else</span>
-        Console.WriteLine(<span style="color:#4ade80">"✗ "</span> + json[<span style="color:#4ade80">"msg"</span>]);
+    var resp = <span style="color:#f472b6">await</span> client.PostAsync(
+        <span style="color:#4ade80">"http://site/Verifyfile/api.php"</span>, content);
+    var json = JObject.Parse(<span style="color:#f472b6">await</span> resp.Content.ReadAsStringAsync());
+    Console.WriteLine((<span style="color:#f472b6">int</span>)json[<span style="color:#4ade80">"code"</span>] == <span style="color:#fbbf24">200</span>
+        ? <span style="color:#4ade80">"✓ "</span> + json[<span style="color:#4ade80">"data"</span>][<span style="color:#4ade80">"expire_time"</span>]
+        : <span style="color:#4ade80">"✗ "</span> + json[<span style="color:#4ade80">"msg"</span>]);
 }</pre>
                     </div>
 
                     <!-- Java -->
                     <div id="code-java" class="terminal-body code-block" style="display:none">
-<pre style="margin:0"><span style="color:#f472b6">import</span> java.net.*;
-<span style="color:#f472b6">import</span> java.io.*;
+<pre style="margin:0"><span style="color:#f472b6">import</span> java.net.*;<span style="color:#f472b6">import</span> java.io.*;
+<span style="color:#f472b6">import</span> java.nio.charset.StandardCharsets;
 
 <span style="color:#f472b6">public class</span> <span style="color:#60a5fa">GuYiVerify</span> {
     <span style="color:#f472b6">public static void</span> main(String[] args) <span style="color:#f472b6">throws</span> Exception {
-        URL url = <span style="color:#f472b6">new</span> URL(<span style="color:#4ade80">"http://site.com/Verifyfile/api.php"</span>);
+        URL url = <span style="color:#f472b6">new</span> URL(<span style="color:#4ade80">"http://site/Verifyfile/api.php"</span>);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod(<span style="color:#4ade80">"POST"</span>);
         conn.setDoOutput(<span style="color:#fbbf24">true</span>);
         conn.setConnectTimeout(<span style="color:#fbbf24">5000</span>);
-
-        String params = <span style="color:#4ade80">"card_code=VIP-123&device_hash=java_client_hash"</span>;
+        conn.setRequestProperty(<span style="color:#4ade80">"Content-Type"</span>, <span style="color:#4ade80">"application/json"</span>);
+        String body = <span style="color:#4ade80">"{\"card_code\":\"VIP\",\"device_hash\":\"hwid\"}"</span>;
         <span style="color:#f472b6">try</span> (OutputStream os = conn.getOutputStream()) {
-            os.write(params.getBytes(<span style="color:#4ade80">"UTF-8"</span>));
+            os.write(body.getBytes(StandardCharsets.UTF_8));
         }
-
-        Scanner sc = <span style="color:#f472b6">new</span> Scanner(conn.getInputStream());
+        Scanner sc = <span style="color:#f472b6">new</span> Scanner(conn.getInputStream(), StandardCharsets.UTF_8);
         System.out.println(sc.useDelimiter(<span style="color:#4ade80">"\\A"</span>).next());
-        <span style="color:rgba(255,255,255,0.25)">// 推荐用 Gson / Jackson解析 JSON</span>}
+    }
 }</pre>
                     </div>
 
                     <!-- Node.js -->
                     <div id="code-node" class="terminal-body code-block" style="display:none">
-<pre style="margin:0"><span style="color:#f472b6">const</span> axios = require(<span style="color:#4ade80">'axios'</span>); <span style="color:rgba(255,255,255,0.25)">// npm i axios</span>
+<pre style="margin:0"><span style="color:#f472b6">const</span> axios = require(<span style="color:#4ade80">'axios'</span>); <span style="color:rgba(255,255,255,0.3)">// npm i axios</span>
 
 <span style="color:#f472b6">async function</span> <span style="color:#60a5fa">verify</span>() {
     <span style="color:#f472b6">try</span> {
         <span style="color:#f472b6">const</span> { data } = <span style="color:#f472b6">await</span> axios.post(
-            <span style="color:#4ade80">'http://site.com/Verifyfile/api.php'</span>,
-            <span style="color:#f472b6">new</span> URLSearchParams({
-                card_code:<span style="color:#4ade80">'VIP-123456'</span>,
-                device_hash: <span style="color:#4ade80">'node_hwid_hash'</span>,
-            })
+            <span style="color:#4ade80">'http://site/Verifyfile/api.php'</span>,
+            { card_code: <span style="color:#4ade80">'VIP-123'</span>, device_hash: <span style="color:#4ade80">'hwid'</span> },
+            { timeout: <span style="color:#fbbf24">5000</span> }
         );<span style="color:#f472b6">if</span> (data.code === <span style="color:#fbbf24">200</span>)
-            console.log(<span style="color:#4ade80">'✓ Expires:'</span>, data.data.expire_time);
+            console.log(<span style="color:#4ade80">'✓'</span>, data.data.expire_time);
         <span style="color:#f472b6">else</span>
-            console.log(<span style="color:#4ade80">'✗ Error:'</span>, data.msg);
+            console.log(<span style="color:#4ade80">'✗'</span>, data.msg);
     } <span style="color:#f472b6">catch</span> (e) {
-        console.error(<span style="color:#4ade80">'Request failed'</span>, e.message);
+        console.error(e.message);
     }
 }
 verify();</pre>
@@ -822,41 +1214,39 @@ verify();</pre>
                     <!-- Go -->
                     <div id="code-go" class="terminal-body code-block" style="display:none">
 <pre style="margin:0"><span style="color:#f472b6">package</span> main
-
-<span style="color:#f472b6">import</span> (
-    <span style="color:#4ade80">"fmt"</span>; <span style="color:#4ade80">"io"</span>; <span style="color:#4ade80">"net/http"</span>; <span style="color:#4ade80">"net/url"</span>
-)
+<span style="color:#f472b6">import</span> (<span style="color:#4ade80">"bytes"</span>; <span style="color:#4ade80">"fmt"</span>; <span style="color:#4ade80">"io"</span>; <span style="color:#4ade80">"net/http"</span>; <span style="color:#4ade80">"time"</span>)
 
 <span style="color:#f472b6">func</span> <span style="color:#60a5fa">main</span>() {
-    api := <span style="color:#4ade80">"http://site.com/Verifyfile/api.php"</span>
-    data := url.Values{
-        <span style="color:#4ade80">"card_code"</span>:   {<span style="color:#4ade80">"VIP-123"</span>},
-        <span style="color:#4ade80">"device_hash"</span>: {<span style="color:#4ade80">"go_client_hash"</span>},
-    }
-    resp, err := http.PostForm(api, data)
-    <span style="color:#f472b6">if</span> err != nil { panic(err) }
+    body := []byte(`{"card_code":"VIP","device_hash":"go_hwid"}`)
+    client := &http.Client{Timeout: <span style="color:#fbbf24">5</span> * time.Second}
+    req, _ := http.NewRequest(<span style="color:#4ade80">"POST"</span>,
+        <span style="color:#4ade80">"http://site/Verifyfile/api.php"</span>,
+        bytes.NewBuffer(body))
+    req.Header.Set(<span style="color:#4ade80">"Content-Type"</span>, <span style="color:#4ade80">"application/json"</span>)
+    resp, err := client.Do(req)<span style="color:#f472b6">if</span> err != nil { panic(err) }
     <span style="color:#f472b6">defer</span> resp.Body.Close()
-    body, _ := io.ReadAll(resp.Body)
-    fmt.Println(string(body))
+    result, _ := io.ReadAll(resp.Body)
+    fmt.Println(string(result))
 }</pre>
                     </div>
 
                     <!-- C++ -->
                     <div id="code-cpp" class="terminal-body code-block" style="display:none">
-<pre style="margin:0"><span style="color:#f472b6">#include</span> &lt;curl/curl.h&gt; <span style="color:rgba(255,255,255,0.25)">//依赖 libcurl</span>
+<pre style="margin:0"><span style="color:#f472b6">#include</span> &lt;curl/curl.h&gt;
 <span style="color:#f472b6">#include</span> &lt;string&gt;
 
 <span style="color:#f472b6">int</span> <span style="color:#60a5fa">main</span>() {
     CURL *curl = curl_easy_init();
     <span style="color:#f472b6">if</span> (!curl) <span style="color:#f472b6">return</span><span style="color:#fbbf24">1</span>;
-
-    std::string post = <span style="color:#4ade80">"card_code=VIP-123&device_hash=hwid_md5_hash"</span>;
-
-    curl_easy_setopt(curl, CURLOPT_URL,<span style="color:#4ade80">"http://site.com/Verifyfile/api.php"</span>);
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post.c_str());
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT,   <span style="color:#fbbf24">5L</span>);
-
+    std::string json =<span style="color:#4ade80">R"({"card_code":"VIP","device_hash":"hwid"})"</span>;
+    struct curl_slist *h = nullptr;
+    h = curl_slist_append(h, <span style="color:#4ade80">"Content-Type: application/json"</span>);
+    curl_easy_setopt(curl, CURLOPT_URL,<span style="color:#4ade80">"http://site/Verifyfile/api.php"</span>);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json.c_str());
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, h);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L);
     CURLcode res = curl_easy_perform(curl);
+    curl_slist_free_all(h);
     curl_easy_cleanup(curl);
     <span style="color:#f472b6">return</span> res == CURLE_OK ? <span style="color:#fbbf24">0</span> : <span style="color:#fbbf24">1</span>;
 }</pre>
@@ -864,72 +1254,332 @@ verify();</pre>
                 </div>
             </section>
 
+            <div style="border-top:1px solid var(--border); margin:32px 0 48px;"></div>
 
-            <div style="border-top:1px solid var(--border); margin:40px 0 60px;"></div>
-
-
-            <!-- ─────────────── 7. 云变量 ─────────────── -->
+            <!-- ─── 9. 云变量 ─── -->
             <section id="api-variables" class="mb-16">
                 <h2 class="doc-h2">云变量系统</h2>
-                <p class="doc-p">在后台【应用列表 → 变量管理】中配置，验证成功后自动随响应下发。</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5mt-6">
+                <p class="doc-p">在后台【应用列表 → 变量管理】中配置，验证成功后自动下发。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4mt-4">
                     <div class="feature-card">
-                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-                            <div style="width:36px; height:36px; border-radius:10px; background:rgba(34,197,94,0.1); display:flex; align-items:center; justify-content:center; color:#4ade80; font-size:18px;">
-                                <i class="ri-lock-2-line"></i>
-                            </div>
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                            <div style="width:34px; height:34px; border-radius:10px; background:rgba(251,146,60,0.1); display:flex; align-items:center; justify-content:center; color:#fb923c; font-size:17px; flex-shrink:0;"><i class="ri-lock-2-line"></i></div>
                             <div>
                                 <div style="font-size:14px; font-weight:600; color:var(--text);">私有变量</div>
-                                <span style="font-size:10.5px; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); color:#86efac; border-radius:99px; padding:1px 8px;">仅验证通过后下发</span>
+                                <span style="font-size:10px; background:rgba(251,146,60,0.1); border:1px solid rgba(251,146,60,0.2); color:#fdba74; border-radius:99px; padding:1px 8px;">仅验证通过后下发</span>
                             </div>
                         </div>
-                        <p style="font-size:13.5px; color:var(--text-subtle); line-height:1.65; margin:0">卡密验证通过后才返回给客户端。适用于加密 Key、VIP 直链、核心配置等<strong style="color:var(--text)">敏感数据</strong>传输。</p>
+                        <p style="font-size:13px; color:var(--text-subtle); line-height:1.65;">适用于加密 Key、VIP 直链、核心配置等敏感数据。免卡密模式下强制只返回公开变量。</p>
                     </div>
-
                     <div class="feature-card">
-                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-                            <div style="width:36px; height:36px; border-radius:10px; background:rgba(59,130,246,0.1); display:flex; align-items:center; justify-content:center; color:#60a5fa; font-size:18px;">
-                                <i class="ri-earth-line"></i>
-                            </div>
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                            <div style="width:34px; height:34px; border-radius:10px; background:rgba(59,130,246,0.1); display:flex; align-items:center; justify-content:center; color:#60a5fa; font-size:17px; flex-shrink:0;"><i class="ri-earth-line"></i></div>
                             <div>
                                 <div style="font-size:14px; font-weight:600; color:var(--text);">公开变量</div>
-                                <span style="font-size:10.5px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.2); color:#93c5fd; border-radius:99px; padding:1px 8px;">仅需app_key</span>
+                                <span style="font-size:10px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.2); color:#93c5fd; border-radius:99px; padding:1px 8px;">仅需app_key</span>
                             </div>
                         </div>
-                        <p style="font-size:13.5px; color:var(--text-subtle); line-height:1.65; margin:0">只需提交<code>app_key</code> 即可获取，<strong style="color:var(--text)">无需消耗卡密次数</strong>。适用于公告、版本号、联系方式等公开数据。</p>
+                        <p style="font-size:13px; color:var(--text-subtle); line-height:1.65;">无需消耗卡密次数，适用于公告、版本号等。响应只含<code>key_name</code> 与 <code>value</code>。</p>
                     </div>
                 </div>
-
-                <div class="callout callout-info mt-6">
+                <div class="callout callout-info mt-4">
                     <i class="ri-information-line"></i>
-                    <div>云变量支持动态更新，后台修改后立即生效，客户端下次验证时自动获取最新内容，<strong>无需重新发版</strong>。</div>
+                    <div>云变量后台修改后立即生效，客户端下次请求自动获取，<strong>无需重新发版</strong>。</div>
                 </div>
             </section>
 
+            <!-- ─── 10. 验证码 ─── -->
+            <section id="captcha" class="mb-16">
+                <h2 class="doc-h2">验证码系统</h2>
+                <p class="doc-p"><code>captcha.php</code> 提供后台登录图形验证码，v26 进行了大幅安全加固。</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                    <div class="feature-card">
+                        <div style="font-size:18px; color:#a78bfa; margin-bottom:8px;"><i class="ri-shuffle-line"></i></div>
+                        <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:5px;">高熵字符集</div>
+                        <div style="font-size:12.5px; color:var(--text-subtle); line-height:1.6;">32字符集，4 位组合 <strong style="color:var(--text)">1,048,576</strong> 种，是原16进制的 16 倍。</div>
+                    </div>
+                    <div class="feature-card">
+                        <div style="font-size:18px; color:#4ade80; margin-bottom:8px;"><i class="ri-font-size-2"></i></div>
+                        <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:5px;">TTF 渲染</div>
+                        <div style="font-size:12.5px; color:var(--text-subtle); line-height:1.6;">放置<code>font.ttf</code> 后自动启用，每字符随机旋转 ±18°，缺失时降级。</div>
+                    </div>
+                    <div class="feature-card">
+                        <div style="font-size:18px; color:#f87171; margin-bottom:8px;"><i class="ri-eye-off-line"></i></div>
+                        <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:5px;">多层干扰</div>
+                        <div style="font-size:12.5px; color:var(--text-subtle); line-height:1.6;">弧线×5+噪点 ×120 + 字符后叠加干扰线，大幅提升抗 OCR 能力。</div>
+                    </div><div class="feature-card">
+                        <div style="font-size:18px; color:#fbbf24; margin-bottom:8px;"><i class="ri-timer-line"></i></div>
+                        <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:5px;">3 分钟时效</div>
+                        <div style="font-size:12.5px; color:var(--text-subtle); line-height:1.6;">超过 180秒自动失效，验证后立即清除 Session，防重放攻击。</div>
+                    </div>
+                </div>
+                <div class="callout callout-success">
+                    <i class="ri-checkbox-circle-fill"></i>
+                    <div><strong style="display:block; margin-bottom:4px;">启用 TTF 验证码</strong>下载免费 TTF 字体，重命名为 <code>font.ttf</code>，上传至<code>Verifyfile/</code> 目录，系统自动检测启用。</div>
+                </div>
+            </section>
 
-            <!-- ─────────────── 8. 安全实践 ─────────────── -->
+            <!-- ─── 11. 安全实践 ─── -->
             <section id="security" class="mb-16">
                 <h2 class="doc-h2">安全最佳实践</h2>
-
-                <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:8px 24px;">
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:6px 20px;">
                     <ul class="security-list">
                         <li>
-                            <div class="icon-wrap" style="background:rgba(34,197,94,0.1); color:#4ade80;"><i class="ri-delete-bin-line"></i></div>
-                            <div>
-                                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:3px;">安装后清理</div>
-                                <div style="font-size:13px; color:var(--text-subtle); line-height:1.6">部署完成后立即删除 <code>install.php</code>，防止站点被恶意重置。</div>
-                            </div>
+                            <div class="icon-wrap" style="background:rgba(239,68,68,0.1); color:#f87171;"><i class="ri-delete-bin-line"></i></div>
+                            <div><div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:3px;">安装后立即清理</div><div style="font-size:12.5px; color:var(--text-subtle); line-height:1.6">删除 <code>install.php</code>，防止站点被恶意重置。</div></div>
                         </li>
                         <li>
                             <div class="icon-wrap" style="background:rgba(59,130,246,0.1); color:#60a5fa;"><i class="ri-lock-password-line"></i></div>
-                            <div>
-                                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:3px;">修改默认密码</div>
-                                <div style="font-size:13px; color:var(--text-subtle); line-height:1.6">默认密码 <code>admin123</code> 仅供首次登录，请立即进入【全局配置】修改为强密码。</div>
-                            </div>
+                            <div><div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:3px;">修改默认密码</div><div style="font-size:12.5px; color:var(--text-subtle); line-height:1.6">默认密码 <code>admin123</code> 仅供首次登录，改密后旧Cookie 自动失效。</div></div>
                         </li>
                         <li>
                             <div class="icon-wrap" style="background:rgba(167,139,250,0.1); color:#a78bfa;"><i class="ri-key-2-line"></i></div>
-                            <div>
-                                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:3px;">更新系统密钥</div>
-                                <div style="font-size:13px; color:var(--text-subtle); line-height:1.6">编辑 <code>config.php</code>，将 <code>SYS_SECRET</code> 替换为随机长字符串，增
+                            <div><div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:3px;">更新系统密钥</div><div style="font-size:12.5px; color:var(--text-subtle); line-height:1.6">编辑 <code>config.php</code>，将 <code>SYS_SECRET</code> 替换为随机长字符串。</div></div>
+                        </li>
+                        <li>
+                            <div class="icon-wrap" style="background:rgba(34,197,94,0.1); color:#4ade80;"><i class="ri-fingerprint-line"></i></div>
+                            <div><div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:3px;">上报真实设备指纹</div><div style="font-size:12.5px; color:var(--text-subtle); line-height:1.6">服务端拒绝 IP哈希兜底，防止多用户共用指纹。</div></div>
+                        </li>
+                        <li>
+                            <div class="icon-wrap" style="background:rgba(6,182,212,0.1); color:#22d3ee;"><i class="ri-global-line"></i></div>
+                            <div><div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:3px;">启用 HTTPS</div><div style="font-size:12.5px; color:var(--text-subtle); line-height:1.6">HTTPS 环境自动追加<code>cookie_secure</code>，保护卡密传输安全。</div></div>
+                        </li>
+                        <li>
+                            <div class="icon-wrap" style="background:rgba(239,68,68,0.1); color:#f87171;"><i class="ri-speed-line"></i></div>
+                            <div><div style="font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:3px;">了解限流规则</div><div style="font-size:12.5px; color:var(--text-subtle); line-height:1.6">客户端应实现本地缓存，避免频繁请求触发 <code>429</code>。</div></div>
+                        </li>
+                </ul>
+                </div>
+            </section>
+
+            <!-- ─── 12. 更新日志 ─── -->
+            <section id="changelog" class="mb-16">
+                <h2 class="doc-h2">更新日志</h2>
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px;">
+                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+                        <div style="font-family:monospace; font-size:15px; font-weight:700; color:#fff;">V26 Pro Enterprise</div>
+                        <span style="font-size:11px; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); color:#4ade80; padding:2px 10px; border-radius:99px;">当前版本</span><span style="font-size:11px; color:var(--text-muted); margin-left:auto;">2026</span>
+                    </div>
+
+                    <div style="font-size:10.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">api.php — 安全加固</div>
+                    <div class="changelog-item"><span class="cl-tag cl-sec">安全</span>限流升级：滑动窗口 +<code>LOCK_EX</code> 排他文件锁</div>
+                    <div class="changelog-item"><span class="cl-tag cl-sec">安全</span>参数隔离读取，根治参数污染</div>
+                    <div class="changelog-item"><span class="cl-tag cl-sec">安全</span>私有变量隔离，免卡密只返回公开变量</div>
+                    <div class="changelog-item"><span class="cl-tag cl-sec">安全</span>禁止 IP 哈希兜底，强制真实指纹</div>
+                    <div class="changelog-item"><span class="cl-tag cl-sec">安全</span><code>Throwable</code> 全捕获，错误信息脱敏</div>
+                    <div class="changelog-item"><span class="cl-tag cl-new">新增</span>安全响应头：<code>X-Frame-Options</code>、<code>Cache-Control: no-store</code></div>
+                    <div class="changelog-item"><span class="cl-tag cl-new">新增</span>请求方法白名单：仅 GET / POST</div>
+                    <div class="changelog-item"><span class="cl-tag cl-new">新增</span>参数长度校验：card_code≤64、device_hash≤128、Body≤8KB</div>
+                    <div class="changelog-item"><span class="cl-tag cl-imp">改进</span>统一响应出口 <code>jsonOut()</code></div>
+
+                    <div style="font-size:10.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.07em; margin:16px 0 8px;">captcha.php — 全面强化</div>
+                    <div class="changelog-item"><span class="cl-tag cl-sec">安全</span>字符集65536 → 1,048,576 种</div>
+                    <div class="changelog-item"><span class="cl-tag cl-sec">安全</span>全链路 <code>random_int()</code> 安全随机</div>
+                    <div class="changelog-item"><span class="cl-tag cl-sec">安全</span>3分钟时效 + 验证后清除 Session</div>
+                    <div class="changelog-item"><span class="cl-tag cl-new">新增</span>TTF 字体支持：随机旋转/偏移/颜色</div>
+                    <div class="changelog-item"><span class="cl-tag cl-new">新增</span>弧线 + 噪点 +叠加干扰线</div>
+                    <div class="changelog-item"><span class="cl-tag cl-imp">改进</span><code>try/finally</code> 确保资源释放</div>
+
+                    <div style="font-size:10.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.07em; margin:16px 0 8px;">架构升级</div>
+                    <div class="changelog-item"><span class="cl-tag cl-new">新增</span>弃用 SQLite，全面采用 MySQL InnoDB</div>
+                    <div class="changelog-item"><span class="cl-tag cl-new">新增</span>Headless API 架构</div>
+                    <div class="changelog-item"><span class="cl-tag cl-new">新增</span><code>install.php</code> 安装向导</div>
+                </div>
+            </section>
+
+            <!-- ─── 13. 联系支持 ─── -->
+            <section id="support" class="mb-16">
+                <h2 class="doc-h2">联系支持</h2>
+                <div class="support-card">
+                    <div style="position:relative; z-index:10;">
+                        <h3 style="font-size:20px; font-weight:600; color:#fff; margin-bottom:10px;">需要帮助？</h3>
+                        <p style="font-size:14px; color:rgba(255,255,255,0.45); line-height:1.7; margin-bottom:24px; max-width:380px;">遇到问题或有功能建议，欢迎通过以下渠道联系我们。</p>
+                        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                            <a href="https://qm.qq.com/q/R8q8Nt43aS" target="_blank"
+                               style="display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:12px; background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.25); color:#93c5fd; font-size:13.5px; font-weight:500; text-decoration:none; transition:all 0.2s; flex:1; min-width:140px; justify-content:center;">
+                                <i class="ri-qq-line"></i> QQ 群1077643184
+                            </a>
+                            <a href="https://github.com/GuYiovo/GuYi-Aegis" target="_blank"
+                               style="display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.6); font-size:13.5px; font-weight:500; text-decoration:none; transition:all 0.2s; flex:1; min-width:140px; justify-content:center;">
+                                <i class="ri-github-fill"></i> 提交 Issue
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section></div><!-- /content-body -->
+    </main>
+</div>
+
+<!--════════════════════移动端底部导航栏 ════════════════════ -->
+<nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <div class="mobile-bottom-nav-inner">
+        <button class="mob-nav-btn" onclick="scrollToTop()">
+            <i class="ri-home-4-line"></i>
+            <span>首页</span>
+        </button>
+        <button class="mob-nav-btn" onclick="openToc()">
+            <i class="ri-list-unordered"></i>
+            <span>目录</span>
+        </button>
+        <a href="index.html" class="mob-nav-btn">
+            <i class="ri-arrow-left-line"></i>
+            <span>返回</span>
+        </a>
+        <button class="mob-nav-btn" onclick="openSidebar()">
+            <i class="ri-menu-2-line"></i>
+            <span>菜单</span>
+        </button>
+        <a href="cards.php" class="mob-nav-btn">
+            <i class="ri-dashboard-3-line"></i>
+            <span>后台</span>
+        </a>
+    </div>
+</nav>
+
+<script>
+//════════════════════ 侧边栏 ════════════════════
+function openSidebar() {
+    document.getElementById('sidebar-drawer').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+    document.getElementById('sidebar-drawer').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// ════════════════════ 目录 Bottom Sheet ════════════════════
+function openToc() {
+    document.getElementById('toc-sheet').classList.add('open');
+    document.getElementById('toc-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeToc() {
+    document.getElementById('toc-sheet').classList.remove('open');
+    document.getElementById('toc-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// ════════════════════ 返回顶部 ════════════════════
+function scrollToTop() {
+    const ms = document.getElementById('main-scroll');
+    if (ms) { ms.scrollTo({ top: 0, behavior: 'smooth' }); }
+    else { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+}
+
+// ════════════════════ 语言切换 ════════════════════
+const langMeta = {
+    python: 'verify.py', elang: 'verify.e', php: 'verify.php',
+    csharp: 'Verify.cs', java: 'GuYiVerify.java',
+    node: 'verify.js', go: 'verify.go', cpp: 'verify.cpp',
+};
+let currentLang = 'python';
+
+function switchLang(lang) {
+    document.getElementById('code-' + currentLang).style.display = 'none';
+    document.getElementById('code-' + lang).style.display = 'block';
+    document.getElementById('code-filename').textContent = langMeta[lang];
+    document.querySelectorAll('.lang-tab').forEach(t => {
+        const txt = t.textContent.trim();
+        const isActive = (
+            (lang === 'python' && txt === 'Python') ||
+            (lang === 'elang'  && txt === '易语言') ||
+            (lang === 'php'    && txt === 'PHP')||
+            (lang === 'csharp' && txt === 'C#')     ||
+            (lang === 'java'   && txt === 'Java')   ||
+            (lang === 'node'   && txt === 'Node.js')||
+            (lang === 'go'     && txt === 'Go')     ||
+            (lang === 'cpp'    && txt === 'C++')
+        );
+        t.className = 'lang-tab ' + (isActive ? 'active' : 'inactive');
+    });
+    currentLang = lang;
+}
+
+// ════════════════════ 复制 ════════════════════
+function copyCurrentCode() {
+    const pre = document.querySelector('#code-' + currentLang + ' pre');
+    copyText(pre ? pre.innerText : '');
+}
+function copyText(text) {
+    navigator.clipboard.writeText(text)
+        .then(() => showToast('已复制 ✓'))
+        .catch(() => showToast('复制失败'));
+}
+function showToast(msg) {
+    const wrap = document.getElementById('toast-wrap');
+    const t = document.createElement('div');
+    t.className = 'toast'; t.textContent = msg;
+    wrap.appendChild(t);
+    requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+    setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 2200);
+}
+
+// ════════════════════ 滚动处理（桌面 + 移动端） ════════════════════
+const sections = document.querySelectorAll('section[id]');
+const navItems = document.querySelectorAll('.nav-item');
+const progressFill = document.getElementById('progress-fill');
+const mainScroll = document.getElementById('main-scroll');
+const isMobile = () => window.innerWidth < 1024;
+
+function onScroll(scrollTop, scrollHeight, clientHeight) {
+    const totalScroll = scrollHeight - clientHeight;
+    if (progressFill && totalScroll > 0) {
+        progressFill.style.height = (scrollTop / totalScroll * 100) + '%';
+    }
+    let current = '';
+    sections.forEach(sec => {
+        if (scrollTop >= sec.offsetTop - 120) current = sec.id;
+    });
+    navItems.forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + current);
+    });
+}
+
+//桌面：监听 .main-scroll
+if (mainScroll) {
+    mainScroll.addEventListener('scroll', () => {
+        onScroll(mainScroll.scrollTop, mainScroll.scrollHeight, mainScroll.clientHeight);
+    }, { passive: true });
+}
+// 移动端：监听 window
+window.addEventListener('scroll', () => {
+    if (isMobile()) {
+        onScroll(window.scrollY, document.documentElement.scrollHeight, window.innerHeight);
+    }
+}, { passive: true });
+
+// ════════════════════ 移动端锚点跳转 ════════════════════
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (!target) return;
+        if (isMobile()) {
+            e.preventDefault();
+            const offset = target.getBoundingClientRect().top + window.scrollY - 64;
+            window.scrollTo({ top: offset, behavior: 'smooth' });
+        } else {
+            e.preventDefault();
+            const offset = target.offsetTop - 16;
+            if (mainScroll) mainScroll.scrollTo({ top: offset, behavior: 'smooth' });
+        }
+    });
+});
+
+// ════════════════════ 移动端底部导航激活态 ════════════════════
+function updateMobNav() {
+    if (!isMobile()) return;
+    const scrollY = window.scrollY;
+    let current = '';
+    sections.forEach(sec => {
+        if (scrollY >= sec.offsetTop - 140) current = sec.id;
+    });
+    document.querySelectorAll('.mob-nav-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === 0 && current === 'intro');
+    });
+}
+window.addEventListener('scroll', updateMobNav, { passive: true });
+</script>
+</body>
+</html>
