@@ -1,25 +1,40 @@
 function initApp() {
-    const BASE_URL = 'https://www.loliapi.com/acg/pe/?id=';
-    const MAX_ID = 2875;
+    // 替换为本地演示图片池
+    const localImages = [
+        'img/demo.png',
+        'img/demo_2.png',
+        'img/demo_3.png',
+        'img/demo_4.png',
+        'img/demo_5.png',
+        'img/demo_6.png'
+    ];
+    
     const COUNT = 8; 
     const groups = [['col1-g1','col1-g2'],['col2-g1','col2-g2'],['col3-g1','col3-g2'],['col4-g1','col4-g2']];
 
-    function getRandomId() { return Math.floor(Math.random() * MAX_ID) + 1; }
+    // 从本地数组中随机获取一张图片
+    function getRandomImg() { 
+        return localImages[Math.floor(Math.random() * localImages.length)]; 
+    }
+
     function buildImg() {
         const img = document.createElement('img');
         img.alt = ''; img.width = 400; img.height = 560; img.loading = 'lazy';
+        // 使用 cover 保持比例填充
+        img.style.objectFit = 'cover'; 
         img.dataset.retries = '0';
-        setTimeout(() => { img.src = BASE_URL + getRandomId(); }, Math.random() * 2500);
+        setTimeout(() => { img.src = getRandomImg(); }, Math.random() * 2500);
         img.onload = function() { this.classList.add('loaded'); };
         img.onerror = function () {
             const retries = parseInt(this.dataset.retries, 10);
             if (retries < 3) { 
                 this.dataset.retries = retries + 1;
-                setTimeout(() => { this.src = BASE_URL + getRandomId(); }, 1000 + Math.random() * 2000);
+                setTimeout(() => { this.src = getRandomImg(); }, 1000 + Math.random() * 2000);
             } else { this.style.background = 'rgba(255,255,255,0.01)'; }
         };
         return img;
     }
+
     groups.forEach(([g1id, g2id]) => {
         const g1 = document.getElementById(g1id), g2 = document.getElementById(g2id);
         if (g1 && g2) { for (let i = 0; i < COUNT; i++) { g1.appendChild(buildImg()); g2.appendChild(buildImg()); } }
