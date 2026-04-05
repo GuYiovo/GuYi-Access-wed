@@ -58,15 +58,77 @@ function initApp() {
         docLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + cur));
     });
 
-    const slides = document.querySelectorAll('#demo-slider .slide');
-    if (slides.length > 0) {
+    // --- 顶级企业级 3D 轮播与鼠标视差逻辑 ---
+    const items = document.querySelectorAll('.ent-item');
+    const wrapper = document.getElementById('ent-3d-wrapper');
+    const visual = document.querySelector('.hero-visual');
+    
+    if (items.length > 0 && wrapper && visual) {
         let cur = 0;
+        const total = items.length;
+        
+        // 1. 轮播图类名更新逻辑
+        function updateGallery() {
+            items.forEach((item, i) => {
+                item.className = 'ent-item'; // 重置类名
+                let diff = i - cur;
+                
+                // 处理循环计算
+                if (diff < -Math.floor(total / 2)) diff += total;
+                if (diff > Math.floor(total / 2)) diff -= total;
+                
+                if (diff === 0) item.classList.add('active');
+                else if (diff === -1) item.classList.add('prev-1');
+                else if (diff === 1) item.classList.add('next-1');
+                else if (diff === -2) item.classList.add('prev-2');
+                else if (diff === 2) item.classList.add('next-2');
+                else item.classList.add('hidden');
+            });
+        }
+        
+        updateGallery();
         setInterval(() => {
-            slides[cur].classList.remove('active');
-            cur = (cur + 1) % slides.length;
-            slides[cur].classList.add('active');
-        }, 3500);
+            cur = (cur + 1) % total;
+            updateGallery();
+        }, 4000); // 4秒切换一次，留出欣赏时间
+
+        // 2. 带有物理阻尼感 (Lerp) 的鼠标跟随逻辑
+        if (!window.matchMedia('(max-width:768px)').matches) {
+            let targetX = 0, targetY = 0;
+            let currentX = 0, currentY = 0;
+            const ease = 0.08; // 阻尼系数，越小越平滑
+
+            visual.addEventListener('mousemove', e => {
+                const rect = visual.getBoundingClientRect();
+                // 计算相对中心的百分比位置 (-0.5 到 0.5)
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                
+                // 设定目标旋转角度 (最大倾斜角度)
+                targetX = y * 15;   // 鼠标上下移动，绕 X 轴旋转
+                targetY = x * -20;  // 鼠标左右移动，绕 Y 轴旋转
+            });
+
+            visual.addEventListener('mouseleave', () => {
+                targetX = 0;
+                targetY = 0;
+            });
+
+            // 渲染循环
+            function renderParallax() {
+                // 线性插值公式：当前值 += (目标值 - 当前值) * 缓动系数
+                currentX += (targetX - currentX) * ease;
+                currentY += (targetY - currentY) * ease;
+                
+                // 应用到 3D 包装器上
+                wrapper.style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`;
+                
+                requestAnimationFrame(renderParallax);
+            }
+            renderParallax(); // 启动循环
+        }
     }
+    // --- 结束 ---
 
     const wrap = document.getElementById('dlWrap');
     const btn = document.getElementById('dlBtn');
