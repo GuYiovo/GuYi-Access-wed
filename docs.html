@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="style.css">
 <script src="main.js" defer></script>
 <style>
-    /* 适配全局瀑布流动画背景，移除纯色背景覆盖 */
+    /* 适配全局视频动画背景，移除纯色背景覆盖 */
     .docs-page-header { 
         padding: 120px 40px 40px; 
         text-align: center; 
@@ -25,21 +25,8 @@
 </head>
 <body>
 
-<!-- 注入同款动态瀑布流背景与覆盖遮罩，由 main.js 自动填充图片并激活运行 -->
-<div class="anime-bg" id="anime-bg" aria-hidden="true">
-    <div class="waterfall-column"><div class="scroll-track">
-        <div class="image-group" id="col1-g1"></div><div class="image-group" id="col1-g2"></div>
-    </div></div>
-    <div class="waterfall-column"><div class="scroll-track">
-        <div class="image-group" id="col2-g1"></div><div class="image-group" id="col2-g2"></div>
-    </div></div>
-    <div class="waterfall-column"><div class="scroll-track">
-        <div class="image-group" id="col3-g1"></div><div class="image-group" id="col3-g2"></div>
-    </div></div>
-    <div class="waterfall-column"><div class="scroll-track">
-        <div class="image-group" id="col4-g1"></div><div class="image-group" id="col4-g2"></div>
-    </div></div>
-</div>
+<!-- 注入全局动态视频背景与覆盖遮罩 -->
+<video class="anime-bg" id="anime-bg" autoplay loop muted playsinline aria-hidden="true"></video>
 <div class="bg-overlay"></div>
 
 <header class="navbar scrolled" id="navbar">

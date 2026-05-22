@@ -1,48 +1,9 @@
 function initApp() {
-    const localImages = [
-        'img/demo.png', 'img/demo_2.png', 'img/demo_3.png',
-        'img/demo_4.png', 'img/demo_5.png', 'img/demo_6.png'
-    ];
-    const COUNT = 8; 
-    const groups = [['col1-g1','col1-g2'],['col2-g1','col2-g2'],['col3-g1','col3-g2'],['col4-g1','col4-g2']];
-
-    function getRandomImg() { return localImages[Math.floor(Math.random() * localImages.length)]; }
-
-    function buildImg() {
-        const img = document.createElement('img');
-        img.alt = ''; img.width = 400; img.height = 560; img.loading = 'lazy';
-        img.style.objectFit = 'cover'; img.dataset.retries = '0';
-        setTimeout(() => { img.src = getRandomImg(); }, Math.random() * 2500);
-        img.onload = function() { this.classList.add('loaded'); };
-        img.onerror = function () {
-            const r = parseInt(this.dataset.retries, 10);
-            if (r < 3) { this.dataset.retries = r + 1; setTimeout(() => { this.src = getRandomImg(); }, 1000); } 
-            else { this.style.background = 'rgba(255,255,255,0.01)'; }
-        };
-        return img;
-    }
-
-    // 仅在存在瀑布流背景的页面(如首页)执行
-    if(document.getElementById('anime-bg')) {
-        groups.forEach(([g1id, g2id]) => {
-            const g1 = document.getElementById(g1id), g2 = document.getElementById(g2id);
-            if (g1 && g2) { for (let i = 0; i < COUNT; i++) { g1.appendChild(buildImg()); g2.appendChild(buildImg()); } }
-        });
-        
-        if (!window.matchMedia('(max-width:768px)').matches) {
-            let raf = 0, last = 0;
-            document.addEventListener('mousemove', e => {
-                const now = Date.now();
-                if (now - last < 50 || raf) return;
-                raf = requestAnimationFrame(() => {
-                    const x = (e.clientX - window.innerWidth / 2) * 0.025;
-                    const y = (e.clientY - window.innerHeight / 2) * 0.025;
-                    const bg = document.getElementById('anime-bg');
-                    if (bg) { bg.style.setProperty('--mouse-x', `${x}px`); bg.style.setProperty('--mouse-y', `${y}px`); }
-                    last = now; raf = 0;
-                });
-            }, { passive: true });
-        }
+    // 动态视频背景 - 自动判断移动端与PC端分配不同视频源
+    const bgVideo = document.getElementById('anime-bg');
+    if (bgVideo) {
+        const isMobile = window.matchMedia('(max-width:768px)').matches;
+        bgVideo.src = isMobile ? 'https://xn--jpr071e.top/file/mp4/wallpaper.mp4' : 'mp4/PC.mp4';
     }
 
     // Navbar Scroll

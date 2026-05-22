@@ -45,29 +45,21 @@ body {
     min-height: 100vh; 
 }
 
-.anime-bg { position: fixed; inset: 0; display: flex; gap: 1rem; pointer-events: none; z-index: 0; transform: rotate(-15deg) scale(1.55) translate(var(--mouse-x,0px), var(--mouse-y,0px)); transition: transform .1s ease-out; }
-.waterfall-column { flex: 1; overflow: hidden; }
-.scroll-track { display: flex; flex-direction: column; animation: scrollDown 110s linear infinite; }
-.waterfall-column:nth-child(2) .scroll-track { animation-name: scrollUp; animation-duration: 116s; }
-.waterfall-column:nth-child(3) .scroll-track { animation-name: scrollDown; animation-duration: 121s; }
-.waterfall-column:nth-child(4) .scroll-track { animation-name: scrollUp; animation-duration: 127s; }
-.image-group { display: flex; flex-direction: column; gap: 1rem; }
+/* 全局动态视频背景 */
+.anime-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6; /* 稍微压暗视频以防止抢走文字焦点 */
+}
 
-/* 【已恢复PC原样】还原PC端原本的图片排版属性 */
-.anime-bg img { 
-    width: 100%; 
-    height: auto; 
-    border-radius: .5rem; 
-    display: block; 
-    background: rgba(255, 255, 255, 0.02); 
-    min-height: 300px; /* 恢复PC端原有的高度限制 */
-    opacity: 0; 
-    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1); 
-} 
-.anime-bg img.loaded { opacity: 0.45; background: transparent; }
+/* 遮罩优化，配合视频背景进行调和 */
 .bg-overlay { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(135deg, rgba(5,5,15,.35) 0%, rgba(10,5,20,.25) 50%, rgba(5,10,20,.35) 100%); }
-@keyframes scrollDown { 0%{transform:translateY(0)} 100%{transform:translateY(-50%)} }
-@keyframes scrollUp   { 0%{transform:translateY(-50%)} 100%{transform:translateY(0)} }
 
 /* 导航栏空气化改造 */
 .navbar { 
@@ -304,25 +296,4 @@ footer { border-top: 1px solid rgba(255,255,255,.1); padding: 60px 0 40px; margi
     .qq-banner{flex-direction:column;} 
     .code-panel{height:500px;margin:0 -20px;border-radius:0;} 
     .f-bottom{flex-direction:column;align-items:center;gap:16px;}
-
-    /* 移动端缩放优化与两列瀑布流限制 */
-    .anime-bg { 
-        gap: .5rem; 
-        transform: rotate(-15deg) scale(1.35); 
-        transition: none; 
-    } 
-
-    /* 📱 仅在移动端强制限制并裁切图片，防止任何压扁和变形 */
-    .anime-bg img { 
-        aspect-ratio: 400 / 560 !important; /* 强制锁定比例 */
-        object-fit: cover !important;        /* 超出部分自裁剪，禁止物理压缩 */
-        min-height: auto !important;         /* 覆盖PC端的最小高度限制 */
-    } 
-
-    /* 在移动端将后两列彻底隐藏以换取单列宽度 */
-    .anime-bg .waterfall-column:nth-child(3), 
-    .anime-bg .waterfall-column:nth-child(4) { 
-        display: none !important; 
-    } 
-    .image-group { gap: .5rem; }
 }
