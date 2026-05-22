@@ -10,14 +10,37 @@
 <link rel="stylesheet" href="style.css">
 <script src="main.js" defer></script>
 <style>
-    /* 专门为文档页定制的背景，去除动画干扰 */
-    body { background: #0d0d12; }
-    .docs-page-header { padding: 120px 40px 40px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); background: radial-gradient(circle at top, rgba(0,136,255,0.1) 0%, transparent 50%); }
-    .docs-page-header h1 { font-size: 42px; font-weight: 800; margin-bottom: 16px; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .docs-page-header p { color: var(--text-secondary); font-size: 16px; max-width: 600px; margin: 0 auto; }
+    /* 适配全局瀑布流动画背景，移除纯色背景覆盖 */
+    .docs-page-header { 
+        padding: 120px 40px 40px; 
+        text-align: center; 
+        border-bottom: 1px solid rgba(255,255,255,0.08); 
+        background: radial-gradient(circle at top, rgba(0,136,255,0.12) 0%, transparent 60%); 
+        position: relative;
+        z-index: 2;
+    }
+    .docs-page-header h1 { font-size: 42px; font-weight: 800; margin-bottom: 16px; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 4px 12px rgba(99, 102, 241, 0.6)); }
+    .docs-page-header p { color: var(--text-secondary); font-size: 16px; max-width: 600px; margin: 0 auto; text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95); }
 </style>
 </head>
 <body>
+
+<!-- 注入同款动态瀑布流背景与覆盖遮罩，由 main.js 自动填充图片并激活运行 -->
+<div class="anime-bg" id="anime-bg" aria-hidden="true">
+    <div class="waterfall-column"><div class="scroll-track">
+        <div class="image-group" id="col1-g1"></div><div class="image-group" id="col1-g2"></div>
+    </div></div>
+    <div class="waterfall-column"><div class="scroll-track">
+        <div class="image-group" id="col2-g1"></div><div class="image-group" id="col2-g2"></div>
+    </div></div>
+    <div class="waterfall-column"><div class="scroll-track">
+        <div class="image-group" id="col3-g1"></div><div class="image-group" id="col3-g2"></div>
+    </div></div>
+    <div class="waterfall-column"><div class="scroll-track">
+        <div class="image-group" id="col4-g1"></div><div class="image-group" id="col4-g2"></div>
+    </div></div>
+</div>
+<div class="bg-overlay"></div>
 
 <header class="navbar scrolled" id="navbar">
     <nav class="nav-container">
@@ -139,6 +162,11 @@
 </main>
 
 <footer>
+    <div class="f-grid">
+        <div><div style="color:#fff;font-size:18px;margin-bottom:12px;font-weight:bold;">GuYi Access 官网</div><p style="color:rgba(255,255,255,.45);font-size:13px;line-height:1.6;">致力于为开源社区提供极致安全、开箱即用的软件授权及网络验证基建引擎。</p></div>
+        <div class="f-links"><div class="f-title">导航</div><a href="docs.html">API 对接文档</a><a href="https://github.com/GuYiovo/GuYi-Access" target="_blank">GitHub 仓库</a></div>
+        <div class="f-links"><div class="f-title">联系与支持</div><a href="https://qm.qq.com/q/X3suYdjWAA" target="_blank">QQ 群：1077643184</a><a href="https://可爱.top/" target="_blank">作者官网</a></div>
+    </div>
     <div class="f-bottom"><span>&copy; 2024-2026 GuYi Access. Open Source under MIT.</span><span>Made with <span style="color:var(--brand-pink)">♥</span> for Developers</span></div>
 </footer>
 
