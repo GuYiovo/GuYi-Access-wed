@@ -1,108 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>GuYi Access 官网 - 高级开源网络验证解决方案</title>
-<meta name="description" content="GuYi Access 官网为您提供极致详细的开源卡密网络验证解决方案，支持30+语言对接，全栈AES-256-GCM强加密通信。专业、高效、安全的网络验证首选。">
-<link rel="icon" href="http://q.qlogo.cn/headimg_dl?dst_uin=156440000&spec=640&img_type=jpg" type="image/png">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<script src="main.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>GuYi Access 官网 - 高级开源网络验证解决方案</title>
+    <meta name="description" content="GuYi Access 官网为您提供极致详细的开源卡密网络验证解决方案，支持30+语言对接，全栈AES-256-GCM强加密通信。专业、高效、安全的网络验证首选。">
+    <link rel="icon" href="http://q.qlogo.cn/headimg_dl?dst_uin=156440000&spec=640&img_type=jpg" type="image/png">
+    
+    <!-- 外部 CSS 资源 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-
-<!-- 注入全局动态视频背景与覆盖遮罩 -->
-<video class="anime-bg" id="anime-bg" autoplay loop muted playsinline aria-hidden="true"></video>
-<div class="bg-overlay"></div>
-
-<header class="navbar" id="navbar">
-    <nav class="nav-container">
-        <a href="index.html" class="nav-brand"><img src="http://q.qlogo.cn/headimg_dl?dst_uin=156440000&spec=640&img_type=jpg" alt="GuYi Access Logo">GuYi Access</a>
-        <div class="nav-links">
-            <a href="docs.html">对接文档</a>
-            <a href="https://github.com/GuYiovo/GuYi-Access" target="_blank"><i class="fab fa-github"></i> 源码</a>
-            <a href="https://qm.qq.com/q/X3suYdjWAA" target="_blank"><i class="fab fa-qq"></i> 官方群</a>
-        </div>
-    </nav>
-</header>
-
-<main>
-    <section class="section hero">
-        <div class="container hero-grid">
-            <div class="hero-text">
-                <div class="badge reveal"><i class="fas fa-shield-halved"></i> Ultimate API Documentation</div>
-                <h1 class="title-lg reveal" style="transition-delay:.1s;">为30+ 语言构建的<br><span class="text-gradient">全平台网络验证基建</span></h1>
-                <p class="subtitle reveal" style="transition-delay:.2s;">无论您使用 C++ 编写原生外挂，还是使用 Flutter 开发多端应用，甚至是用易语言编写小工具。GuYi Access 都为您准备了极其详尽的 AES-256-GCM 网络验证对接源码。</p>
-                <div class="hero-actions reveal" style="transition-delay:.3s;">
-                    <!-- 这里修改为跳转到单独的 docs.html -->
-                    <a href="docs.html" class="btn btn-glow"><i class="fas fa-book"></i> 查看完整对接文档</a>
-                    <a href="https://qm.qq.com/q/X3suYdjWAA" target="_blank" class="btn btn-outline"><i class="fab fa-qq"></i> 加入交流群</a>
-                    <div class="btn-download-wrap" id="dlWrap">
-                        <button class="btn-download" id="dlBtn">
-                            <i class="fas fa-download"></i> 立即下载 <i class="fas fa-chevron-down chevron"></i>
-                        </button>
-                        <div class="download-dropdown" id="dlDropdown">
-                            <div class="dd-label">国内高速下载</div>
-                            <a class="dd-item" href="https://www.123684.com/s/EmjGjv-P7CsH?pwd=DMJz#" target="_blank"><i class="fas fa-cloud-arrow-down"></i>123云盘<span class="dd-sub">源码与服务端</span></a>
-                            <div class="dd-divider"></div>
-                            <div class="dd-label">源码仓库</div>
-                            <a class="dd-item" href="https://github.com/GuYiovo/GuYi-Access" target="_blank"><i class="fab fa-github"></i>查看源码<span class="dd-sub">MIT</span></a>
-                            <a class="dd-item" href="https://github.com/GuYiovo/GuYi-Access/archive/refs/heads/main.zip" target="_blank"><i class="fas fa-file-zipper"></i>下载 ZIP<span class="dd-sub">main分支</span></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="lang-matrix reveal" style="transition-delay:.4s;">
-                    <span class="lang-tag"><i class="fab fa-golang" style="color:#00ADD8"></i> Go</span>
-                    <span class="lang-tag"><i class="fab fa-rust" style="color:#dea584"></i> Rust</span>
-                    <span class="lang-tag"><i class="fas fa-c" style="color:#00599C"></i> C++</span>
-                    <span class="lang-tag"><i class="fab fa-windows" style="color:#239120"></i> C# / .NET</span>
-                    <span class="lang-tag"><i class="fab fa-java" style="color:#b07219"></i> Java</span>
-                    <span class="lang-tag"><i class="fab fa-python" style="color:#3776AB"></i> Python</span>
-                    <span class="lang-tag"><i class="fas fa-tools" style="color:#FF4500"></i> 易语言</span>
-                    <span class="lang-tag">+ 更多...</span>
-                </div>
-            </div>
-            
-            <div class="hero-visual reveal" style="transition-delay:.5s;">
-                <div class="ent-3d-wrapper" id="ent-3d-wrapper">
-                    <div class="ent-gallery" id="ent-gallery">
-                        <div class="ent-item"><img src="img/demo.png" alt="管理员登录"></div>
-                        <div class="ent-item"><img src="img/demo_2.png" alt="仪表盘"></div>
-                        <div class="ent-item"><img src="img/demo_3.png" alt="应用接入"></div>
-                        <div class="ent-item"><img src="img/demo_4.png" alt="云端变量"></div>
-                        <div class="ent-item"><img src="img/demo_5.png" alt="卡密生成"></div>
-                        <div class="ent-item"><img src="img/demo_6.png" alt="卡密库存"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="partners-section reveal">
-        <h2 class="partners-title">国际权威技术生态合作与支持</h2>
-        <div class="marquee-wrapper">
-            <div class="marquee-track">
-                <div class="partner-logo"><i class="fab fa-aws" style="color:#FF9900"></i> AWS</div>
-                <div class="partner-logo"><i class="fab fa-cloudflare" style="color:#F38020"></i> Cloudflare</div>
-                <div class="partner-logo"><i class="fab fa-github" style="color:#fff"></i> GitHub</div>
-                <div class="partner-logo"><i class="fab fa-docker" style="color:#2496ED"></i> Docker</div>
-                <div class="partner-logo"><i class="fab fa-linux" style="color:#FCC624"></i> Linux Foundation</div>
-                <div class="partner-logo"><i class="fab fa-microsoft" style="color:#00A4EF"></i> Microsoft Azure</div>
-                <div class="partner-logo"><i class="fab fa-google" style="color:#4285F4"></i> Google Cloud</div>
-            </div>
-        </div>
-    </section>
-</main>
-
-<footer>
-    <div class="f-grid">
-        <div><div style="color:#fff;font-size:18px;margin-bottom:12px;font-weight:bold;">GuYi Access 官网</div><p style="color:rgba(255,255,255,.45);font-size:13px;line-height:1.6;">致力于为开源社区提供极致安全、开箱即用的软件授权及网络验证基建引擎。</p></div>
-        <div class="f-links"><div class="f-title">导航</div><a href="docs.html">API 对接文档</a><a href="https://github.com/GuYiovo/GuYi-Access" target="_blank">GitHub 仓库</a></div>
-        <div class="f-links"><div class="f-title">联系与支持</div><a href="https://qm.qq.com/q/X3suYdjWAA" target="_blank">QQ 群：1077643184</a><a href="https://可爱.top/" target="_blank">作者官网</a></div>
-    </div>
-    <div class="f-bottom"><span>&copy; 2024-2026 GuYi Access. Open Source under MIT.</span><span>Made with <span style="color:var(--brand-pink)">♥</span> for Developers</span></div>
-</footer>
+    <!-- 所有的 DOM 和 样式将由 JS 动态生成 -->
+    <script src="js/main.js"></script>
 </body>
 </html>
