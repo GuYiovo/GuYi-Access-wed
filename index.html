@@ -1,190 +1,54 @@
 <!DOCTYPE html>
-<html lang="zh-CN" dir="ltr">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="GuYi">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#0b0f1a">
-  
-  <link rel="apple-touch-icon" href="https://q1.qlogo.cn/g?b=qq&nk=156440000&s=640">
-  <link rel="icon" type="image/png" href="https://q1.qlogo.cn/g?b=qq&nk=156440000&s=640">
-  <link rel="preload" as="image" href="https://q1.qlogo.cn/g?b=qq&nk=156440000&s=640">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
 
-  <title>GuYi官网｜GuYi-Access官方入口与发布页</title>
-  <meta name="description" content="GuYi（顾依）官网发布页，汇总 GuYi Access 官方入口、备用线路、官方下载仓库与官方交流群信息，方便用户查找 GuYi 官网及项目相关入口。">
-  <meta name="keywords" content="GuYi, GuYI官网, GuYi官网, GuYi-Access, GuYi Access, GuYi发布页, GuYi网络验证, 顾依">
-  <meta name="author" content="GuYi official">
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <title>GuYi Access｜开源卡密验证与软件授权系统</title>
+    <meta name="description" content="GuYi Access 是面向开发者的开源卡密验证与软件授权系统，提供 API 接口、客户端接入示例、请求签名验证及 AES-256-GCM 加密通信说明。">
+    <meta name="keywords" content="GuYi Access, 开源卡密验证系统, 软件授权验证, 网络验证系统, 卡密系统, API 接口, PHP 卡密系统, AES-256-GCM, 软件授权系统">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="author" content="GuYiovo">
 
-  <!-- 修正 Canonical 规范标签指向绝对主域名，解决搜索引擎空地图与屏蔽索引问题 -->
-  <link rel="canonical" href="https://sad66.pages.dev/">
-
-  <link rel="stylesheet" href="loading.css">
-
-  <meta property="og:title" content="GuYi官网｜GuYi-Access官方入口与发布页">
-  <meta property="og:description" content="GuYi（顾依）官网发布页，汇总 GuYi Access 官方入口、备用线路、官方下载仓库与官方交流群信息。">
-  <meta property="og:image" content="https://q1.qlogo.cn/g?b=qq&nk=156440000&s=640">
-  <meta property="og:url" content="https://sad66.pages.dev/">
-  <meta property="og:type" content="website">
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "GuYi",
-    "alternateName": ["GuYi official", "GuYi官网", "GuYI官网", "GuYi发布页", "GuYi-Access", "GuYi Access", "顾依"],
-    "url": "https://sad66.pages.dev/",
-    "inLanguage": "zh-CN",
-    "description": "GuYi（顾依）官网发布页，汇总 GuYi Access 官方入口、备用线路、官方下载仓库与官方交流群信息。"
-  }
-  </script>
+    <link rel="canonical" href="https://guyi-access-wed.pages.dev/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="GuYi Access">
+    <meta property="og:title" content="GuYi Access｜开源卡密验证与软件授权系统">
+    <meta property="og:description" content="面向开发者的开源卡密验证与软件授权项目，提供 API 文档、客户端接入示例及安全通信说明。">
+    <meta property="og:url" content="https://guyi-access-wed.pages.dev/">
+    <meta property="og:image" content="https://guyi-access-wed.pages.dev/img/mockup-pc.png">
+    <meta property="og:image:alt" content="GuYi Access 软件界面展示">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="GuYi Access｜开源卡密验证与软件授权系统">
+    <meta name="twitter:description" content="查看 GuYi Access API 接口文档、客户端接入示例与安全加密说明。">
+    <meta name="twitter:image" content="https://guyi-access-wed.pages.dev/img/mockup-pc.png">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "GuYi Access",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Cross-platform",
+      "url": "https://guyi-access-wed.pages.dev/",
+      "codeRepository": "https://github.com/GuYiovo/GuYi-Access",
+      "description": "面向开发者的开源卡密验证与软件授权系统，提供 API 接口、客户端接入示例与安全通信能力。"
+    }
+    </script>
+    
+    <link rel="icon" href="https://q1.qlogo.cn/g?b=qq&nk=156440000&s=640" type="image/png">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
 </head>
-<body class="theme-dark">
-  <!-- 1. 开屏 Loading 动画 -->
-  <div id="loading">
-    <div class="loadimg">
-      <img alt="GuYi Loading" src="file/img/opening_logo.png"/>
-    </div>
-    <p class="load_top"></p>
-    <p class="load_bottom"></p>
-  </div>
+<body>
 
-  <!-- 2. 音视频与背景特效容器 -->
-  <audio id="bg-music" src="file/mp3/Music.mp3" loop preload="auto"></audio>
-  <div class="bg-video-container">
-    <video id="mobile-bg-video" class="bg-video" autoplay loop muted playsinline></video>
-    <video id="pc-bg-video" class="bg-video" autoplay loop muted playsinline></video>
-  </div>
-
-  <!-- 3. 公告弹窗 UI -->
-  <div class="modal-mask open" id="announcement-modal">
-    <div class="modal-box" onclick="event.stopPropagation()">
-      <h2 class="modal-title">Announcement Cloud</h2>
-      <div id="modal-content" class="modal-body">加载中...</div>
-    </div>
-    <div id="click-prompt-text" class="click-to-continue">- 点击任意位置进入 -</div>
-  </div>
-
-  <canvas id="Snow"></canvas>
-  <div class="decor"></div>
-
-  <!-- 4. 静态预渲染主结构：供搜索引擎爬虫直接抓取标签与超链接 -->
-  <main class="wrap">
-    <section class="card tilt">
-      <div class="card-content">
-        
-        <!-- 左侧个人/公告卡片头 -->
-        <header class="card-header">
-          <div class="quote-bubble-container">
-            <img class="quote-avatar" src="https://q1.qlogo.cn/g?b=qq&nk=156440000&s=640" alt="GuYi Avatar">
-            <div class="quote-content-wrapper">
-              <h1 class="quote-author-name">GuYi official</h1>
-              <div class="quote-text-bubble">
-                <span id="random-quote-text" class="quote-text-content"></span>
-                <span id="quote-time-tag" class="quote-time-tag"></span>
-              </div>
-            </div>
-          </div>
-          <div class="side-notice-panel">
-            <div id="side-notice-content" class="side-notice-content">加载中...</div>
-          </div>
-        </header>
-
-        <!-- 右侧真实 HTML 导航与链接结构（解决 0 链接抓取问题） -->
-        <div class="card-body">
-          <nav id="stack" class="stack">
-            
-            <!-- 线路 1: GuYi Access 下拉菜单 -->
-            <div class="access-group" id="access-group">
-              <button id="access-trigger" class="btn access-trigger" type="button" aria-expanded="false" aria-controls="access-menu" aria-haspopup="true">
-                <div class="left">
-                  <span class="tag">1</span>
-                  <span>GuYi Access</span>
-                </div>
-                <div class="right">
-                  <span class="chip access-summary-chip">选择线路</span>
-                  <span class="access-caret" aria-hidden="true">⌄</span>
-                </div>
-              </button>
-              <div id="access-menu" class="access-menu" role="menu" aria-hidden="true">
-                <a id="link-global" class="access-option" href="https://guyi-access-wed.pages.dev/" target="_blank" rel="noopener noreferrer">
-                  <div class="access-option-left">
-                    <div class="access-option-text">
-                      <div class="access-option-name">全球入口</div>
-                      <div class="access-option-desc">GuYi Access 官方主线路</div>
-                    </div>
-                  </div>
-                  <span id="ping-global" class="chip">测速中</span>
-                </a>
-                <a id="link-overseas" class="access-option" href="https://guyiovo.github.io/GuYi-Access-wed/" target="_blank" rel="noopener noreferrer">
-                  <div class="access-option-left">
-                    <div class="access-option-text">
-                      <div class="access-option-name">备用入口</div>
-                      <div class="access-option-desc">主线路不可用时使用</div>
-                    </div>
-                  </div>
-                  <span id="ping-overseas" class="chip">测速中</span>
-                </a>
-              </div>
-            </div>
-
-            <!-- 线路 2: 官方下载仓库 -->
-            <a id="link-download" class="btn" href="https://download-e4t.pages.dev/" target="_blank" rel="noopener noreferrer">
-              <div class="left">
-                <span class="tag">2</span>
-                <span>官方下载仓库</span>
-              </div>
-              <div class="right">
-                <span id="ping-download" class="chip">测速中</span>
-                <span class="arrow">➜</span>
-              </div>
-            </a>
-
-            <!-- 线路 3: 官方交流群 -->
-            <a id="link-qq" class="btn" href="https://qm.qq.com/q/R8q8Nt43aS" target="_blank" rel="noopener noreferrer">
-              <div class="left">
-                <span class="tag">3</span>
-                <span>官方交流群</span>
-              </div>
-              <div class="right">
-                <span id="ping-qq" class="chip">测速中</span>
-                <span class="arrow">➜</span>
-              </div>
-            </a>
-
-            <!-- 线路 4: 发卡网 -->
-            <a id="link-faka" class="btn" href="https://shop.sad66.pages.dev/" target="_blank" rel="noopener noreferrer">
-              <div class="left">
-                <span class="tag">4</span>
-                <span>发卡网</span>
-              </div>
-              <div class="right">
-                <span id="ping-faka" class="chip">测速中</span>
-                <span class="arrow">➜</span>
-              </div>
-            </a>
-
-            <!-- 线路 5: GuYi频道 -->
-            <a id="link-telegram" class="btn" href="https://t.me/GuYilove886" target="_blank" rel="noopener noreferrer">
-              <div class="left">
-                <span class="tag">5</span>
-                <span>GuYi频道</span>
-              </div>
-              <div class="right">
-                <span class="arrow">➜</span>
-              </div>
-            </a>
-
-          </nav>
-        </div>
-
-      </div>
-    </section>
-  </main>
-
-  <script src="file/js/main.js" defer></script>
+    <script>
+        document.write('<script src="js/main.js?v=' + new Date().getTime() + '"><\/script>');
+    </script>
 </body>
 </html>
