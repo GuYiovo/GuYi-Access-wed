@@ -1,0 +1,77 @@
+/* loading.css */
+
+/* 清除默认间距，防止出现多余的白边或缝隙 */
+#loading, #loading p, #loading div {
+  margin: 0;
+  padding: 0;
+}
+
+/* 最外层，纯黑底色 */
+#loading {
+  background: #000;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  pointer-events: auto;
+  /* 核心修复1：纯 CSS 强制淡出！1.8秒时开始变透明，历时1.5秒。绝对不会再卡死！ */
+  animation: fadeOutWrap 1.5s 1.8s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+}
+
+@keyframes fadeOutWrap {
+  0% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+/* 包含 Logo 的纯黑图层 */
+#loading .loadimg {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  opacity: 0;
+  animation: loading_img 1.3s ease-out 1 0s forwards;
+}
+
+/* 核心修复2：解除宽度封印！使用 contain 等比填充，让红蓝线尽情延展到屏幕边缘 */
+#loading .loadimg img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
+  display: block;
+}
+
+/* 还原原站移动端的视觉：高度填满，横向溢出 */
+@media only screen and (max-width: 750px) {
+  #loading .loadimg img {
+    object-fit: cover; 
+  }
+}
+
+/* 上下两块黑幕，模拟从中缝拉开的擦除效果 */
+#loading .load_top, 
+#loading .load_bottom {
+  width: 100%;
+  height: 44%;
+  position: absolute;
+  left: 0;
+  background: #000;
+  z-index: 2;
+  animation: loading_bottom 3s ease-out 1 0s forwards;
+}
+
+#loading .load_top { top: 0; }
+#loading .load_bottom { bottom: 0; }
+
+@keyframes loading_img {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes loading_bottom {
+  100% { height: 0; }
+}
