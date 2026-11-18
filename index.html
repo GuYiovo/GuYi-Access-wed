@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#0b0f1a">
-    <title>GuYi Access | Open-Source License Verification &amp; Software Licensing</title>
-    <meta name="description" content="GuYi Access is an open-source licensing system with a PHP/MySQL backend, JSON verification API, AES-256-GCM responses, and multilingual client examples.">
-    <meta name="keywords" content="GuYi Access, open-source license verification, software licensing API, license key verification, PHP license system, AES-256-GCM, device binding, developer SDK">
+    <meta name="theme-color" content="#18283e">
+    <title>GuYi Access｜开源软件授权与卡密验证系统</title>
+    <meta name="description" content="GuYi Access 是一套开源软件授权与卡密验证系统，包含 PHP/MySQL 后端、JSON 验证接口、AES-256-GCM 加密响应及多语言客户端示例。">
+    <meta name="keywords" content="GuYi Access, 开源授权验证, 软件授权接口, 卡密验证, PHP 授权系统, AES-256-GCM, 设备绑定, 开发者 SDK">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="author" content="GuYiovo">
     <link rel="canonical" href="https://guyi-access-wed.pages.dev/">
@@ -16,16 +16,16 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Outfit:wght@300;400;500;600;700;800;900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <meta property="og:type" content="website">
-    <meta property="og:locale" content="en_US">
+    <meta property="og:locale" content="zh_CN">
     <meta property="og:site_name" content="GuYi Access">
-    <meta property="og:title" content="GuYi Access | Open-Source License Verification &amp; Software Licensing">
-    <meta property="og:description" content="Open-source license verification with a PHP/MySQL backend, JSON API, AES-256-GCM responses, device binding, and eight-language client examples.">
+    <meta property="og:title" content="GuYi Access｜开源软件授权与卡密验证系统">
+    <meta property="og:description" content="开源软件授权与卡密验证系统，提供 PHP/MySQL 后端、JSON 接口、AES-256-GCM 加密响应、设备绑定和多语言客户端示例。">
     <meta property="og:url" content="https://guyi-access-wed.pages.dev/">
     <meta property="og:image" content="https://guyi-access-wed.pages.dev/img/mockup-pc.png">
-    <meta property="og:image:alt" content="GuYi Access desktop software interface preview">
+    <meta property="og:image:alt" content="GuYi Access 桌面端软件界面预览">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="GuYi Access | Open-Source License Verification">
-    <meta name="twitter:description" content="Explore the GuYi Access license-verification API, developer documentation, encrypted responses, and multilingual client examples.">
+    <meta name="twitter:title" content="GuYi Access｜开源软件授权与卡密验证">
+    <meta name="twitter:description" content="了解 GuYi Access 授权验证接口、开发文档、加密响应和多语言客户端示例。">
     <meta name="twitter:image" content="https://guyi-access-wed.pages.dev/img/mockup-pc.png">
     <script type="application/ld+json">
     {
@@ -37,10 +37,12 @@
       "url": "https://guyi-access-wed.pages.dev/",
       "codeRepository": "https://github.com/GuYiovo/GuYi-Access",
       "author": {"@type": "Person", "name": "GuYiovo"},
-      "description": "An open-source software licensing and license-key verification system with a PHP backend, JSON API, AES-256-GCM encrypted responses, device binding, and multilingual client integration examples."
+      "description": "一套开源软件授权与卡密验证系统，包含 PHP 后端、JSON API、AES-256-GCM 加密响应、设备绑定及多语言客户端集成示例。"
     }
     </script>
-    <script src="js/main.js?v=20261102" defer></script>
+    <link rel="stylesheet" href="css/site.css?v=20261118-blackwhite2">
+    <script src="js/main.js?v=20261118-clear-glass1" defer></script>
+    <script src="js/changelog.js?v=20261118-nav1" defer></script>
 </head>
 <body>
 <div id="app-wrapper">
@@ -48,11 +50,19 @@
     <video class="anime-bg" id="anime-bg" autoplay loop muted playsinline aria-hidden="true"></video>
     <header class="navbar glass-shine" id="navbar">
         <nav class="nav-container">
-            <a href="index.html" class="nav-brand"><img src="https://pub-8a73d0f678a64dc9abb02ea54e4c44c5.r2.dev/logo.png" alt="GuYi Access logo">GuYi Access</a>
+            <div class="nav-brand-group">
+                <a href="index.html" class="nav-brand"><img src="https://pub-8a73d0f678a64dc9abb02ea54e4c44c5.r2.dev/logo.png" alt="GuYi Access 标志">GuYi Access</a>
+                <div class="nav-version" aria-label="GuYi Access 当前最新版本">
+                    <span class="nav-version-label-full">当前最新版本：</span><span class="nav-version-label-short">当前版本：</span><span class="nav-version-label-tiny">版本：</span>
+                    <strong id="nav-latest-version">2026.11.18</strong>
+                    <span class="sr-only" id="latest-version-status">正在同步云端版本号…</span>
+                </div>
+            </div>
             <div class="nav-links">
-                <a href="docs.html">Developer Docs</a>
-                <a href="https://github.com/GuYiovo/GuYi-Access" target="_blank"><i class="fab fa-github"></i> Open-Source Repository</a>
-                <a href="https://t.me/GuYi0u0" target="_blank"><i class="fab fa-telegram"></i> Developer Community</a>
+                <a class="nav-changelog-link" href="changelog.html"><i class="fas fa-clock-rotate-left"></i> 更新日志</a>
+                <a href="docs.html"><i class="fas fa-book"></i> 开发文档</a>
+                <a href="https://github.com/GuYiovo/GuYi-Access" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> 开源代码仓库</a>
+                <a href="https://t.me/GuYi0u0" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram"></i> 开发者社群</a>
             </div>
         </nav>
     </header>
@@ -60,22 +70,22 @@
         <section class="section hero">
             <div class="container hero-grid">
                 <div class="hero-text">
-                    <h1 class="title-lg" id="dynamic-title" style="min-height: 2.3em;">Open-source license verification,<br><span class="text-gradient">for more secure software licensing.</span><span class="typing-cursor" aria-hidden="true"></span></h1>
-                    <p class="subtitle reveal" style="transition-delay:.2s; font-family: var(--font-mono); color: var(--text-muted); font-size: 14px;"><span style="color: var(--brand-cyan);">//</span> Uses AES-256-GCM authenticated encryption for API responses.<br>Provides multilingual client examples and a straightforward integration path for software license verification.</p>
+                    <h1 class="title-lg" id="dynamic-title" style="min-height: 2.3em;">开源软件授权验证，<br><span class="text-gradient">让软件授权管理更安全。</span><span class="typing-cursor" aria-hidden="true"></span></h1>
+                    <p class="subtitle reveal" style="transition-delay:.2s; font-family: var(--font-mono); color: var(--text-muted); font-size: 14px;"><span style="color: var(--brand-cyan);">//</span> API 响应采用 AES-256-GCM 认证加密。<br>提供多语言客户端示例，帮助开发者快速接入软件授权验证。</p>
                     <div class="hero-actions reveal" style="transition-delay:.3s;">
-                        <a href="docs.html" class="btn btn-glow"><i class="fas fa-book"></i> Read the Full Developer Documentation</a>
-                        <a href="https://t.me/GuYi0u0" target="_blank" class="btn btn-outline"><i class="fab fa-telegram"></i> Join the Developer Community</a>
+                        <a href="docs.html" class="btn btn-doc-blackwhite"><i class="fas fa-book"></i> 查看完整开发文档</a>
+                        <a href="https://t.me/GuYi0u0" target="_blank" class="btn btn-community-blackwhite"><i class="fab fa-telegram"></i> 加入开发者社群</a>
                         <div class="btn-download-wrap" id="dlWrap">
                             <button class="btn-download" id="dlBtn">
-                                <i class="fas fa-download"></i> Download and Deploy <i class="fas fa-chevron-down chevron"></i>
+                                <i class="fas fa-download"></i> 下载与部署 <i class="fas fa-chevron-down chevron"></i>
                             </button>
                             <div class="download-dropdown" id="dlDropdown">
-                                <div class="dd-label">Official Download (v2026.10.6)</div>
-                                <a class="dd-item" href="https://github.com/GuYiovo/GuYi-Access/archive/refs/heads/main.zip" target="_blank"><i class="fas fa-file-zipper"></i>Download the Latest ZIP</a>
-                                <a class="dd-item" href="https://github.com/GuYiovo/GuYi-Access" target="_blank"><i class="fab fa-github"></i>Visit the GitHub Repository</a>
+                                <div class="dd-label">官方下载（v<span id="download-version">2026.11.18</span>）</div>
+                                <a class="dd-item" href="https://github.com/GuYiovo/GuYi-Access/archive/refs/heads/main.zip" target="_blank"><i class="fas fa-file-zipper"></i>下载最新 ZIP</a>
+                                <a class="dd-item" href="https://github.com/GuYiovo/GuYi-Access" target="_blank"><i class="fab fa-github"></i>访问 GitHub 仓库</a>
                                 <div class="dd-divider"></div>
-                                <div class="dd-label">Alternative High-Speed Mirror</div>
-                                <a class="dd-item" href="https://www.123684.com/s/EmjGjv-P7CsH?pwd=DMJz#" target="_blank"><i class="fas fa-cloud-arrow-down"></i>Download from 123 Cloud Drive</a>
+                                <div class="dd-label">备用高速下载镜像</div>
+                                <a class="dd-item" href="https://www.123684.com/s/EmjGjv-P7CsH?pwd=DMJz#" target="_blank"><i class="fas fa-cloud-arrow-down"></i>从 123 云盘下载</a>
                             </div>
                         </div>
                     </div>
@@ -86,8 +96,8 @@
                         <span class="lang-tag"><i class="fab fa-rust" style="color:#dea584"></i> Rust</span>
                         <span class="lang-tag"><i class="fas fa-c" style="color:#00599C"></i> C++</span>
                         <span class="lang-tag"><i class="fab fa-java" style="color:#b07219"></i> Java</span>
-                        <span class="lang-tag"><i class="fas fa-tools" style="color:#FF4500"></i> EPL (Easy Programming Language)</span>
-                        <span class="lang-tag">More languages supported...</span>
+                        <span class="lang-tag"><i class="fas fa-tools" style="color:#FF4500"></i> 易语言（EPL）</span>
+                        <span class="lang-tag">还支持更多编程语言……</span>
                     </div>
                 </div>
                 
@@ -96,31 +106,30 @@
                     <div class="mockup-stage" id="mockup-stage">
                         <div class="mockup-glow"></div>
                         <div class="mockup-macbook-wrap">
-                            <img src="img/mockup-pc.png" alt="GuYi Access desktop interface preview" class="mockup-macbook">
+                            <img src="img/mockup-pc.png" alt="GuYi Access 桌面端界面预览" class="mockup-macbook">
                         </div>
                         <div class="mockup-iphone-wrap">
-                            <img src="img/mockup-mobile.png" alt="GuYi Access mobile interface preview" class="mockup-iphone">
+                            <img src="img/mockup-mobile.png" alt="GuYi Access 移动端界面预览" class="mockup-iphone">
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        
-        <section class="partners-section reveal">
-            <h2 class="partners-title">A Developer Project for Multiple Technology Ecosystems</h2>
+<section class="partners-section reveal">
+            <h2 class="partners-title">面向多种技术生态的开发者项目</h2>
             <div class="partner-carousel" id="partner-carousel">
                 <div class="partner-group active">
                     <div class="partner-logo"><i class="fab fa-aws" style="color:#FF9900"></i> AWS</div>
                     <div class="partner-logo"><i class="fab fa-cloudflare" style="color:#F38020"></i> Cloudflare</div>
                     <div class="partner-logo"><i class="fab fa-github" style="color:#fff"></i> GitHub</div>
                     <div class="partner-logo"><i class="fab fa-docker" style="color:#2496ED"></i> Docker</div>
-                    <div class="partner-logo"><i class="fab fa-linux" style="color:#FCC624"></i> Linux Foundation</div>
+                    <div class="partner-logo"><i class="fab fa-linux" style="color:#FCC624"></i> Linux 基金会</div>
                 </div>
                 <div class="partner-group">
                     <div class="partner-logo"><i class="fab fa-microsoft" style="color:#00A4EF"></i> Microsoft Azure</div>
                     <div class="partner-logo"><i class="fab fa-google" style="color:#4285F4"></i> Google Cloud</div>
-                    <div class="partner-logo"><i class="fab fa-apple" style="color:#999999"></i> Apple Ecosystem</div>
-                    <div class="partner-logo"><i class="fab fa-meta" style="color:#0668E1"></i> Meta Open-Source Ecosystem</div>
+                    <div class="partner-logo"><i class="fab fa-apple" style="color:#999999"></i> Apple 生态</div>
+                    <div class="partner-logo"><i class="fab fa-meta" style="color:#0668E1"></i> Meta 开源生态</div>
                 </div>
                 <div class="partner-group">
                     <div class="partner-logo"><i class="fab fa-redhat" style="color:#EE0000"></i> Red Hat</div>
@@ -134,26 +143,26 @@
         <section class="section seo-section" aria-labelledby="capabilities-title">
             <div class="container">
                 <div class="seo-section-heading">
-                    <span class="seo-eyebrow">CORE CAPABILITIES</span>
-                    <h2 id="capabilities-title">License Verification Built for Developer Integration</h2>
-                    <p>GuYi Access is an open-source software licensing project that connects applications to a centralized license-verification service. The project includes a PHP backend, a JSON API, and client-side integration examples. Deploy the backend on your own web server, then configure each client to use the API endpoint supplied by that deployment.</p>
+                    <span class="seo-eyebrow">核心功能</span>
+                    <h2 id="capabilities-title">为开发者集成而打造的授权验证系统</h2>
+                    <p>GuYi Access 是一个开源软件授权项目，可将应用程序接入统一的授权验证服务。项目包含 PHP 后端、JSON API 和客户端集成示例。你可以将后端部署到自己的服务器，再为各个客户端配置该部署环境提供的 API 地址。</p>
                 </div>
                 <div class="seo-card-grid">
                     <article class="seo-card">
-                        <h3>License Key Verification</h3>
-                        <p>Validate a license key with the application key and card code. A stable device hash can be provided so the server can associate a license with the current installation and apply the configured device policy.</p>
+                        <h3>卡密验证</h3>
+                        <p>通过应用密钥和卡密验证授权。你也可以提供稳定的设备哈希值，让服务器将授权与当前设备关联，并执行已配置的设备策略。</p>
                     </article>
                     <article class="seo-card">
-                        <h3>Device Binding and Unbinding</h3>
-                        <p>Keep track of the device associated with a license. Repeated verification from the same device refreshes its activity record, while the documented self-service unbinding action lets a user move a license to another device under the server's rules.</p>
+                        <h3>设备绑定与解绑</h3>
+                        <p>记录授权所绑定的设备。同一设备重复验证时会刷新活动记录；用户也可以按照服务器规则，通过自助解绑功能将授权转移到另一台设备。</p>
                     </article>
                     <article class="seo-card">
-                        <h3>Cloud Variables and Application Data</h3>
-                        <p>Return application update information and public cloud variables through the API. The developer documentation also describes an administrative API for automated license-key distribution.</p>
+                        <h3>云变量与应用数据</h3>
+                        <p>通过 API 获取应用更新信息和公开云变量。开发文档还介绍了用于自动分发授权卡密的管理接口。</p>
                     </article>
                     <article class="seo-card">
-                        <h3>AES-256-GCM API Responses</h3>
-                        <p>The current integration guide explains the encrypted response format, key handling, decryption steps, JSON response envelope, and common error codes so clients can process verification results consistently.</p>
+                        <h3>AES-256-GCM API 加密响应</h3>
+                        <p>当前集成指南介绍了加密响应格式、密钥处理方式、解密步骤、JSON 响应结构及常见错误代码，帮助客户端统一处理验证结果。</p>
                     </article>
                 </div>
             </div>
@@ -161,24 +170,24 @@
         <section class="section seo-section seo-section-secondary" aria-labelledby="integration-title">
             <div class="container">
                 <div class="seo-section-heading">
-                    <span class="seo-eyebrow">DEVELOPER DOCUMENTATION</span>
-                    <h2 id="integration-title">Integrate with the Languages You Already Use</h2>
-                    <p>The documentation includes client examples for Python, JavaScript / Node.js, PHP, C#, Go, Java, C++, and Rust. Each example demonstrates how to send the verification request, handle the API response, and decrypt AES-256-GCM data where applicable. Review the <a href="docs.html">GuYi Access developer documentation</a> for request parameters, deployment requirements, security notes, and response codes.</p>
-                    <p class="seo-deployment-note"><strong>Deployment baseline:</strong> the published guide lists PHP 7.2 or later with the PDO and JSON extensions, plus MySQL 5.6 or later. The API runs on your own deployment; the project website is a documentation and download entry point, not a universal API endpoint.</p>
+                    <span class="seo-eyebrow">开发者文档</span>
+                    <h2 id="integration-title">使用你熟悉的编程语言快速接入</h2>
+                    <p>文档提供 Python、JavaScript / Node.js、PHP、C#、Go、Java、C++ 和 Rust 客户端示例。每个示例均演示如何发送验证请求、处理 API 响应，以及在需要时解密 AES-256-GCM 数据。请求参数、部署要求、安全说明和响应代码请参阅 <a href="docs.html">GuYi Access 开发文档</a>。</p>
+                    <p class="seo-deployment-note"><strong>部署环境要求：</strong>文档列出的基础环境为 PHP 7.2 或更高版本，并启用 PDO 和 JSON 扩展；数据库使用 MySQL 5.6 或更高版本。API 运行在你自行部署的服务端，项目网站仅提供文档和下载入口，并不是通用 API 地址。</p>
                 </div>
             </div>
         </section>
     </main>
     <footer>
         <div class="f-grid">
-            <div><div style="color:#fff;font-size:18px;margin-bottom:12px;font-weight:bold;">GuYi Access Official Project</div><p style="color:rgba(255,255,255,.45);font-size:13px;line-height:1.6;">Providing easy-to-deploy software licensing and online verification components for the open-source community.</p></div>
-            <div class="f-links"><div class="f-title">Site Navigation</div><a href="docs.html">API Integration Guide</a><a href="https://github.com/GuYiovo/GuYi-Access" target="_blank">Open-Source Code on GitHub</a></div>
-            <div class="f-links"><div class="f-title">Contact and Support</div><a href="https://t.me/GuYi0u0" target="_blank">Telegram Community</a><a href="https://xn--jpr071e.top/" target="_blank">Author Website</a></div>
+            <div><div style="color:#fff;font-size:18px;margin-bottom:12px;font-weight:bold;">GuYi Access 官方项目</div><p style="color:rgba(255,255,255,.45);font-size:13px;line-height:1.6;">为开源社区提供易于部署的软件授权与在线验证组件。</p></div>
+            <div class="f-links"><div class="f-title">站点导航</div><a href="changelog.html">更新日志</a><a href="docs.html">API 接入指南</a><a href="https://github.com/GuYiovo/GuYi-Access" target="_blank">GitHub 开源代码</a></div>
+            <div class="f-links"><div class="f-title">联系与支持</div><a href="https://t.me/GuYi0u0" target="_blank">Telegram 社群</a><a href="https://xn--jpr071e.top/" target="_blank">作者网站</a></div>
         </div>
-        <div class="f-bottom"><span>&copy; 2024-2026 GuYi Access. Released under the MIT License.</span><span>Built for Developers</span></div>
+        <div class="f-bottom"><span>&copy; 2024-2026 GuYi Access. 基于 MIT 许可证开源。</span><span>为开发者而构建</span></div>
     </footer>
     
-    <div id="toast" class="toast"><i class="fas fa-check-circle"></i>Code copied to the clipboard!</div>
+    <div id="toast" class="toast"><i class="fas fa-check-circle"></i>代码已复制到剪贴板！</div>
     
 </div>
 </body>

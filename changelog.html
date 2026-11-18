@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#18283e">
+    <title>更新日志｜GuYi Access</title>
+    <meta name="description" content="查看 GuYi Access 各版本更新记录，按日期浏览每次版本更新的详细内容。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://guyi-access-wed.pages.dev/changelog.html">
+    <link rel="icon" href="https://pub-8a73d0f678a64dc9abb02ea54e4c44c5.r2.dev/logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Outfit:wght@300;400;500;600;700;800;900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:site_name" content="GuYi Access">
+    <meta property="og:title" content="更新日志｜GuYi Access">
+    <meta property="og:description" content="按日期查看 GuYi Access 各版本更新内容。">
+    <meta property="og:url" content="https://guyi-access-wed.pages.dev/changelog.html">
+    <link rel="stylesheet" href="css/site.css?v=20261118-blackwhite2">
+    <script src="js/main.js?v=20261118-clear-glass1" defer></script>
+    <script src="js/changelog.js?v=20261118-nav1" defer></script>
+</head>
+<body>
+<div id="app-wrapper">
+    <div class="cursor-glow" id="cursor-glow"></div>
+    <video class="anime-bg" id="anime-bg" autoplay loop muted playsinline aria-hidden="true"></video>
+    <header class="navbar scrolled glass-shine" id="navbar">
+<nav class="nav-container">
+<div class="nav-brand-group">
+<a class="nav-brand" href="index.html"><img alt="GuYi Access 标志" src="https://pub-8a73d0f678a64dc9abb02ea54e4c44c5.r2.dev/logo.png">GuYi Access</a>
+<div class="nav-version" aria-label="GuYi Access 当前最新版本"><span class="nav-version-label-full">当前最新版本：</span><span class="nav-version-label-short">当前版本：</span><span class="nav-version-label-tiny">版本：</span><strong id="nav-latest-version">2026.11.18</strong><span class="sr-only" id="latest-version-status">正在同步云端版本号…</span></div>
+</div>
+<div class="nav-links">
+<a href="index.html">首页</a>
+<a href="docs.html">开发文档</a>
+<a class="active nav-changelog-link" href="changelog.html"><i class="fas fa-clock-rotate-left"></i> 更新日志</a>
+<a href="https://github.com/GuYiovo/GuYi-Access" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
+</div>
+</nav>
+</header>
+    <main class="changelog-page-main">
+        <section class="section changelog-section" id="changelog" aria-labelledby="changelog-title">
+            <div class="container">
+                <div class="changelog-page-intro">
+                    <h1 id="changelog-title">更新日志</h1>
+                    <p>所有版本更新按日期归档。点击日期，即可查看该版本的完整更新内容。</p>
+                </div>
+                <div class="changelog-panel">
+                    <div class="changelog-panel-head">
+                        <span id="changelog-count">版本记录</span>
+                        <span class="changelog-panel-hint">最新记录优先</span>
+                    </div>
+                    <div class="changelog-list" id="changelog-list" aria-live="polite">
+                        <div class="changelog-loading">正在读取版本更新记录…</div>
+                    </div>
+                    <div class="changelog-pagination" id="changelog-pagination" hidden>
+                        <button type="button" id="changelog-prev" disabled>上一页</button>
+                        <span id="changelog-page-status">第 1 页</span>
+                        <button type="button" id="changelog-next" disabled>下一页</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <dialog class="changelog-dialog" id="changelog-dialog" aria-labelledby="changelog-dialog-title">
+        <div class="changelog-dialog-inner">
+            <div class="changelog-dialog-head">
+                <div>
+                    <span class="changelog-dialog-date" id="changelog-dialog-date"></span>
+                    <h3 id="changelog-dialog-title">版本更新内容</h3>
+                </div>
+                <button type="button" class="changelog-close" id="changelog-close" aria-label="关闭更新内容"><i class="fas fa-xmark"></i></button>
+            </div>
+            <article class="changelog-content" id="changelog-content">
+                <p>正在读取更新内容…</p>
+            </article>
+        </div>
+    </dialog>
+    <footer>
+        <div class="f-grid">
+            <div><div style="color:#fff;font-size:18px;margin-bottom:12px;font-weight:bold;">GuYi Access 官方项目</div><p style="color:rgba(255,255,255,.45);font-size:13px;line-height:1.6;">为开源社区提供易于部署的软件授权与在线验证组件。</p></div>
+            <div class="f-links"><div class="f-title">站点导航</div><a href="index.html">首页</a><a href="docs.html">开发文档</a></div>
+            <div class="f-links"><div class="f-title">联系与支持</div><a href="https://t.me/GuYi0u0" target="_blank" rel="noopener noreferrer">Telegram 社群</a><a href="https://xn--jpr071e.top/" target="_blank" rel="noopener noreferrer">作者网站</a></div>
+        </div>
+        <div class="f-bottom"><span>&copy; 2024-2026 GuYi Access. 基于 MIT 许可证开源。</span><span>为开发者而构建</span></div>
+    </footer>
+</div>
+</body>
+</html>
